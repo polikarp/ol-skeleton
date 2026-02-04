@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>gis-skeleton</title>
+  </head>
+  <body>
+      <div class="container m-0 p-0">
+
+        <!-- Map -->
+        <div
+            id="map"
+            data-config=""
+            style="width:100%; height: calc(100vh - 0px);">
+        </div>
+
+        <!-- Left layers toolbar -->
+        <div id="gis-toolbar" class="gis-toolbar d-flex flex-column align-items-center">
+
+            <button class="toolbar-button bottom-menu-button" data-target="base-map-menu" title="Base map">
+                <i class="fas fa-globe"></i>
+                <span class="menu-label">Base</span>
+            </button>
+
+            <div class="button-separator-vertical"></div>
+
+            <button class="toolbar-button bottom-menu-button" data-target="wms-menu" title="WMS Layers">
+                <i class="fas fa-layer-group"></i>
+                <span class="menu-label">Layers</span>
+            </button>
+
+        </div>
+
+        <!-- Base map menu -->
+        <div id="base-map-menu" class="gis-toolbar-flyout">
+            <h6>Base map</h6>
+
+            <!-- Base layers thumbnails will be injected by JS -->
+            <div class="row g-2" id="baseMapMenuContent"></div>
+        </div>
+
+        <!-- WMS layers menu -->
+        <div id="wms-menu" class="gis-toolbar-flyout">
+            <h6>Layers</h6>
+
+            <input
+                type="text"
+                id="layersSearchInput"
+                class="form-control form-control-sm mb-2"
+                placeholder="Search layers"
+                autocomplete="off"
+            />
+
+            <div class="row g-2">
+                <ul id="layersMenuSelector" class="list-unstyled"></ul>
+            </div>
+        </div>
+
+        <!-- Elevation profile -->
+        <div id="profileWindow" style="display:none;">
+            <div class="profile-header">
+                <span>Elevation Profile</span>
+                <button id="closeProfile">&times;</button>
+            </div>
+            <canvas id="profile"></canvas>
+        </div>
+
+        <!-- Mouse coordinates -->
+        <div id="mouse-coordinates" class="map-coordinates"></div>
+
+        <!-- Search box -->
+        <div class="search-box">
+            <div class="search-wrapper">
+                <span class="search-icon"><i class="fas fa-search"></i></span>
+                <input
+                    type="text"
+                    id="searchInput"
+                    class="form-control search-input"
+                    placeholder="Search">
+                <span class="search-clear d-none" id="clearSearch">
+                    <i class="fas fa-times"></i>
+                </span>
+            </div>
+            <ul id="autocompleteResults" class="list-group d-none"></ul>
+        </div>
+
+        <!-- Bottom menu -->
+        <div id="gis-bottom-menu" class="gis-bottom-menu d-flex align-items-center">
+
+            <!-- Mobile toggle -->
+            <button id="toggleMenuBtn" class="d-block d-sm-none bottom-menu-toggle" title="Show tools">
+                ☰
+            </button>
+
+            <div id="menuButtons" class="d-flex align-items-center">
+
+                <button id="btnMeasureLength" class="bottom-menu-button hideResponsive" title="Measure distance">
+                    <i class="fas fa-ruler"></i>
+                    <span class="menu-label">Distance</span>
+                </button>
+
+                <div class="button-separator hideResponsive"></div>
+
+                <button id="btnMeasureArea" class="bottom-menu-button hideResponsive" title="Measure area">
+                    <i class="fas fa-draw-polygon"></i>
+                    <span class="menu-label">Area</span>
+                </button>
+
+                <div class="button-separator hideResponsive"></div>
+
+                <button id="btnProfile" class="bottom-menu-button hideResponsive" title="Elevation profile">
+                    <i class="fas fa-mountain"></i>
+                    <span class="menu-label">Profile</span>
+                </button>
+
+                <div class="button-separator hideResponsive"></div>
+
+                <button id="btnCancelMeasure" class="bottom-menu-button d-none hideResponsive" title="Cancel measure">
+                    <i class="fas fa-times"></i>
+                    <span class="menu-label">Cancel</span>
+                </button>
+
+                <div class="button-separator"></div>
+
+                <button class="bottom-menu-button" id="gps" title="GPS location">
+                    <i class="fas fa-location-crosshairs"></i>
+                    <span class="menu-label">Location</span>
+                </button>
+
+                <div class="button-separator"></div>
+
+                <button class="bottom-menu-button" id="home" title="Center map">
+                    <i class="fas fa-crosshairs"></i>
+                    <span class="menu-label">Center</span>
+                </button>
+
+                <div class="button-separator"></div>
+
+                <button class="bottom-menu-button" id="btnSpatialViewport" title="Bounding box">
+                    <i class="fas fa-info-circle"></i>
+                    <span class="menu-label">BBox</span>
+                </button>
+
+                <div class="button-separator"></div>
+
+                <button id="rotate" class="bottom-menu-button" title="Reset rotation">
+                    <i class="fa-solid fa-compass"></i>
+                    <span class="menu-label">Reset</span>
+                </button>
+
+                <div class="button-separator"></div>
+
+                <button id="rotate90" class="bottom-menu-button" title="Rotate left">
+                    <i class="fas fa-rotate-left"></i>
+                    <span class="menu-label">Rotate</span>
+                </button>
+
+                <div class="button-separator hideResponsive"></div>
+
+                <button id="btnSpatialDraw" class="bottom-menu-button hideResponsive" title="Spatial search">
+                    <i class="fas fa-draw-polygon"></i>
+                    <span class="menu-label">Search</span>
+                </button>
+
+                <div class="button-separator hideResponsive"></div>
+
+                <button id="btnSpatialDrawCancel" class="bottom-menu-button hideResponsive" title="Clear spatial search">
+                    <i class="fas fa-times"></i>
+                    <span class="menu-label">Clear</span>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- Right identify panel -->
+        <div id="gfiRightPanel" class="gfi-panel">
+
+            <div class="gfi-panel__header">
+                <div class="gfi-panel__title">Identify results</div>
+                <button id="gfiPanelClose" title="Close">✖</button>
+            </div>
+
+            <div id="gfiLoading" class="gfi-loading d-none">
+                <i class="fa fa-spinner fa-spin me-2"></i>
+                <span>Loading…</span>
+            </div>
+
+            <div id="gfiPanelBody" class="gfi-panel__body">
+                <div class="text-muted small">
+                    Click on the map to identify features.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Filters modal -->
+        <div class="modal fade" id="layerFiltersModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Filters</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <ul class="nav nav-tabs" id="layerFiltersTabs" role="tablist"></ul>
+                        <div class="tab-content pt-3" id="layerFiltersTabContent"></div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            Close
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+      </div>
+
+    <script type="module" src="/src/js/app.js"></script>
+  </body>
+</html>
