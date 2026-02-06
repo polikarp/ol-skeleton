@@ -4,6 +4,7 @@
 
 import { UI } from "../../constants/i18.en";
 import { Modal } from "bootstrap";
+import { layersInfo } from "../map/map-config";
 
 
 const schemaCache = new Map(); // key: typename -> [{name,type}]
@@ -16,10 +17,10 @@ let bsModal = null;
 /**
  * Initialize the layer filters manager.
  * @param {Object} options
- * @param {Function} options.refreshWmsLayer - function({layerName}) to refresh WMS after applying filter
+ * @param {Function} options.refreshLayer - function({layerName}) to refresh WMS after applying filter
  * @param {Function} [options.getWfsDescribeUrl] - function(layerName, $layerLi) => url (optional)
  */
-export function initLayerFiltersManager({ refreshWmsLayer, getWfsDescribeUrl }) {
+export function initLayerFiltersManager({ map, refreshLayer, getWfsDescribeUrl }) {
     if (!window.currentCqlFilterByLayer) window.currentCqlFilterByLayer = {};
 
     // Bootstrap modal instance
@@ -41,7 +42,6 @@ export function initLayerFiltersManager({ refreshWmsLayer, getWfsDescribeUrl }) 
         await openFiltersModalForLayer({
             layerName,
             $layerLi,
-            refreshWmsLayer,
             getWfsDescribeUrl
         });
     });
@@ -116,8 +116,8 @@ export function initLayerFiltersManager({ refreshWmsLayer, getWfsDescribeUrl }) 
         updateLayerFilterIcon(layerName);
         updateTabPreview(layerName);
 
-        if (typeof refreshWmsLayer === "function") {
-            refreshWmsLayer({ layerName });
+        if (typeof refreshLayer === "function") {
+            refreshLayer(map, layerName, {});
         }
     });
 
@@ -137,8 +137,8 @@ export function initLayerFiltersManager({ refreshWmsLayer, getWfsDescribeUrl }) 
         updateLayerFilterIcon(layerName);
         updateTabPreview(layerName);
 
-        if (typeof refreshWmsLayer === "function") {
-            refreshWmsLayer({ layerName });
+        if (typeof refreshLayer === "function") {
+            refreshLayer(map, layerName, {});
         }
     });
 }
@@ -146,7 +146,7 @@ export function initLayerFiltersManager({ refreshWmsLayer, getWfsDescribeUrl }) 
 /**
  * Open modal and ensure the tab for the requested layer exists and is active.
  */
-async function openFiltersModalForLayer({ layerName, $layerLi, refreshWmsLayer, getWfsDescribeUrl }) {
+async function openFiltersModalForLayer({ layerName, $layerLi, getWfsDescribeUrl }) {
     const layerTitle = $layerLi.text().replace(/\s+/g, " ").trim();
     ensureTabExists(layerName, layerTitle);
 

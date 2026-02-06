@@ -1,5 +1,7 @@
 import {applyProxyIfNeeded} from '../map/wms-capabilities-loader';
 import {extractLegendItems} from '../map/get-legend-json';
+import { PROXY_PATH } from "../map/map-config";
+
 
 /**
  * Build HTML for the layers menu from groups + parsed WMS layers.
@@ -32,10 +34,12 @@ import {extractLegendItems} from '../map/get-legend-json';
 
 let layersLegends = {};
 
+
+
 export function renderLayersMenuFromWms(
     bootstrap,
     groupsLayers,
-    { useProxy = false, proxyPath = "/proxy/geoserver?url=", showLegends = true, legendScale = null } = {}
+    { useProxy = false, proxyPath = PROXY_PATH, showLegends = true, legendScale = null } = {}
 ) {
     const $menu = $("#layersMenuSelector");
     $menu.empty();
@@ -44,11 +48,16 @@ export function renderLayersMenuFromWms(
         .slice()
         .sort((a, b) => (a.order_idx ?? 9999) - (b.order_idx ?? 9999));
 
+    const services = (bootstrap?.services || []);
+    const servicesById = new Map(
+        services.map(s => [s.id, s])
+    );
+
     groups.forEach((group) => {
         const groupKey = group.key;
         const groupTitle = group.title || group.key;
         const isCollapsedDefault = !!group.collapsed_default;
-
+        const serviceType = servicesById.get(group.service_id).type;
         const collapseId = `group_${String(groupKey).replace(/[^a-zA-Z0-9_-]/g, "_")}_layers`;
         const expanded = isCollapsedDefault ? "false" : "true";
         const collapseClass = isCollapsedDefault ? "collapse" : "collapse show";
@@ -132,7 +141,7 @@ export function renderLayersMenuFromWms(
                             (legendItems) => {
                                 layersLegends[layerName] = legendItems;
                             },
-                            (err) => console.error(err)
+                            (err) => console.error(layerName + '   ' + err)
                         );
 
 
@@ -178,7 +187,8 @@ export function renderLayersMenuFromWms(
                                    data-group-key="${escapeAttr(groupKey)}"
                                    data-service-id="${escapeAttr(layer.serviceId)}"
                                    data-service-base-url="${escapeAttr(layer.serviceBaseUrl)}"
-                                   data-service-version="${escapeAttr(layer.serviceVersion || "1.3.0")}">
+                                   data-service-version="${escapeAttr(layer.serviceVersion || "1.3.0")}"
+                                   data-service-type="${serviceType}">
 
                             <label for="${inputId}" class="mb-0 flex-grow-1"
                                    title="${escapeAttr(layerDesc)}">

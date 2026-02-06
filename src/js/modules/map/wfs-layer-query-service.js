@@ -5,7 +5,7 @@ import { buildIntersectsCql, combineCql } from "./cql-spatial-builder";
 import { polygonFromExtent } from "./geometry-helpers";
 
 export function createWfsLayerQueryService({
-  wmsLayerRegistry,
+  layerRegistry,
   useProxy,
   proxyPath,
   getCqlFilter,
@@ -15,12 +15,12 @@ export function createWfsLayerQueryService({
 }) {
 
     function listActiveCandidates() {
-        return Array.from(wmsLayerRegistry.values())
+        return Array.from(layerRegistry.values())
             .filter(l => l?.getVisible?.())
                 .map(layer => ({
                     layer,
-                    baseUrl: layer.get("wmsServiceBaseUrl"),
-                    typeName: layer.get("wmsLayerName"),
+                    baseUrl: layer.get("serviceBaseUrl"),
+                    typeName: layer.get("layerName"),
                     wfsEnabled: !!layer.get("wfsEnabled"),
                     wfsVersion: layer.get("wfsVersion") || "2.0.0",
                 }))

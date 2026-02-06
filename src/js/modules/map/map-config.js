@@ -11,3 +11,9 @@ export const initialRotation = 0;
  */
 export const wmsLayerRegistry = new Map();
 export const layerRegistry = new Map();
+export const PROXY_PATH = "http://geoproxy.local/geoserver.php?url=";
+/*
+* Stores important info of layers:
+* {layerName, serviceBaseUrl, version, title, serviceType}
+*/
+export const layersInfo = new Map();

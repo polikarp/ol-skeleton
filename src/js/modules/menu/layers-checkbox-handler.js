@@ -1,7 +1,7 @@
 // Checkbox handlers for toggling WMS layers.
 // Requires: jQuery
 
-import { addWmsLayerToMap, removeWmsLayerFromMap } from "../map/wms-layers-on-off";
+import { layersInfo } from "../map/map-config";
 import { addLayerToMap, removeLayerFromMap } from "../map/layers-on-off";
 
 /**
@@ -17,7 +17,7 @@ import { addLayerToMap, removeLayerFromMap } from "../map/layers-on-off";
  * @param {HTMLElement} checkboxEl
  * @returns {{layerName: string, serviceBaseUrl: string, version: string, title: string}}
  */
-function readWmsDataFromCheckbox(checkboxEl) {
+function readDataFromCheckbox(checkboxEl) {
     const $cb = $(checkboxEl);
 
     const layerName = String($cb.data("layer") || "").trim();
@@ -39,14 +39,17 @@ function readWmsDataFromCheckbox(checkboxEl) {
  * @param {boolean} opts.removeOnUncheck
  * @param {string} opts.crossOrigin
  */
-export function bindWmsCheckboxToggles(
+export function bindCheckboxToggles(
     map,
     { selector = ".layerCheckbox", removeOnUncheck = true, crossOrigin = "anonymous" } = {}
 ) {
     if (!map) throw new Error("Map is required");
 
     $(document).on("change", selector, function () {
-        const { layerName, serviceBaseUrl, version, title, serviceType } = readWmsDataFromCheckbox(this);
+
+        const layerInfo = readDataFromCheckbox(this);
+        const layerName = layerInfo.layerName;
+        const serviceBaseUrl = layerInfo.serviceBaseUrl;
         const $row = $(this).closest("li");
 
         if (!layerName || !serviceBaseUrl) {
@@ -55,14 +58,15 @@ export function bindWmsCheckboxToggles(
             return;
         }
 
+
         if ($(this).is(":checked")) {
-            //addWmsLayerToMap(map, { layerName, serviceBaseUrl, version, title, crossOrigin, serviceType });
-            addLayerToMap(map, { layerName, serviceBaseUrl, version, title, crossOrigin, serviceType });
+            //layersInfo store all layers info
+            layersInfo.set(layerInfo.layerName, layerInfo);
+            addLayerToMap(map, layerName, {});
             $row.find(".wms-legend").first().show();
             $row.find(".layerFilterBtn").removeClass("d-none");
         } else {
-            //removeWmsLayerFromMap(map, { layerName, serviceBaseUrl, remove: removeOnUncheck });
-            removeLayerFromMap(map, { layerName, serviceBaseUrl, serviceType, remove: removeOnUncheck });
+            removeLayerFromMap(map, layerName, removeOnUncheck );
             $row.find(".wms-legend").first().hide();
             $row.find(".layerFilterBtn").addClass("d-none");
         }

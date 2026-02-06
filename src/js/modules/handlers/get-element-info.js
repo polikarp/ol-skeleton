@@ -62,7 +62,7 @@ function defaultNotify(msg) {
 
 /**
  * @param {Object} p
- * @param {Map} p.wmsLayerRegistry
+ * @param {Map} p.layerRegistry
  * @param {function(Object):(string|null)} p.getCqlFilter function({layer, click}) => string|null
  * @param {number} [p.hitTolerance=10] pixel tolerance for WMS GetFeatureInfo
  * @param {string} [p.infoFormat="application/json"]
@@ -75,7 +75,7 @@ function defaultNotify(msg) {
  * @returns {Function} async handler(ctx)
  */
 export function createHybridIdentifyHandler({
-    wmsLayerRegistry,
+    layerRegistry,
     useProxy,
     proxyPath,
     showGfiLoading,
@@ -90,8 +90,8 @@ export function createHybridIdentifyHandler({
     notify = defaultNotify,
     onResults = () => {},
 }) {
-    if (!wmsLayerRegistry || typeof wmsLayerRegistry.values !== "function") {
-        throw new Error("createHybridIdentifyHandler: wmsLayerRegistry (Map) is required");
+    if (!layerRegistry || typeof layerRegistry.values !== "function") {
+        throw new Error("createHybridIdentifyHandler: layerRegistry (Map) is required");
     }
     if (typeof getCqlFilter !== "function") {
         throw new Error("createHybridIdentifyHandler: getCqlFilter is required");
@@ -106,7 +106,7 @@ export function createHybridIdentifyHandler({
         spatialDrawTool.deactivate();
         const clickCoord = ctx.coordinate;
 
-        const layers = Array.from(wmsLayerRegistry.values()).filter((l) => l?.getVisible?.());
+        const layers = Array.from(layerRegistry.values()).filter((l) => l?.getVisible?.());
         if (layers.length === 0) {
             notify("No active layers to identify.");
             return;
@@ -140,8 +140,8 @@ export function createHybridIdentifyHandler({
 
             const requests = layers.map(async (layer) => {
                 const source = layer.getSource();
-                const layerName = layer.get("wmsLayerName") || source?.getParams?.()?.LAYERS || "unknown";
-                const serviceBaseUrl = layer.get("wmsServiceBaseUrl") || "unknown";
+                const layerName = layer.get("layerName") || source?.getParams?.()?.LAYERS || "unknown";
+                const serviceBaseUrl = layer.get("serviceBaseUrl") || "unknown";
 
                 if (!source || typeof source.getFeatureInfoUrl !== "function") {
                     return { ok: false, layerName, serviceBaseUrl, error: "No GetFeatureInfo support" };
@@ -198,8 +198,8 @@ export function createHybridIdentifyHandler({
                 return {
                     layer,
                     cql: String(x.cql).trim(),
-                    typeName: layer.get("wmsLayerName"),
-                    baseUrl: layer.get("wmsServiceBaseUrl"),
+                    typeName: layer.get("layerName"),
+                    baseUrl: layer.get("serviceBaseUrl"),
                     wfsEnabled: !!layer.get("wfsEnabled"),
                     wfsVersion: layer.get("wfsVersion") || "2.0.0",
                 };

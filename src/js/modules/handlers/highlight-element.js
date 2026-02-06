@@ -92,11 +92,11 @@ export function onGeomHover(geometry, meta = {}) {
     let feature;
     try {
         feature = _format.readFeature(
-        { type: "Feature", geometry, properties: {} },
-        {
-            dataProjection: _dataProjection,
-            featureProjection: _map.getView().getProjection()
-        }
+            { type: "Feature", geometry, properties: {} },
+            {
+                dataProjection: _dataProjection,
+                featureProjection: _map.getView().getProjection()
+            }
         );
     } catch (err) {
         console.error("Error reading geometry for highlight", err);
@@ -164,7 +164,7 @@ export function zoomToGeometryFromGeoJson(geometry, opts = {}) {
 
     const padding = opts.padding || (isMobile() ? [16, 16, 16, 16] : [24, 24, 24, 24]);
 
-    view.fit(olGeom.getExtent(), { duration, maxZoom });
+    view.fit(olGeom.getExtent(), { duration, maxZoom, padding });
 
     // Mobile offset (push target up ~1/3 screen)
     if (!isMobile()) return;

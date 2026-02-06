@@ -2,6 +2,8 @@
 
 import WMSCapabilities from "ol/format/WMSCapabilities";
 
+import { PROXY_PATH } from "./map-config";
+
 /**
  * Build GetCapabilities URL
  */
@@ -17,7 +19,7 @@ function buildGetCapabilitiesUrl(baseUrl, version) {
 /**
  * Apply proxy only if useProxy === true
  */
-export function applyProxyIfNeeded(url, useProxy, proxyPath = "/proxy/geoserver?url=") {
+export function applyProxyIfNeeded(url, useProxy, proxyPath = "http://geoproxy.local/geoserver.php?url=") {
     if (useProxy) {
         const normalizedUrl = encodeURIComponent(decodeURIComponent(url));
         return proxyPath + normalizedUrl;
@@ -47,7 +49,7 @@ function flattenLayers(layerNode, acc = []) {
  */
 export async function loadWmsCapabilitiesForService(
     service,
-    { useProxy = false, proxyPath = "/proxy/geoserver?url=" } = {}
+    { useProxy = false, proxyPath = PROXY_PATH } = {}
 ) {
     const capsUrl = buildGetCapabilitiesUrl(
         service.base_url,
@@ -90,7 +92,7 @@ export async function loadWmsCapabilitiesForService(
  */
 export async function loadWmsLayersFromConfig(
     config,
-    { useProxy = false, proxyPath = "/proxy/geoserver?url=" } = {}
+    { useProxy = false, proxyPath = PROXY_PATH } = {}
 ) {
     const services = config.services || [];
     const groups = config.groups || [];

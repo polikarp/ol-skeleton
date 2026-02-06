@@ -1364,6 +1364,26 @@ i.icon-button.has-filter::after {
     opacity: 0.7;
 }
 
+/*Info panel goto crosshair button*/
+
+.gfi-header-actions{
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.gfi-zoom-icon{
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #6c757d;
+    line-height: 1;
+}
+
+.gfi-zoom-icon:hover{
+    color: #000;
+}
+
+
 
 
 
@@ -1626,9 +1646,9 @@ i.icon-button.has-filter::after {
     }
 
     div.search-box{
-        width: 300px;
-        top: 20%;
-        left: 60%;
+        width: 80%;
+        top: 18%;
+        left: 50%;
     }
 
     #profileWindow {
@@ -1644,7 +1664,7 @@ i.icon-button.has-filter::after {
     }
 
     div#gis-toolbar{
-        top: 20%;
+        top: 30%;
         left:0;
     }
 
@@ -1664,17 +1684,18 @@ i.icon-button.has-filter::after {
         display: block;
     }
 
-    #wms-menu{
+    /* #wms-menu{
         width: 350px;
-    }
+    } */
 
     #customLayersLi{
         display: none;
     }
 
     .gis-toolbar-flyout {
-        left:65px;
-        max-width: 85%;
+        left: 0;
+        width: 100% !important;
+        top: 14% !important;
     }
 
     .map-copyright{
@@ -1789,7 +1810,7 @@ i.icon-button.has-filter::after {
 
     /* Nav derecha en fila apilada */
     .navbar-nav {
-        flex-direction: row;
+        flex-direction: row !important;
         justify-content: center;
     }
 
@@ -1836,6 +1857,16 @@ i.icon-button.has-filter::after {
 
     .gfi-panel .accordion-body {
         padding: 10px 12px;
+    }
+
+    /*Hide goto geometry*/
+    i.gfi-zoom-icon{
+        display:none;
+    }
+
+    /*Hide add row button on filter*/
+    button.btnLayerFilterAddRow{
+        display:none;
     }
 
 }

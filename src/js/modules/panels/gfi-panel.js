@@ -91,25 +91,36 @@ export function renderGfiRightPanel({ results, containerId = "#gfiPanelBody", ge
                                         geomByHeaderId[headerId] = geom;
                                     }
                                     return `
-                                      <div class="accordion-item">
-                                        <h2 class="accordion-header" id="${featKey}_h"  data-hid="${headerId}">
-                                          <button class="accordion-button collapsed py-2" type="button"
-                                                  data-bs-toggle="collapse"
-                                                  data-bs-target="#${featKey}_c"
-                                                  aria-expanded="false"
-                                                  aria-controls="${featKey}_c">
-                                            ${escapeHtml(f.id)}
-                                          </button>
-                                        </h2>
-                                        <div id="${featKey}_c" class="accordion-collapse collapse"
-                                             aria-labelledby="${featKey}_h"
-                                             data-bs-parent="#${layerKey}_features">
-                                          <div class="accordion-body py-2">
-                                            ${renderPropertiesTable(f.properties)}
-                                          </div>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="${featKey}_h" data-hid="${headerId}">
+                                                <div class="d-flex align-items-center justify-content-between">
+
+                                                    <button class="accordion-button collapsed py-2 text-start flex-grow-1"
+                                                            type="button"
+                                                            data-bs-toggle="collapse"
+                                                            data-bs-target="#${featKey}_c"
+                                                            aria-expanded="false"
+                                                            aria-controls="${featKey}_c">
+                                                    ${escapeHtml(f.id)}
+                                                    </button>
+
+                                                    <div class="gfi-header-actions ms-2">
+                                                        <i class="fa-solid fa-crosshairs gfi-zoom-icon" fa-xl data-hid="${headerId}" title="Go to location"></i>
+                                                    </div>
+
+                                                </div>
+                                            </h2>
+
+                                            <div id="${featKey}_c" class="accordion-collapse collapse"
+                                                aria-labelledby="${featKey}_h"
+                                                data-bs-parent="#${layerKey}_features">
+                                                <div class="accordion-body py-2">
+                                                    ${renderPropertiesTable(f.properties)}
+                                                </div>
+                                            </div>
                                         </div>
-                                      </div>
                                     `;
+
                                 })
                                 .join("")}
                           </div>
@@ -190,11 +201,27 @@ export function renderGfiRightPanel({ results, containerId = "#gfiPanelBody", ge
     $container.on("click.gfiGeom", "h2.accordion-header[data-hid]", function () {
         if (!isMobile()) return; // desktop: ignore
         // Mobile click -> highlight + zoom with offset
+        $(this).toggleClass("opened");
         const headerId = $(this).attr("data-hid");
+        if($(this).hasClass("opened")){
+            const geom = geomByHeaderId[headerId];
+            if (!geom) return;
+            onGeomHover?.(geom, { headerId }); // highlight (no zoom on mobile from hover)
+            zoomToGeometryFromGeoJson(geom, { offsetRatio: 0.33, duration: 300, maxZoom: 19 });
+        }else{
+            onGeomOut({headerId});
+        }
+
+    });
+
+    // Go to geometry button in Desktop
+    $container.on("click.gfi-buttom", "i.gfi-zoom-icon", function () {
+
+        const headerId = $(this).data("hid");
         const geom = geomByHeaderId[headerId];
         if (!geom) return;
 
-        onGeomHover?.(geom, { headerId }); // highlight (no zoom on mobile from hover)
-        zoomToGeometryFromGeoJson(geom, { offsetRatio: 0.33, duration: 300, maxZoom: 19 });
+        //onGeomHover?.(geom, { headerId }); // highlight (no zoom on mobile from hover)
+        zoomToGeometryFromGeoJson(geom, {padding: [100, 100, 100, 100], offsetRatio: 0.5, duration: 300, maxZoom: 10 });
     });
 }

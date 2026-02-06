@@ -41,19 +41,19 @@ import { initBaseMapMenu } from "./modules/map/base-map-menu";
 import { loadLayers } from './modules/map/layers';
 import { loadWmsLayersFromConfig } from "./modules/map/wms-capabilities-loader";
 import { renderLayersMenuFromWms } from "./modules/menu/layers-menu-renderer";
-import { bindWmsCheckboxToggles } from "./modules/menu/layers-checkbox-handler";
+import { bindCheckboxToggles } from "./modules/menu/layers-checkbox-handler";
 import { addMapCopyright } from "././modules/menu/copyright-tooltip";
 import { initAddressSearchWfs } from "./modules/map/toponimic-search";
 import { createSingleClickDispatcher } from "./modules/map/map-singleclick-dispatcher";
 import { createHybridIdentifyHandler } from "./modules/handlers/get-element-info.js";
-import { wmsLayerRegistry } from "./modules/map/map-config";
+import { layerRegistry, PROXY_PATH } from "./modules/map/map-config";
 
 import { openGfiPanel, closeGfiPanel, setGfiPanelLoading } from "./modules/panels/gfi-panel-state";
 import { renderGfiRightPanel } from "./modules/panels/gfi-panel";
 import { initHighlight, onGeomHover, onGeomOut, zoomToGeometryFromGeoJson } from "./modules/handlers/highlight-element.js";
 import { adaptHybridResultsToPanel, hasAnyPanelContent } from "./modules/panels/gfi-results-adapter";
 
-import { addWmsLayerToMap, removeWmsLayerFromMap, refreshWmsLayer } from "./modules/map/wms-layers-on-off";
+import { refreshLayer } from "./modules/map/layers-on-off";
 import {applyProxyIfNeeded} from "./modules/map/wms-capabilities-loader";
 import {initLayerFiltersManager} from "./modules/filters/layers-filter-manager"
 
@@ -63,8 +63,7 @@ import { createSpatialQueryTool } from "./modules/map/spatial-query-tool";
 const MAP_CRS = "EPSG:25830";
 const WFS_CRS = "EPSG:4326";
 const SRID = 25830;
-const USE_PROXY = false;
-const PROXY_PATH = "/proxy/geoserver?url=";
+const USE_PROXY = import.meta.env.DEV;
 const GEOM_PROP = "geom";
 const SEARCH_SERVICE = "wfs";
 
@@ -190,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     registerGisLeftMenu(mapa.map);
     enableMouseCoordinates(mapa.map, '#mouse-coordinates');
-    bindWmsCheckboxToggles(mapa.map, {selector: ".layerCheckbox", removeOnUncheck: true});
+    bindCheckboxToggles(mapa.map, {selector: ".layerCheckbox", removeOnUncheck: true});
 
     initHighlight(mapa.map, {
         dataProjection: MAP_CRS,
@@ -199,11 +198,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ---- Query service ----
     queryService = createWfsLayerQueryService({
-        wmsLayerRegistry,
+        layerRegistry,
         useProxy: USE_PROXY,
         proxyPath: PROXY_PATH,
         getCqlFilter: ({ layer }) => {
-            return window.currentCqlFilterByLayer?.[layer.get("wmsLayerName")] || null;
+            return window.currentCqlFilterByLayer?.[layer.get("layerName")] || null;
         },
         geomPropName: GEOM_PROP,
         srid: SRID,
@@ -227,13 +226,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const dispatcher = createSingleClickDispatcher(mapa.map);
     dispatcher.register(
         createHybridIdentifyHandler({
-            wmsLayerRegistry,
+            layerRegistry,
             useProxy:USE_PROXY,
             proxyPath: PROXY_PATH,
             showGfiLoading,
             spatialDrawTool,
             getCqlFilter: ({ layer }) => {
-                return window.currentCqlFilterByLayer?.[layer.get("wmsLayerName")] || null;
+                return window.currentCqlFilterByLayer?.[layer.get("layerName")] || null;
             },
 
             // WMS
@@ -261,7 +260,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // });
 
     initLayerFiltersManager({
-        refreshWmsLayer,
+        map,
+        refreshLayer,
         getWfsDescribeUrl
     });
 
@@ -271,7 +271,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     addMapCopyright({mapSelector: "#map", year: window.APP_YEAR, version: window.APP_VERSION,});
     initAddressSearchWfs({map: mapa.map, useProxy:USE_PROXY, proxyPath: PROXY_PATH});
-    
 
 });
 
@@ -292,6 +291,7 @@ function clickHandlers(){
      */
     $("#gfiPanelClose").on("click", function () {
         closeGfiPanel();
+        onGeomOut({});
     });
 
     /**
@@ -413,6 +413,12 @@ function clickHandlers(){
         }
     });
 
+    $(".closeMenu").on("click", function () {
+        const targetId = $(this).data("target");
+        $("#" + targetId).hide();
+    });
+
+
 }
 
 /**
@@ -467,8 +473,8 @@ function getWfsDescribeUrl(layerName, $layerLi) {
         // outputFormat: "XMLSCHEMA" // optional if you want
     });
 
-    //const useProxy = import.meta.env.VITE_APP_ENV === 'local';
-    return applyProxyIfNeeded(`${wfsBaseUrl}?${params.toString()}`, USE_PROXY);
+    
+    return applyProxyIfNeeded(`${wfsBaseUrl}?${params.toString()}`, USE_PROXY, PROXY_PATH);
 }
 
 

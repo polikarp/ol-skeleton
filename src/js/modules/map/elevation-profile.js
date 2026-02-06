@@ -18,6 +18,8 @@ import WKT from 'ol/format/WKT';
 
 import Chart from 'chart.js/auto';
 
+import { PROXY_PATH } from "./map-config";
+
 /**
  * Module-scoped state for the elevation profile tool.
  */
@@ -96,7 +98,7 @@ export function enableElevationProfile(map, options = {}) {
             `&viewparams=line:${encodeURIComponent(wkt64)};step:${encodeURIComponent(String(step))}`;
 
         const requestUrl = useProxy
-            ? `/proxy/geoserver?url=${encodeURIComponent(url)}`
+            ? `${PROXY_PATH}${encodeURIComponent(url)}`
             : url;
 
         try {
