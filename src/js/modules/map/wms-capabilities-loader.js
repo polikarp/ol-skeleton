@@ -90,6 +90,50 @@ export async function loadWmsCapabilitiesForService(
 /**
  * Load WMS layers for all services in config
  */
+// export async function loadWmsLayersFromConfig(
+//     config,
+//     { useProxy = false, proxyPath = PROXY_PATH } = {}
+// ) {
+//     const services = config.services || [];
+//     const groups = config.groups || [];
+
+//     const groupsByServiceId = {};
+//     groups.forEach((g) => {
+//         if (!groupsByServiceId[g.service_id]) {
+//             groupsByServiceId[g.service_id] = [];
+//         }
+//         groupsByServiceId[g.service_id].push(g);
+//     });
+
+//     const servicesLayers = {};
+//     const groupsLayers = {};
+
+//     groups.forEach((g) => {
+//         groupsLayers[g.key] = [];
+//     });
+
+//     for (const service of services) {
+//         try {
+//             const layers = await loadWmsCapabilitiesForService(service, {
+//                 useProxy,
+//                 proxyPath,
+//             });
+
+//             servicesLayers[service.id] = layers;
+
+//             (groupsByServiceId[service.id] || []).forEach((g) => {
+//                 groupsLayers[g.key] =
+//                     groupsLayers[g.key].concat(layers);
+//             });
+//         } catch (e) {
+//             console.error("WMS capabilities error:", e);
+//             servicesLayers[service.id] = [];
+//         }
+//     }
+
+//     return { servicesLayers, groupsLayers };
+// }
+
 export async function loadWmsLayersFromConfig(
     config,
     { useProxy = false, proxyPath = PROXY_PATH } = {}
@@ -97,22 +141,31 @@ export async function loadWmsLayersFromConfig(
     const services = config.services || [];
     const groups = config.groups || [];
 
-    const groupsByServiceId = {};
+    // Build map: group_id -> [group]
+    // NOTE: If you keep group ids unique (recommended), this is essentially a direct lookup.
+    const groupById = {};
     groups.forEach((g) => {
-        if (!groupsByServiceId[g.service_id]) {
-            groupsByServiceId[g.service_id] = [];
-        }
-        groupsByServiceId[g.service_id].push(g);
+        groupById[g.id] = g;
     });
 
-    const servicesLayers = {};
-    const groupsLayers = {};
+    const servicesLayers = {}; // key: service.id -> layers[]
+    const groupsLayers = {};   // key: group.key -> layers[]
 
+    // Init empty arrays for every group key
     groups.forEach((g) => {
         groupsLayers[g.key] = [];
     });
 
     for (const service of services) {
+        // Skip services not linked to a group (optional defensive behavior)
+        const group = groupById[service.group_id];
+        if (!group) {
+            // If you prefer to keep it silent, remove the warning
+            console.warn("Service without valid group_id:", service);
+            servicesLayers[service.id] = [];
+            continue;
+        }
+
         try {
             const layers = await loadWmsCapabilitiesForService(service, {
                 useProxy,
@@ -121,10 +174,9 @@ export async function loadWmsLayersFromConfig(
 
             servicesLayers[service.id] = layers;
 
-            (groupsByServiceId[service.id] || []).forEach((g) => {
-                groupsLayers[g.key] =
-                    groupsLayers[g.key].concat(layers);
-            });
+            // Now: each service belongs to a single group (service.group_id)
+            // So we append its layers to that group bucket
+            groupsLayers[group.key] = groupsLayers[group.key].concat(layers);
         } catch (e) {
             console.error("WMS capabilities error:", e);
             servicesLayers[service.id] = [];
@@ -133,3 +185,4 @@ export async function loadWmsLayersFromConfig(
 
     return { servicesLayers, groupsLayers };
 }
+

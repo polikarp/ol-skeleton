@@ -60,6 +60,8 @@ import {initLayerFiltersManager} from "./modules/filters/layers-filter-manager"
 import { createWfsLayerQueryService } from "./modules/map/wfs-layer-query-service";
 import { createSpatialQueryTool } from "./modules/map/spatial-query-tool";
 
+import LAYERS_CONFIG from "./data/layersConfig.js";
+
 const MAP_CRS = "EPSG:25830";
 const WFS_CRS = "EPSG:4326";
 const SRID = 25830;
@@ -96,53 +98,14 @@ $(function () {
 //Load wms services from DDBB and generate menus of those layers in Layers menu
 (async () => {
     try {
-        const bootstrap = {
-            "groups": [
-                {
-                    "id": 2,
-                    "key": "overlays",
-                    "title": "Overlays",
-                    "order_idx": 1,
-                    "parent_id": null,
-                    "collapsed_default": true,
-                    "service_id": 2,
-                    "icon": null
-                },
-                {
-                    "id": 3,
-                    "key": "inspire",
-                    "title": "INSPIRE layers",
-                    "order_idx": 10,
-                    "parent_id": null,
-                    "collapsed_default": true,
-                    "service_id": 1,
-                    "icon": null
-                }
-            ],
-            "services": [
-                {
-                    "id": 1,
-                    "name": "Geoportal Gibraltar - INSPIRE",
-                    "type": "WMS",
-                    "base_url": "https:\/\/download.geoportal.gov.gi\/geoserver\/inspire\/ows",
-                    "version": "1.3.0",
-                    "options": []
-                },
-                {
-                    "id": 2,
-                    "name": "Geoportal Gibraltar - Public WMS",
-                    "type": "WMS",
-                    "base_url": "https:\/\/download.geoportal.gov.gi\/geoserver\/wms",
-                    "version": "1.3.0",
-                    "options": []
-                }
-            ]
-        }
 
-        console.log("Groups:", bootstrap.groups);
-        console.log("Services:", bootstrap.services);
+        const { groups, services } = LAYERS_CONFIG;
 
-        //const useProxy = import.meta.env.VITE_APP_ENV === "local";
+        console.log("Groups:", groups);
+        console.log("Services:", services);
+
+        const bootstrap = { groups, services };
+        
 
         const { servicesLayers, groupsLayers } =
             await loadWmsLayersFromConfig(

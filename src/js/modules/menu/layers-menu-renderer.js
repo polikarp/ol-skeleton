@@ -49,15 +49,13 @@ export function renderLayersMenuFromWms(
         .sort((a, b) => (a.order_idx ?? 9999) - (b.order_idx ?? 9999));
 
     const services = (bootstrap?.services || []);
-    const servicesById = new Map(
-        services.map(s => [s.id, s])
-    );
+
 
     groups.forEach((group) => {
         const groupKey = group.key;
         const groupTitle = group.title || group.key;
         const isCollapsedDefault = !!group.collapsed_default;
-        const serviceType = servicesById.get(group.service_id).type;
+        const serviceType = services.filter(s => s.group_id == group.id).map(s => s.type);
         const collapseId = `group_${String(groupKey).replace(/[^a-zA-Z0-9_-]/g, "_")}_layers`;
         const expanded = isCollapsedDefault ? "false" : "true";
         const collapseClass = isCollapsedDefault ? "collapse" : "collapse show";
