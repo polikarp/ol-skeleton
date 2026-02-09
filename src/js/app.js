@@ -39,7 +39,7 @@ import { registerGisBottomMenuTools, registerGisLeftMenu } from './modules/menu/
 import { enableMouseCoordinates } from './modules/map/mouse-coordinates';
 import { initBaseMapMenu } from "./modules/map/base-map-menu";
 import { loadLayers } from './modules/map/layers';
-import { loadWmsLayersFromConfig } from "./modules/map/wms-capabilities-loader";
+import { loadLayersFromConfig } from "./modules/map/wms-capabilities-loader";
 import { renderLayersMenuFromWms } from "./modules/menu/layers-menu-renderer";
 import { bindCheckboxToggles } from "./modules/menu/layers-checkbox-handler";
 import { addMapCopyright } from "././modules/menu/copyright-tooltip";
@@ -108,7 +108,7 @@ $(function () {
         
 
         const { servicesLayers, groupsLayers } =
-            await loadWmsLayersFromConfig(
+            await loadLayersFromConfig(
                 {
                     groups: bootstrap.groups,
                     services: bootstrap.services,

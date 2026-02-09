@@ -134,7 +134,7 @@ export async function loadWmsCapabilitiesForService(
 //     return { servicesLayers, groupsLayers };
 // }
 
-export async function loadWmsLayersFromConfig(
+export async function loadLayersFromConfig(
     config,
     { useProxy = false, proxyPath = PROXY_PATH } = {}
 ) {
