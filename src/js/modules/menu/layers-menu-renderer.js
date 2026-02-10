@@ -1,6 +1,6 @@
 import {applyProxyIfNeeded} from '../map/wms-capabilities-loader';
 import {extractLegendItems} from '../map/get-legend-json';
-import { PROXY_PATH } from "../map/map-config";
+import { layersInfo, PROXY_PATH } from "../map/map-config";
 
 
 /**
@@ -55,7 +55,7 @@ export function renderLayersMenuFromWms(
         const groupKey = group.key;
         const groupTitle = group.title || group.key;
         const isCollapsedDefault = !!group.collapsed_default;
-        const serviceType = services.filter(s => s.group_id == group.id).map(s => s.type);
+        let serviceType = services.filter(s => s.group_id == group.id).map(s => s.type);
         const collapseId = `group_${String(groupKey).replace(/[^a-zA-Z0-9_-]/g, "_")}_layers`;
         const expanded = isCollapsedDefault ? "false" : "true";
         const collapseClass = isCollapsedDefault ? "collapse" : "collapse show";
@@ -100,9 +100,18 @@ export function renderLayersMenuFromWms(
             `);
         } else {
             layers.forEach((layer) => {
-                const layerName = layer.name;
-                const layerTitle = layer.title || layer.name;
-                const layerDesc = layer.desc || "";
+                const layerName = layer.name || layer.layer_name;
+                const title = layer.title || layer.name;
+                const desc = layer.desc || layer.description ||  "";
+                const serviceBaseUrl = layer.serviceBaseUrl || layer.base_url;
+                const version = layer.serviceVersion || layer.options.version || "1.3.0";
+                const format = layer.options?.format ?? "image/png";
+                const tiled = layer.options?.tiled ?? true;
+                if (!serviceType.length) {
+                    serviceType = layer.type;
+                }
+                //Store all layers info in this Map
+                layersInfo.set(layerName, { layerName, title, desc, serviceBaseUrl, version, serviceType, format, tiled });
 
                 const safeId = `wms_${groupKey}_${layerName}`.replace(/[^a-zA-Z0-9_-]/g, "_");
                 const inputId = `${safeId}_switch`;
@@ -111,20 +120,20 @@ export function renderLayersMenuFromWms(
                 let legendImgTag = "";
                 if (showLegends) {
                     const legendUrlDirect = buildLegendGraphicUrl({
-                        serviceBaseUrl: layer.serviceBaseUrl,
+                        serviceBaseUrl: serviceBaseUrl,
                         layerName: layerName,
-                        version: layer.serviceVersion || "1.3.0",
+                        version: version,
                         style: null,
-                        format: "image/png",
+                        format: format,
                         scale: legendScale,
                     });
 
                     const legendUrlDirectJson = buildLegendGraphicUrl({
-                        serviceBaseUrl: layer.serviceBaseUrl,
+                        serviceBaseUrl: serviceBaseUrl,
                         layerName: layerName,
-                        version: layer.serviceVersion || "1.3.0",
+                        version: version,
                         style: null,
-                        format: "application/json",//"image/png",
+                        format: "application/json",
                         scale: legendScale,
                     });
 
@@ -148,7 +157,7 @@ export function renderLayersMenuFromWms(
                     legendImgTag = `
                         <div class="wms-legend mt-1 ms-4"
                              data-layer="${escapeAttr(layerName)}"
-                             data-service-base-url="${escapeAttr(layer.serviceBaseUrl)}"
+                             data-service-base-url="${escapeAttr(serviceBaseUrl)}"
                              data-legend-url="${escapeAttr(legendUrlDirect)}"
                              style="display:none;">
                             <img class="wms-legend-img"
@@ -164,15 +173,7 @@ export function renderLayersMenuFromWms(
                 const checkedAttr = "";
 
                 const layerRowHtml = `
-                    <li class="d-flex flex-column mb-1"
-                        data-layer="${escapeAttr(layerName)}"
-                        data-layer-title="${escapeAttr(layerTitle)}"
-                        data-layer-desc="${escapeAttr(layerDesc)}"
-                        data-group-key="${escapeAttr(groupKey)}"
-                        data-service-id="${escapeAttr(layer.serviceId)}"
-                        data-service-base-url="${escapeAttr(layer.serviceBaseUrl)}"
-                        data-service-version="${escapeAttr(layer.serviceVersion || "1.3.0")}">
-
+                    <li class="d-flex flex-column mb-1" data-layer="${escapeAttr(layerName)}">
                         <div class="d-flex align-items-center">
                             <input id="${inputId}"
                                    type="checkbox"
@@ -180,26 +181,17 @@ export function renderLayersMenuFromWms(
                                    class="me-2 layerCheckbox"
                                    title="Add layer"
                                    ${checkedAttr}
-                                   data-layer="${escapeAttr(layerName)}"
-                                   data-layer-title="${escapeAttr(layerTitle)}"
-                                   data-group-key="${escapeAttr(groupKey)}"
-                                   data-service-id="${escapeAttr(layer.serviceId)}"
-                                   data-service-base-url="${escapeAttr(layer.serviceBaseUrl)}"
-                                   data-service-version="${escapeAttr(layer.serviceVersion || "1.3.0")}"
-                                   data-service-type="${serviceType}">
+                                   data-layer="${escapeAttr(layerName)}">
 
-                            <label for="${inputId}" class="mb-0 flex-grow-1"
-                                   title="${escapeAttr(layerDesc)}">
-                                ${escapeHtml(layerTitle)}
+                            <label for="${inputId}" class="mb-0 flex-grow-1" title="${escapeAttr(desc)}">
+                                ${escapeHtml(title)}
                             </label>
 
                             &nbsp;&nbsp;
 
                             <i class="fa-solid fa-filter icon-button d-none layerFilterBtn"
-                               data-layer="${escapeAttr(layerName)}"
-                               data-group-key="${escapeAttr(groupKey)}"
-                               data-service-id="${escapeAttr(layer.serviceId)}"
-                               data-service-base-url="${escapeAttr(layer.serviceBaseUrl)}"></i>
+                               data-layer="${escapeAttr(layerName)}">
+                            </i>
                         </div>
 
                         ${legendImgTag}

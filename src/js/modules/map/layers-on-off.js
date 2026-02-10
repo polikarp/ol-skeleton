@@ -64,51 +64,44 @@ function buildLayerKey({ type, layerName, serviceBaseUrl }) {
  *
  * @returns {import("ol/layer/Base").default}
  */
-export function createOlLayerFromServiceType({
-  layerName,
-  serviceBaseUrl,
-  version,
-  title = null,
-  serviceType,
-  options = {},
-}) {
-  if (!layerName) throw new Error("layerName is required");
-  if (!serviceBaseUrl) throw new Error("serviceBaseUrl is required");
-  if (!serviceType) throw new Error("serviceType is required");
+export function createOlLayerFromServiceType({layerName, serviceBaseUrl, version, title = null, serviceType, tiled, format, options = {},}) {
+    if (!layerName) throw new Error("layerName is required");
+    if (!serviceBaseUrl) throw new Error("serviceBaseUrl is required");
+    if (!serviceType) throw new Error("serviceType is required");
 
-  const type = normalizeType(serviceType);
+    const type = normalizeType(serviceType);
 
-  // Store some metadata on the layer for later refresh/remove logic
-  const commonMeta = {
-    serviceType: type,
-    serviceBaseUrl,
-    serviceVersion: version || null,
-    layerName,
-    title: title || layerName,
-  };
+    // Store some metadata on the layer for later refresh/remove logic
+    const commonMeta = {
+        serviceType: type,
+        serviceBaseUrl,
+        serviceVersion: version || null,
+        layerName,
+        title: title || layerName,
+    };
 
-  if (type === "WMS") {
-    const source = new TileWMS({
-      url: serviceBaseUrl,
-      params: {
-        SERVICE: "WMS",
-        VERSION: version || "1.3.0",
-        REQUEST: "GetMap",
-        LAYERS: layerName,
-        TILED: true,
-        TRANSPARENT: true,
-        FORMAT: options.format || "image/png",
-      },
-    });
+    if (type === "WMS") {
+        const source = new TileWMS({
+            url: serviceBaseUrl,
+            params: {
+                SERVICE: type,
+                VERSION: version || "1.3.0",
+                REQUEST: "GetMap",
+                LAYERS: layerName,
+                TILED: tiled,
+                TRANSPARENT: true,
+                FORMAT: format || "image/png",
+            },
+        });
 
-    const layer = new TileLayer({ source, visible: true });
-    Object.entries(commonMeta).forEach(([k, v]) => layer.set(k, v));
+        const layer = new TileLayer({ source, visible: true });
+        Object.entries(commonMeta).forEach(([k, v]) => layer.set(k, v));
 
-    // Extra metadata (optional)
-    layer.set("wfsEnabled", options.wfsEnabled ?? true);
-    layer.set("wfsVersion", options.wfsVersion || "2.0.0");
+        // Extra metadata (optional)
+        layer.set("wfsEnabled", options.wfsEnabled ?? true);
+        layer.set("wfsVersion", options.wfsVersion || "2.0.0");
 
-    return layer;
+        return layer;
   }
 
   if (type === "WFS") {
@@ -253,34 +246,25 @@ export function createOlLayerFromServiceType({
  *
  * @returns {import("ol/layer/Base").default}
  */
-export function addLayerToMap(
-  map, layerName, { options = {} }
-) {
+export function addLayerToMap(map, layerName, { options = {} }) {
 
-  const { serviceBaseUrl, version, title, serviceType } = layersInfo.get(layerName);
-  if (!map) throw new Error("Map is required");
-  if (!layerName || !serviceBaseUrl) throw new Error("layerName and serviceBaseUrl are required");
+    const { serviceBaseUrl, version, title, serviceType, tiled, format } = layersInfo.get(layerName);
+    if (!map) throw new Error("Map is required");
+    if (!layerName || !serviceBaseUrl) throw new Error("layerName and serviceBaseUrl are required");
 
-  const key = buildLayerKey({ type: serviceType, layerName, serviceBaseUrl });
+    const key = buildLayerKey({ type: serviceType, layerName, serviceBaseUrl });
 
-  if (layerRegistry.has(key)) {
-    const existing = layerRegistry.get(key);
-    existing.setVisible(true);
-    return existing;
-  }
+    if (layerRegistry.has(key)) {
+        const existing = layerRegistry.get(key);
+        existing.setVisible(true);
+        return existing;
+    }
 
-  const olLayer = createOlLayerFromServiceType({
-    layerName,
-    serviceBaseUrl,
-    version,
-    title,
-    serviceType,
-    options,
-  });
+    const olLayer = createOlLayerFromServiceType({layerName, serviceBaseUrl, version, title, serviceType, tiled, format, options,});
 
-  map.addLayer(olLayer);
-  layerRegistry.set(key, olLayer);
-  return olLayer;
+    map.addLayer(olLayer);
+    layerRegistry.set(key, olLayer);
+    return olLayer;
 }
 
 /**
@@ -290,25 +274,22 @@ export function addLayerToMap(
  * @param {Object} opts
  * @param {boolean} [opts.remove=true] true -> remove from map and registry; false -> setVisible(false)
  */
-export function removeLayerFromMap(
-  map, layerName, removeOnUncheck
-) {
-  if (!map) throw new Error("Map is required");
-  const { serviceBaseUrl, serviceType } = layersInfo.get(layerName);
-  if (!layerName || !serviceBaseUrl) throw new Error("layerName and serviceBaseUrl are required");
+export function removeLayerFromMap(map, layerName, removeOnUncheck) {
+    if (!map) throw new Error("Map is required");
+    const { serviceBaseUrl, serviceType } = layersInfo.get(layerName);
+    if (!layerName || !serviceBaseUrl) throw new Error("layerName and serviceBaseUrl are required");
 
-  const key = buildLayerKey({ type: serviceType, layerName, serviceBaseUrl });
-  const olLayer = layerRegistry.get(key);
+    const key = buildLayerKey({ type: serviceType, layerName, serviceBaseUrl });
+    const olLayer = layerRegistry.get(key);
 
-  if (!olLayer) return;
+    if (!olLayer) return;
 
-  if (removeOnUncheck) {
-    map.removeLayer(olLayer);
-    layerRegistry.delete(key);
-    layersInfo.delete(layerName);
-  } else {
-    olLayer.setVisible(false);
-  }
+    if (removeOnUncheck) {
+        map.removeLayer(olLayer);
+        layerRegistry.delete(key);
+    } else {
+        olLayer.setVisible(false);
+    }
 }
 
 /**
@@ -324,57 +305,57 @@ export function removeLayerFromMap(
  * @returns {boolean}
  */
 export function refreshLayer(map, layerName, { bustCache = true, cacheParam = "_t" }) {
-  if (!map) throw new Error("Map is required");
+    if (!map) throw new Error("Map is required");
 
-  const { serviceBaseUrl, serviceType} = layersInfo.get(layerName);
-  if (!layerName || !serviceBaseUrl) throw new Error("layerName and serviceBaseUrl are required");
+    const { serviceBaseUrl, serviceType} = layersInfo.get(layerName);
+    if (!layerName || !serviceBaseUrl) throw new Error("layerName and serviceBaseUrl are required");
 
-  const type = normalizeType(serviceType);
-  const key = buildLayerKey({ type, layerName, serviceBaseUrl });
-  const olLayer = layerRegistry.get(key);
-  if (!olLayer) return false;
+    const type = normalizeType(serviceType);
+    const key = buildLayerKey({ type, layerName, serviceBaseUrl });
+    const olLayer = layerRegistry.get(key);
+    if (!olLayer) return false;
 
-  if (type === "WMS") {
-    const source = olLayer.getSource?.();
-    if (!source || typeof source.updateParams !== "function") return false;
+    if (type === "WMS") {
+        const source = olLayer.getSource?.();
+        if (!source || typeof source.updateParams !== "function") return false;
 
-    const cql = window.currentCqlFilterByLayer?.[layerName] ?? null;
+        const cql = window.currentCqlFilterByLayer?.[layerName] ?? null;
 
-    // Get current params
-    const params = source.getParams ? { ...source.getParams() } : {};
+        // Get current params
+        const params = source.getParams ? { ...source.getParams() } : {};
 
-    // Update / clear CQL_FILTER
-    if (cql && String(cql).trim().length > 0) {
-      params.CQL_FILTER = String(cql).trim();
-    } else {
-      params.CQL_FILTER = undefined;
+        // Update / clear CQL_FILTER
+        if (cql && String(cql).trim().length > 0) {
+            params.CQL_FILTER = String(cql).trim();
+        } else {
+            params.CQL_FILTER = undefined;
+        }
+
+        // Force refresh of tiles
+        if (bustCache) {
+            params[cacheParam] = Date.now();
+        }
+
+        source.updateParams(params);
+        olLayer.setVisible(true);
+        return true;
     }
 
-    // Force refresh of tiles
-    if (bustCache) {
-      params[cacheParam] = Date.now();
+    if (type === "WFS") {
+        const source = olLayer.getSource?.();
+        if (!source) return false;
+
+        // Clear current features and force reload on next render/extent load
+        source.clear(true);
+
+        // Trigger re-load by calling changed() (bbox loader will run when needed)
+        source.changed();
+        olLayer.setVisible(true);
+        return true;
     }
 
-    source.updateParams(params);
-    olLayer.setVisible(true);
-    return true;
-  }
-
-  if (type === "WFS") {
-    const source = olLayer.getSource?.();
-    if (!source) return false;
-
-    // Clear current features and force reload on next render/extent load
-    source.clear(true);
-
-    // Trigger re-load by calling changed() (bbox loader will run when needed)
-    source.changed();
-    olLayer.setVisible(true);
-    return true;
-  }
-
-  // WMTS/XYZ typically do not support server-side CQL refresh in the same way
-  return false;
+    // WMTS/XYZ typically do not support server-side CQL refresh in the same way
+    return false;
 }
 
 /**

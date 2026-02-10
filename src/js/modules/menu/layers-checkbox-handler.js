@@ -25,8 +25,10 @@ function readDataFromCheckbox(checkboxEl) {
     const version = String($cb.data("service-version") || "1.3.0").trim();
     const title = String($cb.data("layer-title") || layerName).trim();
     const serviceType = String($cb.data("service-type") || "").trim();
+    let options = "";
 
-    return { layerName, serviceBaseUrl, version, title, serviceType };
+
+    return { layerName, serviceBaseUrl, version, title, serviceType, options };
 }
 
 /**
@@ -39,16 +41,15 @@ function readDataFromCheckbox(checkboxEl) {
  * @param {boolean} opts.removeOnUncheck
  * @param {string} opts.crossOrigin
  */
-export function bindCheckboxToggles(
-    map,
-    { selector = ".layerCheckbox", removeOnUncheck = true, crossOrigin = "anonymous" } = {}
+export function bindCheckboxToggles(map, { selector = ".layerCheckbox", removeOnUncheck = true, crossOrigin = "anonymous" } = {}
 ) {
     if (!map) throw new Error("Map is required");
 
     $(document).on("change", selector, function () {
 
-        const layerInfo = readDataFromCheckbox(this);
-        const layerName = layerInfo.layerName;
+        const layerName = $(this).data("layer");
+        const layerInfo = layersInfo.get(layerName);
+        //const layerName = layerInfo.layerName;
         const serviceBaseUrl = layerInfo.serviceBaseUrl;
         const $row = $(this).closest("li");
 
@@ -61,7 +62,7 @@ export function bindCheckboxToggles(
 
         if ($(this).is(":checked")) {
             //layersInfo store all layers info
-            layersInfo.set(layerInfo.layerName, layerInfo);
+            //layersInfo.set(layerInfo.layerName, layerInfo);
             addLayerToMap(map, layerName, {});
             $row.find(".wms-legend").first().show();
             $row.find(".layerFilterBtn").removeClass("d-none");

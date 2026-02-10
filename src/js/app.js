@@ -99,19 +99,20 @@ $(function () {
 (async () => {
     try {
 
-        const { groups, services } = LAYERS_CONFIG;
+        const { groups, services, layers } = LAYERS_CONFIG;
 
         console.log("Groups:", groups);
         console.log("Services:", services);
+        console.log("Layers:", layers);
 
-        const bootstrap = { groups, services };
-        
+        const bootstrap = {groups, services, layers};
 
-        const { servicesLayers, groupsLayers } =
+        const { servicesLayers, groupsLayers, customLayers } =
             await loadLayersFromConfig(
                 {
                     groups: bootstrap.groups,
                     services: bootstrap.services,
+                    layers: bootstrap.layers
                 },
                 {
                     useProxy: USE_PROXY,
@@ -124,11 +125,25 @@ $(function () {
                     proxyPath: PROXY_PATH,
                 });
 
-        console.log("WMS layers by service:", servicesLayers);
+        Object.entries(servicesLayers).forEach(([serviceUrl, layers]) => {
+            console.log(
+                'Service:',
+                serviceUrl,
+                layers.map(l => ({
+                name: l.name,
+                title: l.title,
+                serviceBaseUrl: l.serviceBaseUrl
+                }))
+            );
+        });
+
+
         console.log("WMS layers by group:", groupsLayers);
+        console.log("Custom layers:", customLayers);
 
         window.WMS_LAYERS_BY_SERVICE = servicesLayers;
         window.WMS_LAYERS_BY_GROUP = groupsLayers;
+        window.CUSTOM_LAYERS = customLayers;
 
     } catch (err) {
         console.error("Error loading layers bootstrap:", err);
