@@ -1,6 +1,112 @@
 
 
 export default {
+
+    "base_layers": [
+            {
+                "id": 1,
+                "group_id": 10,
+                "title": "gibgis:basemap_basic_1",
+                "layer_name": "gibgis:basemap_basic_1",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "layer_type": "wms",
+                "geom_field": "geom",
+                "visible_default": true,
+                "z_index": 0,
+                "queryable": false,
+                "options": "{\"format\": \"image/jpeg\", \"layers\": \"gibgis:basemap_basic_1\", \"transparent\": true}",
+                "enabled": true,
+                "created_at": "2026-02-11 08:48:15.004609+01",
+                "updated_at": "2026-02-11 08:48:15.004609+01",
+                "description": "gibgis:basemap_basic_1"
+            },
+            {
+                "id": 2,
+                "group_id": 10,
+                "title": "gibgis:aerial2013_v3",
+                "layer_name": "gibgis:aerial2013_v3",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "layer_type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": false,
+                "options": "{\"format\": \"image/jpeg\", \"layers\": \"gibgis:aerial2013_v3\", \"transparent\": true}",
+                "enabled": true,
+                "created_at": "2026-02-11 08:48:15.004609+01",
+                "updated_at": "2026-02-11 08:48:15.004609+01",
+                "description": "gibgis:basemap_basic_1"
+            },
+            {
+                "id": 3,
+                "group_id": 10,
+                "title": "gibgis:aerial2003",
+                "layer_name": "gibgis:aerial2003",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "layer_type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": false,
+                "options": "{\"format\": \"image/jpeg\", \"layers\": \"gibgis:aerial2003\", \"transparent\": true}",
+                "enabled": true,
+                "created_at": "2026-02-11 08:48:15.004609+01",
+                "updated_at": "2026-02-11 08:48:15.004609+01",
+                "description": "gibgis:basemap_basic_1"
+            },
+            {
+                "id": 4,
+                "group_id": 10,
+                "title": "gibgis:basemap_hybrid_2013_v3",
+                "layer_name": "gibgis:basemap_hybrid_2013_v3",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "layer_type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": false,
+                "options": "{\"format\": \"image/png\", \"layers\": \"gibgis:basemap_hybrid_2013_v3\", \"transparent\": true}",
+                "enabled": true,
+                "created_at": "2026-02-11 08:48:15.004609+01",
+                "updated_at": "2026-02-11 08:48:15.004609+01",
+                "description": "gibgis:basemap_hybrid_2013_v3"
+            },
+            {
+                "id": 5,
+                "group_id": 10,
+                "title": "OSM_Base_Layer",
+                "layer_name": "OSM_Base_Layer",
+                "base_url": "geoserver",
+                "layer_type": "osm",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": false,
+                "options": "{\"tiled\": true, \"format\": \"image/png\", \"version\": \"1.3.0\"}",
+                "enabled": true,
+                "created_at": "2026-02-11 08:48:15.004609+01",
+                "updated_at": "2026-02-11 08:48:15.004609+01",
+                "description": "OSM_Base_Layer"
+            },
+            {
+                "id": 6,
+                "group_id": 10,
+                "title": "OSM_Base_Gray_Layer",
+                "layer_name": "OSM_Base_Gray_Layer",
+                "base_url": "https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                "layer_type": "xyz",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": false,
+                "options": "{\"tiled\": true, \"format\": \"image/png\", \"version\": \"1.3.0\"}",
+                "enabled": true,
+                "created_at": "2026-02-11 08:48:15.004609+01",
+                "updated_at": "2026-02-11 08:48:15.004609+01",
+                "description": "OSM_Base_Layer"
+            }
+    ],
+
     "groups": [
 
         {

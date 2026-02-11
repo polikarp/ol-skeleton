@@ -69,16 +69,21 @@ const USE_PROXY = import.meta.env.DEV;
 const GEOM_PROP = "geom";
 const SEARCH_SERVICE = "wfs";
 
-const baseMapLayers = [
-    'gibgis:basemap_basic_1',
-    'gibgis:aerial2013_v3',
-    'gibgis:aerial2003',
-    'gibgis:basemap_hybrid_2013_v3',
-    'OSM_Base_Layer',
-    'OSM_Base_Gray_Layer'
-];
+const baseMapLayers = LAYERS_CONFIG.base_layers.map(layer => layer.layer_name);
 
-let selectedBaseLayer = "gibgis:basemap_basic_1";
+// const baseMapLayers = [
+//     'gibgis:basemap_basic_1',
+//     'gibgis:aerial2013_v3',
+//     'gibgis:aerial2003',
+//     'gibgis:basemap_hybrid_2013_v3',
+//     'OSM_Base_Layer',
+//     'OSM_Base_Gray_Layer'
+// ];
+
+let selectedBaseLayer = LAYERS_CONFIG.base_layers.find(layer => layer.visible_default)?.layer_name;
+
+
+//let selectedBaseLayer = "gibgis:basemap_basic_1";
 
 $(function () {
     $("#iconSidebar").on("click", function () {

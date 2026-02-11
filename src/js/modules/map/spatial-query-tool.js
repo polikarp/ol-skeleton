@@ -74,9 +74,10 @@ export function createSpatialQueryTool({
         const geom = evt.feature.getGeometry()?.clone();
         if (!geom) return;
 
-
-        drawInteraction.setActive(false);
-        drawInteraction.abortDrawing();
+        // drawInteraction.setActive(false);
+        // drawInteraction.abortDrawing();
+        map.removeInteraction(drawInteraction);
+        drawInteraction = null;
 
         (async () => {
             try {
