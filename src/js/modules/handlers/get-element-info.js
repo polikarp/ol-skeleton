@@ -100,9 +100,10 @@ export function createHybridIdentifyHandler({
         throw new Error("createHybridIdentifyHandler: showGfiLoading is required");
     }
 
-
+    
 
     return async (ctx) => {
+        if (window.MAP_CLICK_BLOCKED) return;
         spatialDrawTool.deactivate();
         const clickCoord = ctx.coordinate;
 
