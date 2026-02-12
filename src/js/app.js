@@ -65,7 +65,7 @@ import LAYERS_CONFIG from "./data/layersConfig.js";
 const MAP_CRS = "EPSG:25830";
 const WFS_CRS = "EPSG:4326";
 const SRID = 25830;
-const USE_PROXY = import.meta.env.DEV;
+const USE_PROXY = false; //import.meta.env.DEV;
 const GEOM_PROP = "geom";
 const SEARCH_SERVICE = "wfs";
 
@@ -152,7 +152,7 @@ let map, queryService, spatialDrawTool;
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    const mapa = initOpenLayersMap('map');
+    const mapa =  initOpenLayersMap('map');
     map = mapa.map;
     //const useProxy = import.meta.env.VITE_APP_ENV === 'local';
     registerGisBottomMenuTools(mapa.map, {useProxy:USE_PROXY});

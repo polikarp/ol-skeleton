@@ -127,7 +127,7 @@ export function initAddressSearchWfs({
 
                     if (pos.length !== 2) continue;
 
-                    const [y, x] = pos;
+                    const [x, y] = pos;
 
                     const $li = $("<li>")
                         .addClass("list-group-item list-group-item-action")
