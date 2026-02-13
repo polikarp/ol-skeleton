@@ -1,41 +1,6 @@
 
 
 export default {
-
-    "base_layers_gip":[
-        {
-            "id": 7,
-            "group_id": 10,
-            "title": "Gipuzkoa Ortho (b5m TMS)",
-            "layer_name": "gipuzkoa_ortho",
-            "base_url": "https://b5m.gipuzkoa.eus/api/2.0/osgeo/tms/1.0.0/ort/{z}/{x}/{-y}.jpg",
-            "layer_type": "xyz",
-            "geom_field": "geom",
-            "visible_default": false,
-            "z_index": 0,
-            "queryable": false,
-            "options": "{\"attributions\":\"© Gipuzkoa / b5m.gipuzkoa.eus\",\"crossOrigin\":\"anonymous\"}",
-            "enabled": true,
-            "description": "Gipuzkoa orthophoto TMS"
-        },
-        {
-            "id": 8,
-            "group_id": 10,
-            "title": "Gipuzkoa Map (b5m TMS)",
-            "layer_name": "gipuzkoa_map",
-            "base_url": "https://b5m.gipuzkoa.eus/api/2.0/osgeo/tms/1.0.0/map/{z}/{x}/{-y}.png",
-            "layer_type": "xyz",
-            "geom_field": "geom",
-            "visible_default": false,
-            "z_index": 0,
-            "queryable": false,
-            "options": "{\"attributions\":\"© Gipuzkoa / b5m.gipuzkoa.eus\",\"crossOrigin\":\"anonymous\"}",
-            "enabled": true,
-            "description": "Gipuzkoa base map TMS"
-        }
-
-    ],
-
     "base_layers": [
             {
                 "id": 1,

@@ -152,7 +152,7 @@ let map, queryService, spatialDrawTool;
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    const mapa =  initOpenLayersMap('map');
+    const mapa = initOpenLayersMap('map');
     map = mapa.map;
     //const useProxy = import.meta.env.VITE_APP_ENV === 'local';
     registerGisBottomMenuTools(mapa.map, {useProxy:USE_PROXY});
