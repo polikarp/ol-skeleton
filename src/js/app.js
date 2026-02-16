@@ -60,7 +60,7 @@ import {initLayerFiltersManager} from "./modules/filters/layers-filter-manager"
 import { createWfsLayerQueryService } from "./modules/map/wfs-layer-query-service";
 import { createSpatialQueryTool } from "./modules/map/spatial-query-tool";
 
-import LAYERS_CONFIG from "./data/layersConfig.js";
+import LAYERS_CONFIG from "/public/data/layersConfig.js";
 
 const MAP_CRS = "EPSG:25830";
 const WFS_CRS = "EPSG:4326";
@@ -96,7 +96,10 @@ $(function () {
 (async () => {
     try {
 
-        const { groups, services, layers } = LAYERS_CONFIG;
+        const params = new URLSearchParams(window.location.search);
+        console.log("Parameters:", params.get("type"));
+
+        const { groups, services, layers } = LAYERS_CONFIG[params.get("type")];
 
         console.log("Groups:", groups);
         console.log("Services:", services);

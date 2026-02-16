@@ -20,7 +20,7 @@ import ScaleLine from 'ol/control/ScaleLine';
 import { defaults as defaultControls } from 'ol/control';
 
 import {initialCenter, initialZoom, initialRotation} from './map-config';
-import LAYERS_CONFIG from "../../data/layersConfig.js";
+import LAYERS_CONFIG from "/public/data/layersConfig.js";
 
 /**
  * Initialize OpenLayers map with EPSG:25830, custom resolutions/extent,
