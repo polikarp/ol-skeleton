@@ -222,6 +222,6 @@ export function renderGfiRightPanel({ results, containerId = "#gfiPanelBody", ge
         if (!geom) return;
 
         //onGeomHover?.(geom, { headerId }); // highlight (no zoom on mobile from hover)
-        zoomToGeometryFromGeoJson(geom, {padding: [100, 100, 100, 100], offsetRatio: 0.5, duration: 300, maxZoom: 10 });
+        zoomToGeometryFromGeoJson(geom, { offsetRatio: 0.5, duration: 300, maxZoom: 10 });
     });
 }

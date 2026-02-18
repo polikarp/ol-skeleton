@@ -40,7 +40,7 @@ import { createSingleClickDispatcher } from "./modules/map/map-singleclick-dispa
 import { createHybridIdentifyHandler } from "./modules/handlers/get-element-info.js";
 import { layerRegistry, PROXY_PATH } from "./modules/map/map-config";
 
-import { closeGfiPanel } from "./modules/panels/gfi-panel-state";
+import { openGfiPanel, closeGfiPanel } from "./modules/panels/gfi-panel-state";
 import { renderGfiRightPanel } from "./modules/panels/gfi-panel";
 import { initHighlight, onGeomHover, onGeomOut, zoomToGeometryFromGeoJson } from "./modules/handlers/highlight-element.js";
 import { adaptHybridResultsToPanel, hasAnyPanelContent } from "./modules/panels/gfi-results-adapter";
@@ -310,6 +310,8 @@ function writeResultsOnGFIPanel(mode, results) {
     onGeomOut,
     zoomToGeometryFromGeoJson,
   });
+
+  openGfiPanel();
 }
 
 function getWfsDescribeUrl(layerName, $layerLi) {
