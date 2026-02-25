@@ -351,7 +351,7 @@ table.table-custom button{
 
 #gis-toolbar {
     position: absolute;
-    top: 120px;
+    top: 5%;
     left: 10px;
     background-color: rgba(255, 255, 255, 0.95);
     border: 1px solid #ccc;
@@ -744,7 +744,7 @@ ul.layerSelector {
 
 .search-box {
   position: absolute;
-  top: 120px;
+  top: 5%;
   left: 50%;
   transform: translateX(-50%);
   width: 500px;
@@ -1231,9 +1231,14 @@ i.icon-button.has-filter::after {
     color: #666;
 }
 
-
-
-
+.wms-menu-close i {
+    cursor: pointer;
+    font-size: 1rem;
+    opacity: 0.7;
+}
+.wms-menu-close i:hover {
+    opacity: 1;
+}
 
 
 /* Responsive behavior*/
@@ -1384,6 +1389,52 @@ i.icon-button.has-filter::after {
 }
 
 
+.ol-compass{
+  position:absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 1000;
+}
+
+.ol-compass-btn{
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: grab;
+  touch-action: none; /* important for mobile drag */
+}
+
+.ol-compass-btn:active{
+  cursor: grabbing;
+}
+
+.ol-compass-svg{
+  width: 120px;
+  height: 120px;
+  filter: drop-shadow(0 8px 22px rgba(0,0,0,.35));
+}
+
+.compass-label{
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 800;
+  font-size: 26px;
+  fill: rgba(0,0,0,.85);
+  paint-order: stroke;
+  stroke: rgba(255,255,255,.9);
+  stroke-width: 3px;
+}
+
+.compass-needle{
+  transform-origin: 50% 50%;
+  transition: transform .18s cubic-bezier(.4,0,.2,1);
+}
+
+button.ol-rotate-reset{
+    display:none !important;
+}
 
 
 
@@ -1647,7 +1698,7 @@ i.icon-button.has-filter::after {
 
     div.search-box{
         width: 80%;
-        top: 18%;
+        top: 5%;
         left: 50%;
     }
 
@@ -1664,7 +1715,7 @@ i.icon-button.has-filter::after {
     }
 
     div#gis-toolbar{
-        top: 30%;
+        top: 15%;
         left:0;
     }
 
@@ -1695,7 +1746,7 @@ i.icon-button.has-filter::after {
     .gis-toolbar-flyout {
         left: 0;
         width: 100% !important;
-        top: 14% !important;
+        top: 0 !important;
     }
 
     .map-copyright{
@@ -1866,6 +1917,10 @@ i.icon-button.has-filter::after {
 
     /*Hide add row button on filter*/
     button.btnLayerFilterAddRow{
+        display:none;
+    }
+
+    #map-compass{
         display:none;
     }
 

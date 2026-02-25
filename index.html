@@ -7,7 +7,7 @@
     <title>gis-skeleton</title>
   </head>
   <body>
-      <div class="container m-0 p-0">
+      <div class=" m-0 p-0">
 
         <!-- Map -->
         <div
@@ -35,7 +35,13 @@
 
         <!-- Base map menu -->
         <div id="base-map-menu" class="gis-toolbar-flyout">
-            <h6>Base map</h6>
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <h6>Base map</h6>
+                <div class="wms-menu-close">
+                    <i class="fa-solid fa-xmark closeMenu" data-target="base-map-menu" title="Close" role="button"></i>
+                </div>
+            </div>
+            
 
             <!-- Base layers thumbnails will be injected by JS -->
             <div class="row g-2" id="baseMapMenuContent"></div>
@@ -43,8 +49,13 @@
 
         <!-- WMS layers menu -->
         <div id="wms-menu" class="gis-toolbar-flyout">
-            <h6>Layers</h6>
-
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <h6>Layers</h6>
+                <div class="wms-menu-close">
+                    <i class="fa-solid fa-xmark closeMenu" data-target="wms-menu" title="Close" role="button"></i>
+                </div>
+            </div>
+            
             <input
                 type="text"
                 id="layersSearchInput"
@@ -218,6 +229,31 @@
 
                 </div>
             </div>
+        </div>
+
+
+        <div id="map-compass" class="ol-compass">
+            <button type="button" class="ol-compass-btn" title="Rotate / Reset north">
+                <svg viewBox="0 0 240 240" class="ol-compass-svg" aria-hidden="true">
+                <!-- Ring -->
+                <circle cx="120" cy="120" r="90" fill="#fff" stroke="#222" stroke-width="6"/>
+                <circle cx="120" cy="120" r="74" fill="none" stroke="#bbb" stroke-width="2"/>
+
+                <!-- Labels OUTSIDE the circle -->
+                <text x="120" y="24"  text-anchor="middle" class="compass-label compass-n">N</text>
+                <text x="120" y="232" text-anchor="middle" class="compass-label compass-s">S</text>
+                <text x="-1"  y="128" text-anchor="start"  class="compass-label compass-w">W</text>
+                <text x="230" y="128" text-anchor="end"    class="compass-label compass-e">E</text>
+
+                <!-- Needle (rotates) -->
+                <g class="compass-needle">
+                    <polygon points="120,34 138,120 120,100 102,120" fill="#d62828"/>
+                    <polygon points="120,206 138,120 120,140 102,120" fill="#333"/>
+                    <circle cx="120" cy="120" r="7" fill="#111"/>
+                    <circle cx="120" cy="120" r="3.5" fill="#fff"/>
+                </g>
+                </svg>
+            </button>
         </div>
 
       </div>

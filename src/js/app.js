@@ -51,6 +51,8 @@ import { initLayerFiltersManager } from "./modules/filters/layers-filter-manager
 import { createWfsLayerQueryService } from "./modules/map/wfs-layer-query-service";
 import { createSpatialQueryTool } from "./modules/map/spatial-query-tool";
 
+import { initCompass } from "./modules/map/compass";
+
 const MAP_CRS = "EPSG:25830";
 const WFS_CRS = "EPSG:4326";
 const SRID = 25830;
@@ -239,6 +241,8 @@ async function initApp() {
 
   addMapCopyright({ mapSelector: "#map", year: window.APP_YEAR, version: window.APP_VERSION });
   initAddressSearchWfs({ map, useProxy: USE_PROXY, proxyPath: PROXY_PATH });
+
+  initCompass(map);
 }
 
 // Ensure bootstrap runs even if DOMContentLoaded already fired
