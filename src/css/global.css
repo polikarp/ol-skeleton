@@ -1437,6 +1437,31 @@ button.ol-rotate-reset{
 }
 
 
+.gfi-export-btn {
+    border: none;
+    background: transparent;
+    padding: 4px 6px;
+    font-size: 0.9rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.gfi-export-btn i {
+    pointer-events: none;
+}
+
+.gfi-export-btn:hover {
+    color: var(--bs-primary);
+}
+
+.gfi-export-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
 
 /*Tablet view*/
 @media (max-width: 1023px) {

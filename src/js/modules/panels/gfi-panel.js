@@ -1,5 +1,10 @@
 // gfi-panel.js
 // Render identify results into a right panel using Bootstrap 5 accordion.
+import GeoJSON from "ol/format/GeoJSON";
+import {exportNormalizedFeaturesToGeoJSON} from '../export/exportToGeojson';
+
+//Registry of layers to export to geojson
+const gfiExportRegistry = new Map();
 
 function escapeHtml(s) {
     return String(s ?? "")
@@ -76,8 +81,13 @@ export function renderGfiRightPanel({ results, containerId = "#gfiPanelBody", ge
 
                 const featureCount = features.length;
 
+                
                 let bodyHtml = "";
                 if (r.format === "json") {
+                    gfiExportRegistry.set(layerKey, {
+                        features: features,
+                        fileName: `${(r.layerName || layerTitle || "layer").toString().replace(/[^\w\-]+/g, "_")}.geojson`
+                    });
                     bodyHtml = featureCount === 0
                         ? `<div class="text-muted small">No features found for this layer.</div>`
                         : `
@@ -141,17 +151,31 @@ export function renderGfiRightPanel({ results, containerId = "#gfiPanelBody", ge
                 return `
                   <div class="accordion-item">
                     <h2 class="accordion-header" id="${layerKey}_h">
-                      <button class="accordion-button collapsed" type="button"
-                              data-bs-toggle="collapse"
-                              data-bs-target="#${layerKey}_c"
-                              aria-expanded="${layerIdx === 0 ? "true" : "false"}"
-                              aria-controls="${layerKey}_c">
-                        ${layerTitle}
-                        ${cql}
-                        <span class="ms-2 badge text-bg-secondary">${featureCount}</span>
-                      </button>
-                    </h2>
+                        <div class="d-flex align-items-center justify-content-between">
+                            
+                            <button class="accordion-button collapsed text-start flex-grow-1"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#${layerKey}_c"
+                                    aria-expanded="${layerIdx === 0 ? "true" : "false"}"
+                                    aria-controls="${layerKey}_c">
+                            ${layerTitle}
+                            ${cql}
+                            <span class="ms-2 badge text-bg-secondary">${featureCount}</span>
+                            </button>
 
+                            <div class="ms-2 d-flex align-items-center pe-2">
+                                <button type="button"
+                                        class="gfi-export-btn"
+                                        data-gfi-export-key="${layerKey}"
+                                        title="Export GeoJSON"
+                                        ${featureCount === 0 ? "disabled" : ""}>
+                                    <i class="fa-solid fa-file-arrow-down fa-xl"></i>
+                                </button>
+                            </div>
+
+                        </div>
+                    </h2>
                     <div id="${layerKey}_c" class="accordion-collapse collapse"
                          aria-labelledby="${layerKey}_h"
                          data-bs-parent="#${accId}">
@@ -223,5 +247,24 @@ export function renderGfiRightPanel({ results, containerId = "#gfiPanelBody", ge
 
         //onGeomHover?.(geom, { headerId }); // highlight (no zoom on mobile from hover)
         zoomToGeometryFromGeoJson(geom, { offsetRatio: 0.5, duration: 300, maxZoom: 10 });
+    });
+
+    $container.off("click.exportGeojson").on("click.exportGeojson", "[data-gfi-export-key]", function (e) {
+        // Prevent accordion toggle
+        e.preventDefault();
+        e.stopPropagation();
+
+        const key = $(this).data("gfi-export-key");
+        const entry = gfiExportRegistry.get(key);
+
+        if (!entry || !Array.isArray(entry.features) || entry.features.length === 0) {
+            return;
+        }
+
+       exportNormalizedFeaturesToGeoJSON(entry.features, {
+          fileName: entry.fileName,
+          fromEpsg: "EPSG:25830",
+          toEpsg: "EPSG:4326"
+      });
     });
 }
