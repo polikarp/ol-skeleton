@@ -4,6 +4,8 @@ import GeoJSON from "ol/format/GeoJSON";
 import {exportNormalizedFeaturesToGeoJSON} from '../export/exportToGeojson';
 import { exportNormalizedFeaturesToCSV } from "../export/exportToCSV";
 import { exportGfiRegistryToZipGeoJSON } from "../export/exportToZIP";
+import { olGeomToGeoJsonLikeFeature } from "../map/utils";
+import Feature from "ol/Feature";
 
 //Registry of layers to export to geojson
 const gfiExportRegistry = new Map();
@@ -294,6 +296,18 @@ export function renderGfiRightPanel({ results, headerId = "gfiPanelHeader", cont
     $header.off("click.exportZip").on("click.exportZip", "button#gfiExportZipBtn", function (e) {
         e.preventDefault();
         e.stopPropagation();
+        if(window.LAST_DRAW_GEOM){
+            let feature = olGeomToGeoJsonLikeFeature(window.LAST_DRAW_GEOM.clone(), {
+                featureProjection: "EPSG:25830", 
+                dataProjection: "EPSG:25830"
+            });
+            
+            gfiExportRegistry.set("lastDrawGeom", {
+                features: normalizeFeaturesFromGeoJsonLike({features: [feature]}),  
+                fileName: "work_zone"
+            });
+        }
+        
         exportGfiRegistryToZipGeoJSON(gfiExportRegistry);
     });
 
