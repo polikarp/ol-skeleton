@@ -1334,6 +1334,11 @@ i.icon-button.has-filter::after {
   margin: 0;
 }
 
+.gfi-panel__header .gfi-btn{
+    border:none;
+    background: transparent;
+}
+
 /* Body: tighter spacing + scroll */
 .gfi-panel__body {
   flex: 1 1 auto;

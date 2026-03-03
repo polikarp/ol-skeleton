@@ -2,6 +2,8 @@
 // Render identify results into a right panel using Bootstrap 5 accordion.
 import GeoJSON from "ol/format/GeoJSON";
 import {exportNormalizedFeaturesToGeoJSON} from '../export/exportToGeojson';
+import { exportNormalizedFeaturesToCSV } from "../export/exportToCSV";
+import { exportGfiRegistryToZipGeoJSON } from "../export/exportToZIP";
 
 //Registry of layers to export to geojson
 const gfiExportRegistry = new Map();
@@ -53,8 +55,9 @@ function renderPropertiesTable(props) {
  * Expected input:
  * results: [{ ok, layerName, layerTitle, format:"json"|"text", data }]
  */
-export function renderGfiRightPanel({ results, containerId = "#gfiPanelBody", getCqlFilter, onGeomHover, onGeomOut, zoomToGeometryFromGeoJson }) {
+export function renderGfiRightPanel({ results, headerId = "gfiPanelHeader", containerId = "#gfiPanelBody", getCqlFilter, onGeomHover, onGeomOut, zoomToGeometryFromGeoJson }) {
     const $container = $(containerId);
+    const $header = $(headerId);
 
     const okResults = (results || []).filter((r) => r?.ok);
 
@@ -86,7 +89,7 @@ export function renderGfiRightPanel({ results, containerId = "#gfiPanelBody", ge
                 if (r.format === "json") {
                     gfiExportRegistry.set(layerKey, {
                         features: features,
-                        fileName: `${(r.layerName || layerTitle || "layer").toString().replace(/[^\w\-]+/g, "_")}.geojson`
+                        fileName: `${(r.layerName || layerTitle || "layer").toString().replace(/[^\w\-]+/g, "_")}`
                     });
                     bodyHtml = featureCount === 0
                         ? `<div class="text-muted small">No features found for this layer.</div>`
@@ -168,9 +171,18 @@ export function renderGfiRightPanel({ results, containerId = "#gfiPanelBody", ge
                                 <button type="button"
                                         class="gfi-export-btn"
                                         data-gfi-export-key="${layerKey}"
+                                        data-file="geojson"
                                         title="Export GeoJSON"
                                         ${featureCount === 0 ? "disabled" : ""}>
-                                    <i class="fa-solid fa-file-arrow-down fa-xl"></i>
+                                    <i class="fa-solid fa-file-code fa-xl"></i>
+                                </button>
+                                <button type="button"
+                                        class="gfi-export-btn"
+                                        data-gfi-export-key="${layerKey}"
+                                        data-file="csv"
+                                        title="Export CSV"
+                                        ${featureCount === 0 ? "disabled" : ""}>
+                                    <i class="fa-solid fa-file-csv fa-xl"></i>
                                 </button>
                             </div>
 
@@ -255,16 +267,35 @@ export function renderGfiRightPanel({ results, containerId = "#gfiPanelBody", ge
         e.stopPropagation();
 
         const key = $(this).data("gfi-export-key");
+        const fileType = $(this).data("file");
         const entry = gfiExportRegistry.get(key);
 
         if (!entry || !Array.isArray(entry.features) || entry.features.length === 0) {
             return;
         }
 
-       exportNormalizedFeaturesToGeoJSON(entry.features, {
-          fileName: entry.fileName,
-          fromEpsg: "EPSG:25830",
-          toEpsg: "EPSG:4326"
-      });
+        if("geojson" == fileType){
+            exportNormalizedFeaturesToGeoJSON(entry.features, {
+                fileName: entry.fileName + '.geojson',
+                fromEpsg: "EPSG:25830",
+                toEpsg: "EPSG:4326"
+            });
+        }else{
+            exportNormalizedFeaturesToCSV(entry.features, {
+                fileName: entry.fileName + '.csv',
+                fromEpsg: "EPSG:25830",
+                toEpsg: "EPSG:4326"
+            });
+        }
+
+        
     });
+
+    $header.off("click.exportZip").on("click.exportZip", "button#gfiExportZipBtn", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        exportGfiRegistryToZipGeoJSON(gfiExportRegistry);
+    });
+
+    
 }

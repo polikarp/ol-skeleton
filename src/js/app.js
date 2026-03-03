@@ -308,6 +308,7 @@ function writeResultsOnGFIPanel(mode, results) {
 
   renderGfiRightPanel({
     results: panelResults,
+    headerId: "#gfiPanelHeader",
     containerId: "#gfiPanelBody",
     getCqlFilter: ({ layerTitle }) => window.currentCqlFilterByLayer?.[layerTitle] || null,
     onGeomHover,
