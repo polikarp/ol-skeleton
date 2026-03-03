@@ -74,6 +74,9 @@ export function createWfsLayerQueryService({
             return { ok: false, error: "No spatial input", results: [] };
         }
 
+        //Store on window environment to use that geometry to export
+        window.LAST_DRAW_GEOM = queryGeom;
+
 
         const spatialCql = buildIntersectsCql({
             geomProp: geomPropName,

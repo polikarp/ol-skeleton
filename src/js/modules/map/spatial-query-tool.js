@@ -165,9 +165,6 @@ export function createSpatialQueryTool({
 
         lastDrawGeom = geom;
 
-        //Store on window environment to use that geometry to export
-        window.LAST_DRAW_GEOM = geom;
-
         // Anchor popup to polygon center
         const extent = geom.getExtent();
         const center = [

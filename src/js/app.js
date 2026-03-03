@@ -146,6 +146,7 @@ function bindStaticUiHandlers() {
   $("#gfiPanelClose").on("click", function () {
     closeGfiPanel();
     onGeomOut({});
+    window.LAST_DRAW_GEOM = null;
   });
 }
 
@@ -239,7 +240,7 @@ async function initApp() {
 
   clickHandlers();
 
-  addMapCopyright({ mapSelector: "#map", year: window.APP_YEAR, version: window.APP_VERSION });
+  addMapCopyright({ mapSelector: "#map", year: LAYERS_CONFIG.copyright.year, version: LAYERS_CONFIG.copyright.version});
   initAddressSearchWfs({ map, useProxy: USE_PROXY, proxyPath: PROXY_PATH });
 
   initCompass(map);

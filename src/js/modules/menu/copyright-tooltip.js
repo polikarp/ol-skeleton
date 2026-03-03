@@ -11,8 +11,8 @@
  */
 export function addMapCopyright({
     mapSelector = "#map",
-    year,
-    version,
+    year = 2026,
+    version = "none",
 }) {
     if (!year || !version) {
         console.warn("Year or version not provided for map copyright");

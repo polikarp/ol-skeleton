@@ -1,4 +1,6 @@
  {
+
+    "copyright":{"version": "1.3.0", "year": "2026"},
     "base_layers": [
             {
                 "id": 1,
