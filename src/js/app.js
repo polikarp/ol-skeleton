@@ -45,11 +45,13 @@ import { renderGfiRightPanel } from "./modules/panels/gfi-panel";
 import { initHighlight, onGeomHover, onGeomOut, zoomToGeometryFromGeoJson } from "./modules/handlers/highlight-element.js";
 import { adaptHybridResultsToPanel, hasAnyPanelContent } from "./modules/panels/gfi-results-adapter";
 
-import { refreshLayer } from "./modules/map/layers-on-off";
+import { refreshLayer, clearAllLayers } from "./modules/map/layers-on-off";
 import { initLayerFiltersManager } from "./modules/filters/layers-filter-manager";
 
 import { createWfsLayerQueryService } from "./modules/map/wfs-layer-query-service";
 import { createSpatialQueryTool } from "./modules/map/spatial-query-tool";
+
+import { registerMoveEndHandler } from "./modules/handlers/map-events";
 
 import { initCompass } from "./modules/map/compass";
 
@@ -146,7 +148,17 @@ function bindStaticUiHandlers() {
   $("#gfiPanelClose").on("click", function () {
     closeGfiPanel();
     onGeomOut({});
-    window.LAST_DRAW_GEOM = null;
+    //Show right button to show panel with results
+    if (window.LAST_DRAW_GEOM) {
+        $('#mapFloatingControls').show();
+    } else {
+        $('#mapFloatingControls').hide();
+    }
+  });
+
+    $("#toggleResultsPanelBtn").on("click", function(){
+      openGfiPanel();
+      $('#mapFloatingControls').hide();
   });
 }
 
@@ -174,6 +186,8 @@ async function initApp() {
 
   registerGisBottomMenuTools(map, { useProxy: USE_PROXY });
 
+  registerMoveEndHandler(map, 5);
+
   initBaseMapMenu({
     layers: baseMapLayers,
     selectedLayer: selectedBaseLayer,
@@ -183,7 +197,7 @@ async function initApp() {
 
   registerGisLeftMenu(map);
   enableMouseCoordinates(map, "#mouse-coordinates");
-  bindCheckboxToggles(map, { selector: ".layerCheckbox", removeOnUncheck: true });
+  bindCheckboxToggles(map, wfsQueryExecutor, { selector: ".layerCheckbox", removeOnUncheck: true });
 
   initHighlight(map, { dataProjection: MAP_CRS, zIndex: 9999 });
 
@@ -292,10 +306,31 @@ function clickHandlers() {
   $(".closeMenu").on("click", function () {
     const targetId = $(this).data("target");
     $("#" + targetId).hide();
+    $('#mapFloatingControls').hide();
   });
+
+    $("#clearAllLayers").on("click", function(){
+        clearAllLayers(map);
+        closeGfiPanel();
+        $('#mapFloatingControls').hide();
+        $("#btnSpatialDrawCancel").trigger("click");
+
+    });
 
   // Layers search (your existing logic can stay here as-is)
   // ...
+}
+
+//Execute query service manually
+async function wfsQueryExecutor(geom){
+  try{
+    showGfiLoading();
+    const resp = await queryService.query({ geometryMap: geom, context: { mode: "draw" } });
+    writeResultsOnGFIPanel(SEARCH_SERVICE, resp.results);
+  }catch (e){
+    console.error(e);
+  }
+    
 }
 
 function writeResultsOnGFIPanel(mode, results) {

@@ -105,6 +105,13 @@ export function renderGfiRightPanel({ results, headerId = "gfiPanelHeader", cont
                                     if (geom) {
                                         geomByHeaderId[headerId] = geom;
                                     }
+
+                                    const label =
+                                            f?.properties?.name ??
+                                            f?.properties?.NAME ??
+                                            f?.properties?.title ??
+                                            f?.id ??
+                                            'Feature ' + featIdx;
                                     return `
                                         <div class="accordion-item">
                                             <h2 class="accordion-header" id="${featKey}_h" data-hid="${headerId}">
@@ -116,7 +123,7 @@ export function renderGfiRightPanel({ results, headerId = "gfiPanelHeader", cont
                                                             data-bs-target="#${featKey}_c"
                                                             aria-expanded="false"
                                                             aria-controls="${featKey}_c">
-                                                    ${escapeHtml(f.id)}
+                                                    ${escapeHtml(label)}
                                                     </button>
 
                                                     <div class="gfi-header-actions ms-2">

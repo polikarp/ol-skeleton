@@ -20,9 +20,12 @@ import GeoJSON from "ol/format/GeoJSON";
 import { bbox as bboxStrategy } from "ol/loadingstrategy";
 import { get as getProjection } from "ol/proj";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
+import WKT from 'ol/format/WKT';
 
 // Use your registry (rename as you wish)
 import { layerRegistry, layersInfo } from "./map-config";
+
+import { clearAllFilters } from "../filters/layers-filter-manager";
 
 const DEFAULT_CRS = "EPSG:25830";
 
@@ -81,18 +84,51 @@ export function createOlLayerFromServiceType({layerName, serviceBaseUrl, version
     };
 
     if (type === "WMS") {
+
+        let cqlFilter = null;
+
+        // Check if drawn geometry exists
+        if (window.LAST_DRAW_GEOM) {
+            // Convert geometry to WKT
+            const format = new WKT();
+
+            // IMPORTANT: transform to WMS projection if needed
+            const geom = window.LAST_DRAW_GEOM.clone().transform(
+                DEFAULT_CRS,
+                DEFAULT_CRS 
+            );
+
+            const wkt = format.writeGeometry(geom);
+
+            // Build spatial filter
+            // Note: geom must match DB geometry column name in GeoServer
+            cqlFilter = `INTERSECTS(geom, ${wkt})`;
+        }
+
+        const params = {
+            SERVICE: type,
+            VERSION: version || "1.3.0",
+            REQUEST: "GetMap",
+            LAYERS: layerName,
+            TILED: tiled,
+            TRANSPARENT: true,
+            FORMAT: format || "image/png",
+        };
+
+        // Add CQL_FILTER only if exists
+        if (cqlFilter) {
+            params.CQL_FILTER = cqlFilter;
+        }
+
         const source = new TileWMS({
             url: serviceBaseUrl,
-            params: {
-                SERVICE: type,
-                VERSION: version || "1.3.0",
-                REQUEST: "GetMap",
-                LAYERS: layerName,
-                TILED: tiled,
-                TRANSPARENT: true,
-                FORMAT: format || "image/png",
-            },
+            params: params,
         });
+
+        // const layer = new ol.layer.Tile({
+        //     source,
+        //     visible: true
+        // });
 
         const layer = new TileLayer({ source, visible: true });
         Object.entries(commonMeta).forEach(([k, v]) => layer.set(k, v));
@@ -375,11 +411,31 @@ export function hasLayer({ layerName, serviceBaseUrl, serviceType }) {
  * Optional: clear all registered layers from map.
  * @param {import("ol/Map").default} map
  */
-export function clearAllLayers(map) {
-  if (!map) throw new Error("Map is required");
+// export function clearAllLayers(map) {
+//   if (!map) throw new Error("Map is required");
 
-  for (const layer of layerRegistry.values()) {
-    map.removeLayer(layer);
-  }
-  layerRegistry.clear();
+//   for (const layer of layerRegistry.values()) {
+//     map.removeLayer(layer);
+//   }
+//   layerRegistry.clear();
+// }
+
+/**
+ * Optional: clear all registered layers from map.
+ * @param {import("ol/Map").default} map
+ */
+export function clearAllLayers(map) {
+    if (!map) throw new Error("Map is required");
+    clearAllFilters();
+    for (const layer of layerRegistry.values()) {
+            const layerName = layer.get("layerName");
+            if($(`#layersMenuSelector input[type="checkbox"][data-layer="${layerName}"]`).is(":checked")){
+                 $(`#layersMenuSelector input[type="checkbox"][data-layer="${layerName}"]`).trigger("click");
+            }else{
+                map.removeLayer(layer);
+            }
+            //$(`#layersMenuSelector input[type="checkbox"][data-layer="${layerName}"]`).prop("checked", false);
+
+    }
+    layerRegistry.clear();
 }

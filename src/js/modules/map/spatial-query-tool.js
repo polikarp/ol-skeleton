@@ -63,7 +63,8 @@ function initDrawConfirmPopup(map, clear, queryService, showGfiLoading, notify, 
         if (!lastDrawGeom) return;
         if(layerRegistry.size === 0){
           $("#drawCancelBtn").trigger("click");
-          alert("No active layers");
+          window.LAST_DRAW_GEOM = lastDrawGeom;
+          alert("No active layers. Choose layers from layers menu");
           return;
         }
 
@@ -90,6 +91,7 @@ function initDrawConfirmPopup(map, clear, queryService, showGfiLoading, notify, 
         lastDrawGeom = null;
     });
 }
+
 
 
 
@@ -135,6 +137,7 @@ export function createSpatialQueryTool({
     map.removeLayer(drawLayer);
     clear();
     window.MAP_CLICK_BLOCKED = false;
+    window.LAST_DRAW_GEOM = null;
   }
 
   function activate() {
@@ -171,6 +174,13 @@ export function createSpatialQueryTool({
             (extent[0] + extent[2]) / 2,
             (extent[1] + extent[3]) / 2
         ];
+
+        //If no layers active, make instant search of that drawn zone
+        if(layerRegistry.size === 0){
+            window.LAST_DRAW_GEOM = lastDrawGeom;
+            alert("No active layers. Choose layers from layers menu");
+            return;
+        }
 
         window.MAP_CLICK_BLOCKED = true;
         drawConfirmOverlay.setPosition(center);

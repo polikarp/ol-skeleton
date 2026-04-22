@@ -1295,11 +1295,20 @@ i.icon-button.has-filter::after {
     z-index: 1000;
 }
 
+/* Right button to show panel*/
+#mapFloatingControls {
+    position: absolute;
+    top: 12px;
+    right: 2%;
+    z-index: 1000;
+    display: none;
+}
+
 
 /* Right panel container */
 .gfi-panel {
   position: absolute;
-  top: 12%;
+  top: 12px;
   right: 0;
   width: 500px;
   height: 75%;
@@ -1397,7 +1406,7 @@ i.icon-button.has-filter::after {
 .ol-compass{
   position:absolute;
   top: 14px;
-  right: 14px;
+  right: 10%;
   z-index: 1000;
 }
 

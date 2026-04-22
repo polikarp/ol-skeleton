@@ -4,7 +4,7 @@
 
 import { UI } from "../../constants/i18.en";
 import { Modal } from "bootstrap";
-import { layersInfo } from "../map/map-config";
+import { layerRegistry, layersInfo } from "../map/map-config";
 
 
 const schemaCache = new Map(); // key: typename -> [{name,type}]
@@ -613,4 +613,13 @@ function cssEscape(s) {
         .replace(/\\/g, "\\\\") // escape backslash first
         .replace(/"/g, '\\"')   // escape double quotes
         .replace(/:/g, "\\:");  // escape colon (workspace:layer)
+}
+
+
+//Crear all filters when LLM search is called
+export function clearAllFilters(){
+    for (const layerName of layerRegistry.keys()) {
+        delete window.currentCqlFilterByLayer[layerName];
+        updateLayerFilterIcon(layerName);
+    }
 }

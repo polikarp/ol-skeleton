@@ -41,7 +41,7 @@ function readDataFromCheckbox(checkboxEl) {
  * @param {boolean} opts.removeOnUncheck
  * @param {string} opts.crossOrigin
  */
-export function bindCheckboxToggles(map, { selector = ".layerCheckbox", removeOnUncheck = true, crossOrigin = "anonymous" } = {}
+export function bindCheckboxToggles(map, wfsQueryExecutor, { selector = ".layerCheckbox", removeOnUncheck = true, crossOrigin = "anonymous" } = {}
 ) {
     if (!map) throw new Error("Map is required");
 
@@ -64,8 +64,13 @@ export function bindCheckboxToggles(map, { selector = ".layerCheckbox", removeOn
             //layersInfo store all layers info
             //layersInfo.set(layerInfo.layerName, layerInfo);
             addLayerToMap(map, layerName, {});
+            if(window.LAST_DRAW_GEOM){
+                wfsQueryExecutor(window.LAST_DRAW_GEOM);
+            }else{
+                $row.find(".layerFilterBtn").removeClass("d-none");
+            }
             $row.find(".wms-legend").first().show();
-            $row.find(".layerFilterBtn").removeClass("d-none");
+            
         } else {
             removeLayerFromMap(map, layerName, removeOnUncheck );
             $row.find(".wms-legend").first().hide();
