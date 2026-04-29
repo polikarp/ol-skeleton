@@ -372,7 +372,14 @@ function clickHandlers() {
           dpi: 150
       });
 
-      fetch('/geoserver/pdf/create.json', {
+      let url;
+      if(USE_PROXY){
+          url = '/geoserver/pdf/create.json';
+      }else{
+          url = 'https://download.geoportal.gov.gi/geoserver/pdf/create.json'
+      }
+
+      fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(printSpec)
