@@ -127,6 +127,7 @@ function buildBaseLayers(baseLayersJson) {
               TRANSPARENT: opts.transparent ?? true,
             },
             serverType: "geoserver",
+            crossOrigin: 'anonymous'
           }),
           visible: !!r.visible_default,
           name: r.layer_name,

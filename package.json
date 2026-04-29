@@ -16,8 +16,10 @@
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.8",
     "chart.js": "^4.5.1",
+    "html2canvas": "^1.4.1",
     "jquery": "^4.0.0",
     "jquery-ui-dist": "^1.13.3",
+    "jspdf": "^4.2.1",
     "jszip": "^3.10.1",
     "ol": "^10.7.0",
     "proj4": "^2.20.2"

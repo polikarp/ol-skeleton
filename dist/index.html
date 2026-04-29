@@ -5,8 +5,8 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>gis-skeleton</title>
-    <script type="module" crossorigin src="/assets/index-84SYO1bB.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-DQOpK38D.css">
+    <script type="module" crossorigin src="/assets/index-Iw2ht6KN.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BDSrzy4s.css">
   </head>
   <body>
       <div class=" m-0 p-0">
@@ -66,8 +66,8 @@
                 autocomplete="off"
             />
 
-            <div class="row g-2">
-                <ul id="layersMenuSelector" class="list-unstyled"></ul>
+           <div class="layers-list-wrapper">
+                <ul id="layersMenuSelector" class="list-unstyled mb-0"></ul>
             </div>
         </div>
 
@@ -174,6 +174,18 @@
                 <button id="clearAllLayers" title="Clean map" class="bottom-menu-button">
                     <i class="fa-solid fa-broom"></i>
                     <span class="menu-label">Clean map</span>
+                </button>
+
+                <div class="button-separator "></div>
+                <button id="btnPrintPdfMapfish" title="Export map to PDF" class="bottom-menu-button">
+                    <i class="fa-solid fa-file-pdf"></i>
+                    <span class="menu-label">PDF Fish</span>
+                </button>                
+
+                <div class="button-separator "></div>
+                <button id="clientPdfBtn" title="Export map to PDF" class="bottom-menu-button">
+                    <i class="fa-solid fa-file-pdf"></i>
+                    <span class="menu-label">PDF client</span>
                 </button>
 
                 <div class="button-separator hideResponsive"></div>

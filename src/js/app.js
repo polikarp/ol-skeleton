@@ -55,6 +55,15 @@ import { registerMoveEndHandler } from "./modules/handlers/map-events";
 
 import { initCompass } from "./modules/map/compass";
 
+import { buildMapfishPrintRequest } from './modules/export/mapfishPrint';
+
+import { getBaseUrlFromSource } from './modules/map/utils';
+
+import { exportVisibleMapToPdf, exportOpenLayersMapToPdf } from './modules/export/exportToPDF'
+
+import OSM from 'ol/source/OSM';
+import XYZ from 'ol/source/XYZ';
+
 const MAP_CRS = "EPSG:25830";
 const WFS_CRS = "EPSG:4326";
 const SRID = 25830;
@@ -97,8 +106,8 @@ function readBootstrapFromUrlConfig() {
     return null;
   }
 
-  const { groups, services, layers } = LAYERS_CONFIG[type];
-  return { type, groups, services, layers };
+  const { pdf_print, groups, services, layers } = LAYERS_CONFIG[type];
+  return { type, pdf_print, groups, services, layers };
 }
 
 /**
@@ -108,7 +117,7 @@ async function bootstrapLayersFromConfig() {
   const bootstrapData = readBootstrapFromUrlConfig();
   if (!bootstrapData) return;
 
-  const { groups, services, layers } = bootstrapData;
+  const {pdf_print, groups, services, layers } = bootstrapData;
 
   const { servicesLayers, groupsLayers, customLayers } = await loadLayersFromConfig(
     { groups, services, layers },
@@ -123,6 +132,7 @@ async function bootstrapLayersFromConfig() {
   window.WMS_LAYERS_BY_SERVICE = servicesLayers;
   window.WMS_LAYERS_BY_GROUP = groupsLayers;
   window.CUSTOM_LAYERS = customLayers;
+  window.PDF_PRINT = pdf_print;
 }
 
 /**
@@ -174,12 +184,25 @@ async function initApp() {
   baseMapLayers = (LAYERS_CONFIG.base_layers || []).map((l) => l.layer_name);
   selectedBaseLayer = (LAYERS_CONFIG.base_layers || []).find((l) => l.visible_default)?.layer_name || null;
 
+  
+
   // 2) Bind UI handlers (safe once DOM exists)
   bindStaticUiHandlers();
 
   // 3) Build menus and layer groups from config (async)
   await bootstrapLayersFromConfig();
 
+  const isMapfishEnabled = window.PDF_PRINT?.mapfish ?? false;
+  const isCanvasPdfEnabled = window.PDF_PRINT?.canvas ?? false;
+
+  if(!isMapfishEnabled){
+      $("#btnPrintPdfMapfish").prev("div").remove();
+      $("#btnPrintPdfMapfish").remove();
+  }
+  if(!isCanvasPdfEnabled){
+      $("#clientPdfBtn").prev("div").remove();
+      $("#clientPdfBtn").remove();
+  }
   // 4) Initialize map + tools
   const mapa = initOpenLayersMap("map", LAYERS_CONFIG);
   map = mapa.map;
@@ -317,8 +340,94 @@ function clickHandlers() {
 
     });
 
+  $("#btnPrintPdfMapfish").on("click", function(){
+     const selectedBaseLayer = getSelectedBaseLayer();
+
+      // const baseLayer = {
+      //     baseUrl: 'https://download.geoportal.gov.gi/geoserver/wms',
+      //     layerName: 'gibgis:basemap_basic_1',
+      //     transparent: false
+      // };
+
+      const dataLayers = Array.from(layerRegistry.values())
+          .filter(l => l.get('visible'))
+          .map(l => ({
+              type: 'WMS',
+              baseUrl: l.get('serviceBaseUrl'),
+              layerName: l.get('layerName'),
+              cqlFilter: window.currentCqlFilterByLayer?.[l.get('layerName')],
+              transparent: true
+          }));
+
+      const layersForPrint = [
+          selectedBaseLayer,
+          ...dataLayers.filter(l => l.layerName !== selectedBaseLayer.layerName)
+      ];
+
+      const printSpec = buildMapfishPrintRequest(map, layersForPrint, {
+          srs: 'EPSG:25830',   
+          layout: 'A4 Portrait',
+          mapTitle: 'GeoServer Print Test',
+          mapComment: 'Generated from OL',
+          dpi: 150
+      });
+
+      fetch('/geoserver/pdf/create.json', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(printSpec)
+      })
+      .then(res => res.json())
+      .then(data => {
+          window.open(data.getURL, '_blank');
+      });
+  });
+
+  // $('#clientPdfBtn').on('click', async function () {
+  //     await exportVisibleMapToPdf(map);
+  // });
+
+  $('#clientPdfBtn').on('click', function () {
+      exportOpenLayersMapToPdf(map);
+  });
+
   // Layers search (your existing logic can stay here as-is)
   // ...
+}
+
+/**
+ * Get selected base layer
+ * @returns { layerName, baseUrl, transparent}
+ */
+function getSelectedBaseLayer(){
+    const selectedBaseLayer = map.getLayers().getArray()
+      .filter(layer => layer.getVisible() && layer.get('isBaseLayer'))
+      .map(layer => {
+          const source = layer.getSource();
+
+          const isOSM = source instanceof OSM;
+          const isXYZ = source instanceof XYZ;
+
+          if (isOSM || isXYZ) {
+              return {
+                  type: isOSM?'OSM':'XYZ',
+                  baseUrl: getBaseUrlFromSource(source),
+                  layerName: layer.get('name'),
+                  opacity: layer.getOpacity?.() ?? 1,
+                  transparent: true
+              };
+          }
+
+          return {
+              type: 'WMS',
+              layerName: layer.get('name'),
+              baseUrl: source?.getUrl ? source.getUrl() : source?.getUrls?.()[0],
+              transparent: true,
+              opacity: layer.getOpacity?.() ?? 1
+          };
+      })[0];
+
+      return selectedBaseLayer;
 }
 
 //Execute query service manually

@@ -1,6 +1,7 @@
  {
 
     "copyright":{"version": "1.3.0", "year": "2026"},
+    
     "base_layers": [
             {
                 "id": 1,
@@ -107,7 +108,9 @@
     ],
 
     "visor":
-        {"groups": [
+        {
+            "pdf_print":{"mapfish": true, "canvas": true}, 
+            "groups": [
 
             {
                 "id": 1,
@@ -1298,6 +1301,1525 @@
                     }
                 }
 
+        ]
+    },
+
+    "mapviewer": {
+        "pdf_print":{"mapfish": true, "canvas": true}, 
+        "groups": [
+            {
+                "id": 1,
+                "key": "basemap_layers",
+                "title": "BaseMap Layers",
+                "order_idx": 1,
+                "parent_id": null,
+                "collapsed_default": false,
+                "icon": null
+            },
+            {
+                "id": 2,
+                "key": "household_waste_recycling_points",
+                "title": "Household Waste/Recycling Points",
+                "order_idx": 2,
+                "parent_id": null,
+                "collapsed_default": true,
+                "icon": null
+            },
+            {
+                "id": 3,
+                "key": "environment",
+                "title": "Environment",
+                "order_idx": 3,
+                "parent_id": null,
+                "collapsed_default": true,
+                "icon": null
+            },
+            {
+                "id": 4,
+                "key": "under_construction",
+                "title": "Under construction",
+                "order_idx": 4,
+                "parent_id": null,
+                "collapsed_default": true,
+                "icon": null
+            }
+        ],
+        "services": [
+        ],
+        "layers": [
+            {
+                "id": 31,
+                "group_id": 1,
+                "title": "Roads Colloquial",
+                "layer_name": "gibgis:roads_lb_vw",
+                "description": "Roads Colloquial",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 32,
+                "group_id": 1,
+                "title": "Estates",
+                "layer_name": "gibgis:estates_py_ind",
+                "description": "Estates",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 33,
+                "group_id": 1,
+                "title": "Blocks",
+                "layer_name": "gibgis:blocks_py_ind",
+                "description": "Blocks",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 34,
+                "group_id": 1,
+                "title": "Thoroughfare",
+                "layer_name": "gibgis:thoroughfare_pl",
+                "description": "Thoroughfare",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 35,
+                "group_id": 1,
+                "title": "Landform ManMade",
+                "layer_name": "gibgis:landformmanmade_py",
+                "description": "Landform ManMade",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 36,
+                "group_id": 1,
+                "title": "Structures",
+                "layer_name": "gibgis:structures_py",
+                "description": "Structures",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 37,
+                "group_id": 1,
+                "title": "TopoLabels",
+                "layer_name": "gibgis:topolabels_pt",
+                "description": "TopoLabels",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 38,
+                "group_id": 1,
+                "title": "Landmarks",
+                "layer_name": "gibgis:topolabels_pt_ext_vw",
+                "description": "Landmarks",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 39,
+                "group_id": 1,
+                "title": "Vegetation",
+                "layer_name": "gibgis:vegetation_py",
+                "description": "Vegetation",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 40,
+                "group_id": 1,
+                "title": "Buildings",
+                "layer_name": "gibgis:buildings_py",
+                "description": "Buildings",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 41,
+                "group_id": 1,
+                "title": "Transport",
+                "layer_name": "gibgis:transport_py",
+                "description": "Transport",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 42,
+                "group_id": 1,
+                "title": "Landform Natural",
+                "layer_name": "gibgis:landformnatural_py",
+                "description": "Landform Natural",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 43,
+                "group_id": 1,
+                "title": "Territorial Waters",
+                "layer_name": "gibgis:territorial_sea_limit_25830_py",
+                "description": "Territorial Waters",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 44,
+                "group_id": 2,
+                "title": "Refuse Bins",
+                "layer_name": "gibgis:refuse_bins_vw",
+                "description": "Refuse Bins",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": true,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 45,
+                "group_id": 2,
+                "title": "Recycling Bins",
+                "layer_name": "gibgis:recycling_bins_vw",
+                "description": "Recycling Bins",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": true,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 46,
+                "group_id": 3,
+                "title": "Public Toilets",
+                "layer_name": "gibgis:public_toilets_vw",
+                "description": "Public Toilets",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": true,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 47,
+                "group_id": 3,
+                "title": "WFD Coastal W. Bodies",
+                "layer_name": "gibgis:coastal_water_bodies_25830",
+                "description": "WFD Coastal W. Bodies",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 48,
+                "group_id": 3,
+                "title": "Reef Cont Areas",
+                "layer_name": "gibgis:reefcontareas_25830",
+                "description": "Reef Cont Areas",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 49,
+                "group_id": 3,
+                "title": "WFD Groundwater W. Bodies",
+                "layer_name": "gibgis:groundwater_water_bodies_25830",
+                "description": "WFD Groundwater W. Bodies",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 50,
+                "group_id": 3,
+                "title": "Nature Reserve Area",
+                "layer_name": "gibgis:nature_reserve_area_25830",
+                "description": "Nature Reserve Area",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 51,
+                "group_id": 3,
+                "title": "Rbd",
+                "layer_name": "gibgis:rbd_etrs_25830",
+                "description": "Rbd",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 52,
+                "group_id": 3,
+                "title": "Terrestrial Sac Area",
+                "layer_name": "gibgis:terrestrial_sac_area_25830",
+                "description": "Terrestrial Sac Area",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 53,
+                "group_id": 3,
+                "title": "Reefareas Shallow",
+                "layer_name": "gibgis:reefareas_shallow_25830",
+                "description": "Reefareas Shallow",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 54,
+                "group_id": 3,
+                "title": "Marine Sac",
+                "layer_name": "gibgis:marine_sac_25830",
+                "description": "Marine Sac",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 55,
+                "group_id": 4,
+                "title": "Under Construction",
+                "layer_name": "gibgis:under_construction",
+                "description": "Under Construction",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            }
+        ]
+    },
+
+    "town-planning": {
+        "pdf_print":{"mapfish": true, "canvas": true}, 
+        "groups": [
+            {
+                "id": 2,
+                "key": "town_planning_applications",
+                "title": "Town Planning Applications",
+                "order_idx": 1,
+                "parent_id": null,
+                "collapsed_default": false,
+                "icon": null
+            },
+            {
+                "id": 3,
+                "key": "advertisement_applications",
+                "title": "Advertisement Applications",
+                "order_idx": 1,
+                "parent_id": 2,
+                "collapsed_default": false,
+                "icon": null
+            },
+            {
+                "id": 4,
+                "key": "demolition_applications",
+                "title": "Demolition Applications",
+                "order_idx": 2,
+                "parent_id": 2,
+                "collapsed_default": false,
+                "icon": null
+            },
+            {
+                "id": 5,
+                "key": "planning_and_building_applications",
+                "title": "Planning and Building Applications",
+                "order_idx": 3,
+                "parent_id": 2,
+                "collapsed_default": false,
+                "icon": null
+            },
+            {
+                "id": 6,
+                "key": "tree_applications",
+                "title": "Tree Applications",
+                "order_idx": 4,
+                "parent_id": 2,
+                "collapsed_default": false,
+                "icon": null
+            },
+            {
+                "id": 7,
+                "key": "other_town_planning_layers",
+                "title": "Other Town Planning Layers",
+                "order_idx": 2,
+                "parent_id": null,
+                "collapsed_default": false,
+                "icon": null
+            },
+            {
+                "id": 8,
+                "key": "basemap_layers",
+                "title": "BaseMap Layers",
+                "order_idx": 3,
+                "parent_id": null,
+                "collapsed_default": true,
+                "icon": null
+            },
+            {
+                "id": 9,
+                "key": "environment",
+                "title": "Environment",
+                "order_idx": 4,
+                "parent_id": null,
+                "collapsed_default": true,
+                "icon": null
+            }
+        ],
+        "services": [
+            
+        ],
+        "layers": [
+            {
+                "id": 31,
+                "group_id": 8,
+                "title": "Buildings",
+                "layer_name": "gibgis:buildings_py",
+                "description": "Buildings",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/gibgis/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 31,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 32,
+                "group_id": 8,
+                "title": "_Thoroughfare",
+                "layer_name": "gibgis:thoroughfare_pl",
+                "description": "_Thoroughfare",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/gibgis/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 32,
+                "queryable": true,
+                "options": {
+                    "tiled": false,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true,
+                    "singleTile": true,
+                    "opacity": 0.9
+                }
+            },
+            {
+                "id": 33,
+                "group_id": 8,
+                "title": "TopoLabels",
+                "layer_name": "gibgis:topolabels_pt",
+                "description": "TopoLabels",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/gibgis/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 33,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 34,
+                "group_id": 8,
+                "title": "Transport",
+                "layer_name": "gibgis:transport_py",
+                "description": "Transport",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/gibgis/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 34,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 35,
+                "group_id": 8,
+                "title": "Vegetation",
+                "layer_name": "gibgis:vegetation_py",
+                "description": "Vegetation",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/gibgis/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 35,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 36,
+                "group_id": 8,
+                "title": "Landform ManMade",
+                "layer_name": "gibgis:landformmanmade_py",
+                "description": "Landform ManMade",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/gibgis/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 36,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 37,
+                "group_id": 8,
+                "title": "Landform_Natural",
+                "layer_name": "gibgis:landformnatural_py",
+                "description": "Landform_Natural",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/gibgis/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 37,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 38,
+                "group_id": 8,
+                "title": "Territorial Waters py",
+                "layer_name": "gibgis:territorial_sea_limit_25830_py",
+                "description": "Territorial Waters py",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/gibgis/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 38,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 39,
+                "group_id": 9,
+                "title": "WFD Coastal Water B.",
+                "layer_name": "gibgis:coastal_water_bodies_25830",
+                "description": "WFD Coastal Water B.",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/gibgis/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 39,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 40,
+                "group_id": 9,
+                "title": "Reef Cont Areas",
+                "layer_name": "gibgis:reefcontareas_25830",
+                "description": "Reef Cont Areas",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/gibgis/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 40,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 41,
+                "group_id": 9,
+                "title": "WFD Groundwater Water B.",
+                "layer_name": "gibgis:groundwater_water_bodies_25830",
+                "description": "WFD Groundwater Water B.",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/gibgis/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 41,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 42,
+                "group_id": 9,
+                "title": "Nature Reserve Area",
+                "layer_name": "gibgis:nature_reserve_area_25830",
+                "description": "Nature Reserve Area",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/gibgis/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 42,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 43,
+                "group_id": 9,
+                "title": "Rbd",
+                "layer_name": "gibgis:rbd_etrs_25830",
+                "description": "Rbd",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/gibgis/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 43,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 44,
+                "group_id": 9,
+                "title": "Terrestrial Sac Area",
+                "layer_name": "gibgis:terrestrial_sac_area_25830",
+                "description": "Terrestrial Sac Area",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/gibgis/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 44,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 45,
+                "group_id": 9,
+                "title": "Reefareas Shallow",
+                "layer_name": "gibgis:reefareas_shallow_25830",
+                "description": "Reefareas Shallow",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/gibgis/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 45,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 46,
+                "group_id": 9,
+                "title": "Marine Sac",
+                "layer_name": "gibgis:marine_sac_25830",
+                "description": "Marine Sac",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/gibgis/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 46,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 47,
+                "group_id": 3,
+                "title": "Govermment Apps",
+                "layer_name": "tpbc:app_plus_bounds_vw_add_gv",
+                "description": "Town Planning App Bounds ADD GV",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/tpbc/ows?",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 47,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 48,
+                "group_id": 3,
+                "title": "Private Apps",
+                "layer_name": "tpbc:app_plus_bounds_vw_add_ng",
+                "description": "Town Planning App Bounds ADD PR",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/tpbc/ows?",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 48,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 49,
+                "group_id": 4,
+                "title": "Govermment Apps",
+                "layer_name": "tpbc:app_plus_bounds_vw_dem_gv",
+                "description": "Town Planning App Bounds DEM GV",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/tpbc/ows?",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 49,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 50,
+                "group_id": 4,
+                "title": "Private Apps",
+                "layer_name": "tpbc:app_plus_bounds_vw_dem_ng",
+                "description": "Town Planning App Bounds DEM PR",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/tpbc/ows?",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 50,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 51,
+                "group_id": 5,
+                "title": "Govermment Apps",
+                "layer_name": "tpbc:app_plus_bounds_vw_plb_gv",
+                "description": "Town Planning App Bounds PLB GV",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/tpbc/ows?",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 51,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 52,
+                "group_id": 5,
+                "title": "Private Apps",
+                "layer_name": "tpbc:app_plus_bounds_vw_plb_ng",
+                "description": "Town Planning App Bounds PLB PR",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/tpbc/ows?",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 52,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 53,
+                "group_id": 6,
+                "title": "Govermment Apps",
+                "layer_name": "tpbc:app_plus_bounds_vw_trp_gv",
+                "description": "Town Planning App Bounds TRP GV",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/tpbc/ows?",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 53,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 54,
+                "group_id": 6,
+                "title": "Private Apps",
+                "layer_name": "tpbc:app_plus_bounds_vw_trp_ng",
+                "description": "Town Planning App Bounds TRP PR",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/tpbc/ows?",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 54,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 56,
+                "group_id": 7,
+                "title": "Tpo Individual",
+                "layer_name": "tpbc:tpo_individual",
+                "description": "Tpo Individual",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/tpbc/wms?",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 56,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 57,
+                "group_id": 7,
+                "title": "Tree Area including centroids",
+                "layer_name": "tpbc:tree_area_including_centroids",
+                "description": "Tree Area including centroids",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/tpbc/wms?",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 57,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            }
+        ]
+    },
+    "inspire": {
+        "pdf_print":{"mapfish": false, "canvas": false}, 
+        "groups": [
+            {
+                "id": 2,
+                "key": "inspire_annex_i",
+                "title": "INSPIRE Annex I",
+                "order_idx": 1,
+                "parent_id": null,
+                "collapsed_default": false,
+                "icon": null
+            },
+            {
+                "id": 3,
+                "key": "inspire_annex_ii",
+                "title": "INSPIRE Annex II",
+                "order_idx": 2,
+                "parent_id": null,
+                "collapsed_default": false,
+                "icon": null
+            },
+            {
+                "id": 4,
+                "key": "inspire_annex_iii",
+                "title": "INSPIRE Annex III",
+                "order_idx": 3,
+                "parent_id": null,
+                "collapsed_default": true,
+                "icon": null
+            }
+        ],
+        "services": [
+            
+        ],
+        "layers": [
+            {
+                "id": 31,
+                "group_id": 2,
+                "title": "PS.ProtectedSite",
+                "layer_name": "inspire:PS_ProtectedSite",
+                "description": "ProtectedSite",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/inspire/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 32,
+                "group_id": 2,
+                "title": "GN.GeographicalNames",
+                "layer_name": "inspire:GN_GeographicalNames",
+                "description": "GeographicalNames",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/inspire/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 33,
+                "group_id": 2,
+                "title": "AD.Address",
+                "layer_name": "inspire:AD_Address",
+                "description": "AdAddress",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/inspire/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 34,
+                "group_id": 2,
+                "title": "AU.AdministrativeUnit",
+                "layer_name": "inspire:AU_AdministrativeUnit",
+                "description": "AuAdministrativeUnit",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/inspire/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 35,
+                "group_id": 2,
+                "title": "HY.Reporting.WFDCoastalwater",
+                "layer_name": "inspire:HY_Reporting_WFDCoastalwater",
+                "description": "HYReportingWFDCoastalwater",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/inspire/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 36,
+                "group_id": 2,
+                "title": "HY.Reporting.WFDGroundWaterBody",
+                "layer_name": "inspire:HY_Reporting_WFDGroundWaterBody",
+                "description": "HYReportingWFDGroundWaterBody",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/inspire/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 37,
+                "group_id": 2,
+                "title": "CP.CadastralParcel",
+                "layer_name": "inspire:CP_cadastralparcel_r2_vw",
+                "description": "CPCadastralParcel",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/inspire/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 38,
+                "group_id": 2,
+                "title": "TN.RoadTransportNetwork.RoadArea",
+                "layer_name": "inspire:TN_RoadTransportNetwork_RoadArea",
+                "description": "TNRoadTransportNetworkRoadArea",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/inspire/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 39,
+                "group_id": 2,
+                "title": "TN.RoadTransportNetwork.RoadLink",
+                "layer_name": "inspire:TN_RoadTransportNetwork_RoadLink",
+                "description": "TNRoadTransportNetworkRoadLink",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/inspire/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 40,
+                "group_id": 3,
+                "title": "LC.LandCoverSurfaces",
+                "layer_name": "inspire:LC_LandCoverSurfaces",
+                "description": "LCLandCoverSurfaces",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/inspire/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 41,
+                "group_id": 3,
+                "title": "GE.GeologicUnit",
+                "layer_name": "inspire:GE_GeologicUnit",
+                "description": "GEGeologicUnit",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/inspire/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 42,
+                "group_id": 3,
+                "title": "EL.Contourline",
+                "layer_name": "inspire:EL_Contourline",
+                "description": "ELContourline",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/inspire/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 43,
+                "group_id": 4,
+                "title": "BR.Natura2000GeographicalRegions",
+                "layer_name": "inspire:BR_Natura2000andEmeraldBio-geographicalRegions",
+                "description": "BRGeopraphicalRegions",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/inspire/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 44,
+                "group_id": 4,
+                "title": "PF.ProductionSite",
+                "layer_name": "inspire:PF_productionsite",
+                "description": "PFProductionSite",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/inspire/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true,
+                    "opacity": 0.8
+                }
+            },
+            {
+                "id": 45,
+                "group_id": 4,
+                "title": "SU.VectorStatisticalUnits",
+                "layer_name": "inspire:SU_vectorstatisticalunits",
+                "description": "SUVectorStatisticalUnits",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/inspire/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 46,
+                "group_id": 4,
+                "title": "PD.PopulationDistribution",
+                "layer_name": "inspire:PD_populationdistribution",
+                "description": "PDpopulationdistribution",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/inspire/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true,
+                    "opacity": 0.8
+                }
+            },
+            {
+                "id": 47,
+                "group_id": 4,
+                "title": "HB.Habitat",
+                "layer_name": "inspire:HB_habitat",
+                "description": "HBHabitat",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/inspire/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 48,
+                "group_id": 4,
+                "title": "SO.SoilObservedProfile",
+                "layer_name": "inspire:SO_SoilObservedProfile",
+                "description": "SOObservedProfile",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/inspire/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 49,
+                "group_id": 4,
+                "title": "EF.EnvironmentalMonitoringFacilities",
+                "layer_name": "inspire:EF_EnvironmentalMonitoringFacilities",
+                "description": "EFEnvironmentalMonitoringFacilities",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/inspire/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
+                "id": 50,
+                "group_id": 4,
+                "title": "BU.BuildingParts",
+                "layer_name": "inspire:BU_buildingparts",
+                "description": "BUBuildingParts",
+                "base_url": "https://download.geoportal.gov.gi/geoserver/inspire/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            }
         ]
     }
 

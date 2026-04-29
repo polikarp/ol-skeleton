@@ -25,3 +25,32 @@ export function olGeomToGeoJsonLikeFeature(geom, { featureProjection, dataProjec
         geometry: geojsonGeom
     };
 }
+
+/**
+ * Remove {z}/{x}/{y} or any template part
+ * Example: https://tile.openstreetmap.org/{z}/{x}/{y}.png -> https://tile.openstreetmap.org/
+ * @param {} source 
+ * @returns 
+ */
+export function getBaseUrlFromSource(source) {
+    if (!source) return null;
+
+    // Try multiple URLs first (tile sources)
+    let url = source.getUrls ? source.getUrls()?.[0] : null;
+
+    // Fallback to single URL
+    if (!url && source.getUrl) {
+        url = source.getUrl();
+    }
+
+    if (!url) return null;
+
+    // Remove {z}/{x}/{y} or any template part
+    // Example: https://tile.openstreetmap.org/{z}/{x}/{y}.png -> https://tile.openstreetmap.org/
+    const cleaned = url.split('/{')[0];
+
+    return cleaned;
+
+    // Ensure it ends with /
+    //return cleaned.endsWith('/') ? cleaned : cleaned + '/';
+}
