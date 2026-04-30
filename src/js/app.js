@@ -400,6 +400,99 @@ function clickHandlers() {
 
   // Layers search (your existing logic can stay here as-is)
   // ...
+
+
+    /**
+    * Layers search on left menu
+    */
+    $(document).off("keyup.layersSearch", "#layersSearchInput");
+    $(document).off("keyup.layersSearch", "#layersSearchInput");
+    $(document).on("keyup.layersSearch", "#layersSearchInput", function () {
+        const q = ($(this).val() || "").toLowerCase().trim();
+        const active = q.length >= 3;
+
+        // 1) Filter layer rows by text (ONLY if active)
+        $("#layersMenuSelector li[data-layer]").each(function () {
+            if (!active) {
+                $(this).removeClass("d-none");
+                return;
+            }
+
+            const txt = $(this).text().toLowerCase();
+            $(this).toggleClass("d-none", !txt.includes(q));
+        });
+
+        // 2) Group handling using only classes (NO .show()/.hide() on collapse elements)
+        $("#layersMenuSelector ul.layerSelector").each(function () {
+            const $groupUl = $(this);
+            const groupKey = $groupUl.data("group-key");
+
+            const $headerA = $("#layersMenuSelector a.toggle-arrow[data-group-key='" + groupKey + "']");
+            const $headerLi = $headerA.closest("li");
+
+            const hasLayers = $groupUl.find("li[data-layer]").length > 0;
+            const visibleCount = $groupUl.find("li[data-layer]:not(.d-none)").length;
+
+            // Placeholder "No layers"
+            const $emptyRow = $groupUl.find("li[data-empty='true']");
+
+            if (!active) {
+                // --- SEARCH OFF: restore original state (collapsed_default) ---
+                $headerLi.removeClass("d-none");
+                $groupUl.removeClass("d-none");
+
+                if ($emptyRow.length) {
+                    $emptyRow.removeClass("d-none");
+                }
+
+                const collapsedDefault = String($groupUl.data("collapsed-default") || "0") === "1";
+
+                // Keep 'collapse' class always, only toggle 'show'
+                $groupUl.addClass("collapse");
+
+                if (collapsedDefault) {
+                    $groupUl.removeClass("show");
+                    $headerA.attr("aria-expanded", "false");
+                } else {
+                    $groupUl.addClass("show");
+                    $headerA.attr("aria-expanded", "true");
+                }
+
+                return;
+            }
+
+            // --- SEARCH ON (>=3): show only groups with matches ---
+            if ($emptyRow.length) {
+                $emptyRow.addClass("d-none");
+            }
+
+            const showGroup = hasLayers && visibleCount > 0;
+
+            $headerLi.toggleClass("d-none", !showGroup);
+            $groupUl.toggleClass("d-none", !showGroup);
+
+            if (!showGroup) return;
+
+            // Expand groups to reveal matches (but keep collapse class)
+            $groupUl.addClass("collapse show");
+            $headerA.attr("aria-expanded", "true");
+        });
+    });
+
+    $(document).off("keydown.layersSearch", "#layersSearchInput");
+    $(document).on("keydown.layersSearch", "#layersSearchInput", function (e) {
+        if (e.key === "Escape") {
+            $(this).val("").trigger("keyup");
+        }
+    });
+
+    // Focus search input when WMS menu becomes visible
+    $(document).on("mouseenter", "#wms-menu", function () {
+        const $input = $("#layersSearchInput");
+        if ($input.length) {
+            $input.trigger("focus");
+        }
+    });
 }
 
 /**
