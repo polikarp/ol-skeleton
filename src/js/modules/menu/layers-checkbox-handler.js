@@ -2,7 +2,7 @@
 // Requires: jQuery
 
 import { layersInfo } from "../map/map-config";
-import { addLayerToMap, removeLayerFromMap } from "../map/layers-on-off";
+import { addLayerToMap, refreshLayer, removeLayerFromMap } from "../map/layers-on-off";
 
 /**
  * Read WMS info from checkbox data attributes.
@@ -68,6 +68,10 @@ export function bindCheckboxToggles(map, wfsQueryExecutor, { selector = ".layerC
                 wfsQueryExecutor(window.LAST_DRAW_GEOM);
             }else{
                 $row.find(".layerFilterBtn").removeClass("d-none");
+                const cql = window.currentCqlFilterByLayer?.[layerName] ?? null;
+                if(cql){
+                    refreshLayer(map, layerName, {});
+                }
             }
             $row.find(".wms-legend").first().show();
             

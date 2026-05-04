@@ -38,7 +38,7 @@ import { addMapCopyright } from "./modules/menu/copyright-tooltip";
 import { initAddressSearchWfs } from "./modules/map/toponimic-search";
 import { createSingleClickDispatcher } from "./modules/map/map-singleclick-dispatcher";
 import { createHybridIdentifyHandler } from "./modules/handlers/get-element-info.js";
-import { layerRegistry, PROXY_PATH } from "./modules/map/map-config";
+import { layerRegistry, layersInfo, PROXY_PATH } from "./modules/map/map-config";
 
 import { openGfiPanel, closeGfiPanel } from "./modules/panels/gfi-panel-state";
 import { renderGfiRightPanel } from "./modules/panels/gfi-panel";
@@ -106,8 +106,8 @@ function readBootstrapFromUrlConfig() {
     return null;
   }
 
-  const { pdf_print, groups, services, layers } = LAYERS_CONFIG[type];
-  return { type, pdf_print, groups, services, layers };
+  const { pdf_print, debug, groups, services, layers } = LAYERS_CONFIG[type];
+  return { type, pdf_print, debug, groups, services, layers };
 }
 
 /**
@@ -117,7 +117,7 @@ async function bootstrapLayersFromConfig() {
   const bootstrapData = readBootstrapFromUrlConfig();
   if (!bootstrapData) return;
 
-  const {pdf_print, groups, services, layers } = bootstrapData;
+  const {pdf_print, debug, groups, services, layers } = bootstrapData;
 
   const { servicesLayers, groupsLayers, customLayers } = await loadLayersFromConfig(
     { groups, services, layers },
@@ -133,6 +133,7 @@ async function bootstrapLayersFromConfig() {
   window.WMS_LAYERS_BY_GROUP = groupsLayers;
   window.CUSTOM_LAYERS = customLayers;
   window.PDF_PRINT = pdf_print;
+  window.DEBUG_ENABLED =  debug === true;
 }
 
 /**
@@ -207,7 +208,7 @@ async function initApp() {
   const mapa = initOpenLayersMap("map", LAYERS_CONFIG);
   map = mapa.map;
 
-  registerGisBottomMenuTools(map, { useProxy: USE_PROXY });
+  let gisBottomMenuResult = registerGisBottomMenuTools(map, { useProxy: USE_PROXY });
 
   registerMoveEndHandler(map, 5);
 
@@ -265,6 +266,7 @@ async function initApp() {
       count: 50,
       notify: (msg) => console.log(msg),
       onResults: ({ mode, results }) => writeResultsOnGFIPanel(mode, results),
+      getState: gisBottomMenuResult.getState
     }),
     { id: "identify-hybrid", order: 100 }
   );
@@ -342,12 +344,6 @@ function clickHandlers() {
 
   $("#btnPrintPdfMapfish").on("click", function(){
      const selectedBaseLayer = getSelectedBaseLayer();
-
-      // const baseLayer = {
-      //     baseUrl: 'https://download.geoportal.gov.gi/geoserver/wms',
-      //     layerName: 'gibgis:basemap_basic_1',
-      //     transparent: false
-      // };
 
       const dataLayers = Array.from(layerRegistry.values())
           .filter(l => l.get('visible'))
@@ -565,11 +561,13 @@ function writeResultsOnGFIPanel(mode, results) {
 }
 
 function getWfsDescribeUrl(layerName, $layerLi) {
-  const serviceBaseUrl = String($layerLi.data("service-base-url") || "");
+  //const serviceBaseUrl = String($layerLi.data("service-base-url") || "");
   let wfsBaseUrl = String($layerLi.data("wfs-base-url") || "");
 
+  const layerData = layersInfo.get(layerName);
+
   if (!wfsBaseUrl) {
-    wfsBaseUrl = serviceBaseUrl;
+    wfsBaseUrl = layersInfo.get(layerName)['serviceBaseUrl'];
     wfsBaseUrl = wfsBaseUrl.replace(/\/wms\/?$/i, "/ows");
   }
 

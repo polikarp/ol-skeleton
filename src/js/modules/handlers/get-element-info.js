@@ -89,6 +89,7 @@ export function createHybridIdentifyHandler({
     count = 50,
     notify = defaultNotify,
     onResults = () => {},
+    getState = () => {}
 }) {
     if (!layerRegistry || typeof layerRegistry.values !== "function") {
         throw new Error("createHybridIdentifyHandler: layerRegistry (Map) is required");
@@ -103,7 +104,15 @@ export function createHybridIdentifyHandler({
     
 
     return async (ctx) => {
-        if (window.MAP_CLICK_BLOCKED) return;
+        const state = getState?.() ?? {};
+
+        if (
+            window.MAP_CLICK_BLOCKED === true ||
+            state.measuring === true ||
+            state.profiling === true
+        ) {
+            return;
+        }
         spatialDrawTool.deactivate();
         const clickCoord = ctx.coordinate;
 

@@ -145,24 +145,53 @@ export function enableElevationProfile(map, options = {}) {
                     labels: distances,
                     datasets: [{
                         label: 'Elevation (m)',
-                        data: elevations,
-                        tension: 0.6,
+                        data: elevations.map(v => Math.round(Number(v))), // Normalize elevation noise
+                        tension: 0.25,
                         fill: true,
-                        pointRadius: 1,
-                        pointHoverRadius: 6,
-                        hitRadius: 10,
+                        pointRadius: 0,
+                        pointHoverRadius: 5,
+                        hitRadius: 12,
+                        borderWidth: 2,
                     }]
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
+                    normalized: true,
+                    animation: false,
                     interaction: {
-                        mode: 'nearest',
+                        mode: 'index',
                         intersect: false,
+                    },
+                    elements: {
+                        line: {
+                            cubicInterpolationMode: 'monotone',
+                        }
+                    },
+                    layout: {
+                        padding: {
+                            bottom: 12
+                        }
+                    },
+                    plugins: {
+                        decimation: {
+                            enabled: true,
+                            algorithm: 'lttb',
+                            samples: 250,
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return `Elevation: ${context.parsed.y} m`;
+                                }
+                            }
+                        }
                     },
                     onHover: function (_evt, activeEls) {
                         if (activeEls && activeEls.length > 0) {
                             const idx = activeEls[0].index;
                             const coord = profileCoords[idx];
+
                             if (coord) {
                                 highlightPointOnMap(map, coord);
                             }
@@ -171,11 +200,59 @@ export function enableElevationProfile(map, options = {}) {
                         }
                     },
                     scales: {
-                        y: { title: { display: true, text: 'Elevation (m)' } },
-                        x: { title: { display: true, text: 'Distance (km)' } },
+                        y: {
+                            title: { display: true, text: 'Elevation (m)' },
+                            ticks: {
+                                precision: 0,
+                            }
+                        },
+                        x: {
+                            title: { display: true, text: 'Distance (km)' },
+                            ticks: {
+                                maxTicksLimit: 8,
+                            }
+                        },
                     }
                 }
             });
+
+            // new Chart(ctx, {
+            //     type: 'line',
+            //     data: {
+            //         labels: distances,
+            //         datasets: [{
+            //             label: 'Elevation (m)',
+            //             data: elevations.map(v => Math.round(Number(v))),
+            //             tension: 0.25,
+            //             fill: true,
+            //             pointRadius: 1,
+            //             pointHoverRadius: 6,
+            //             hitRadius: 10,
+            //         }]
+            //     },
+            //     options: {
+            //         responsive: true,
+            //         interaction: {
+            //             mode: 'nearest',
+            //             intersect: false,
+            //         },
+            //         onHover: function (_evt, activeEls) {
+            //             if (activeEls && activeEls.length > 0) {
+            //                 const idx = activeEls[0].index;
+            //                 const coord = profileCoords[idx];
+            //                 if (coord) {
+            //                     highlightPointOnMap(map, coord);
+            //                 }
+            //             } else {
+            //                 clearProfileHighlight();
+            //             }
+            //         },
+            //         scales: {
+            //             y: { title: { display: true, text: 'Elevation (m)' } },
+            //             x: { title: { display: true, text: 'Distance (km)' } },
+            //         }
+            //     }
+            // });
 
             // Remove draw interaction after drawing once
             if (draw) {

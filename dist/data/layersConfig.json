@@ -110,6 +110,7 @@
     "visor":
         {
             "pdf_print":{"mapfish": true, "canvas": true}, 
+            "debug": true,
             "groups": [
 
             {
@@ -1306,6 +1307,7 @@
 
     "mapviewer": {
         "pdf_print":{"mapfish": true, "canvas": true}, 
+        "debug": false,
         "groups": [
             {
                 "id": 1,
@@ -2404,7 +2406,7 @@
         ]
     },
     "inspire": {
-        "pdf_print":{"mapfish": false, "canvas": false}, 
+        "pdf_print":{"mapfish": true, "canvas": false}, 
         "groups": [
             {
                 "id": 2,

@@ -132,6 +132,10 @@ export function initLayerFiltersManager({ map, refreshLayer, getWfsDescribeUrl }
         // Reset rows: keep only one empty row
         $pane.find(".layerFilterRows").empty();
         addRowToPane($pane);
+
+        const fields = schemaCache.get(layerName);
+        populateFieldsSelect($pane, fields);
+
         normalizeRowsUi($pane);
 
         updateLayerFilterIcon(layerName);
@@ -210,6 +214,9 @@ function ensureTabExists(layerName, layerTitle) {
       </li>
     `;
 
+    let showCQLPreview = window.DEBUG_ENABLED === true ? "":"d-none";
+
+
     const paneHtml = `
       <div class="tab-pane fade"
            id="${paneId}"
@@ -245,7 +252,7 @@ function ensureTabExists(layerName, layerTitle) {
         </div>
 
 
-        <div class="mt-3 small">
+        <div class="mt-3 small ${showCQLPreview}">
           <div class="text-muted">CQL preview</div>
           <code class="d-block p-2 bg-light border rounded layerFilterPreview"></code>
         </div>
@@ -307,6 +314,15 @@ function renderFilterRowHtml({ isFirstRow }) {
             </div>
         `;
 
+    // <option value="=">=</option>
+    // <option value="!=">!=</option>
+    // <option value=">">&gt;</option>
+    // <option value=">=">&gt;=</option>
+    // <option value="<">&lt;</option>
+    // <option value="<=">&lt;=</option>
+    // <option value="ILIKE">Contains</option>
+    // <option value="IN">IN (a,b,c)</option>
+
     // Field select options are filled later by populateFieldsSelect().
     return `
       <div class="row g-2 align-items-end layerFilterRow">
@@ -321,13 +337,9 @@ function renderFilterRowHtml({ isFirstRow }) {
           <label class="form-label small mb-1">${UI.OPERATOR}</label>
           <select class="form-select form-select-sm layerFilterOp">
             <option value="=">=</option>
-            <option value="!=">!=</option>
-            <option value=">">&gt;</option>
             <option value=">=">&gt;=</option>
-            <option value="<">&lt;</option>
             <option value="<=">&lt;=</option>
             <option value="ILIKE">Contains</option>
-            <option value="IN">IN (a,b,c)</option>
           </select>
         </div>
 
@@ -618,8 +630,10 @@ function cssEscape(s) {
 
 //Crear all filters when LLM search is called
 export function clearAllFilters(){
-    for (const layerName of layerRegistry.keys()) {
+    const layers = Array.from(layerRegistry.values()).map(layer => (layer.get("layerName")));
+    for (const layerName of layers) {
         delete window.currentCqlFilterByLayer[layerName];
         updateLayerFilterIcon(layerName);
     }
+
 }
