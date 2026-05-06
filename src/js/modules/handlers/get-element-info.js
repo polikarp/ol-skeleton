@@ -109,7 +109,8 @@ export function createHybridIdentifyHandler({
         if (
             window.MAP_CLICK_BLOCKED === true ||
             state.measuring === true ||
-            state.profiling === true
+            state.profiling === true ||
+            state.streetViewMode === true
         ) {
             return;
         }

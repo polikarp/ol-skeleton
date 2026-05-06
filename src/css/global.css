@@ -1510,6 +1510,58 @@ button.ol-rotate-reset{
 }
 
 
+.street-view-panel {
+    display: none;
+    position: fixed;
+    right: 50px;
+    bottom: 180px;
+    width: 800px;
+    height: 500px;
+    min-width: 320px;
+    min-height: 240px;
+    background: #fff;
+    z-index: 9999;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.25);
+    overflow: hidden;
+}
+
+.street-view-header {
+    cursor: move;
+    height: 38px;
+    padding: 6px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+}
+
+#streetViewContainer {
+    width: 100%;
+    height: calc(100% - 38px);
+}
+
+.ui-resizable-handle {
+    z-index: 10000;
+}
+
+.street-view-status {
+    position: absolute;
+    top: 45px;
+    left: 10px;
+    right: 10px;
+    padding: 6px;
+    background: rgba(255,255,255,.9);
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.street-view-active,
+.street-view-active .ol-viewport {
+    cursor: crosshair !important;
+}
+
 /*Tablet view*/
 @media (max-width: 1023px) {
     input[type="checkbox"] {

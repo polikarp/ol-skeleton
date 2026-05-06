@@ -61,6 +61,8 @@ import { getBaseUrlFromSource } from './modules/map/utils';
 
 import { exportVisibleMapToPdf, exportOpenLayersMapToPdf } from './modules/export/exportToPDF'
 
+import { registerStreetViewTool } from "./modules/streetView/street-view-tool";
+
 import OSM from 'ol/source/OSM';
 import XYZ from 'ol/source/XYZ';
 
@@ -134,6 +136,7 @@ async function bootstrapLayersFromConfig() {
   window.CUSTOM_LAYERS = customLayers;
   window.PDF_PRINT = pdf_print;
   window.DEBUG_ENABLED =  debug === true;
+  window.GOOGLE_API_KEY = LAYERS_CONFIG.google_api_key;
 }
 
 /**
@@ -210,6 +213,8 @@ async function initApp() {
 
   let gisBottomMenuResult = registerGisBottomMenuTools(map, { useProxy: USE_PROXY });
 
+  const streetViewTool = registerStreetViewTool(map);
+
   registerMoveEndHandler(map, 5);
 
   initBaseMapMenu({
@@ -266,7 +271,10 @@ async function initApp() {
       count: 50,
       notify: (msg) => console.log(msg),
       onResults: ({ mode, results }) => writeResultsOnGFIPanel(mode, results),
-      getState: gisBottomMenuResult.getState
+      getState: () => ({
+            ...gisBottomMenuResult.getState(),
+            ...streetViewTool.getState()
+        })
     }),
     { id: "identify-hybrid", order: 100 }
   );

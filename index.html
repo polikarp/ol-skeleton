@@ -69,6 +69,17 @@
             </div>
         </div>
 
+        <!-- Street view container-->
+         <div id="streetViewPanel" class="street-view-panel">
+            <div class="street-view-header">
+                <strong>Street View</strong>
+                <button id="closeStreetView">×</button>
+            </div>
+
+            <div id="streetViewStatus" class="street-view-status"></div>
+            <div id="streetViewContainer"></div>
+        </div>
+
         <!-- Elevation profile -->
         <div id="profileWindow" style="display:none;">
             <div class="profile-header">
@@ -154,16 +165,16 @@
                     <span class="menu-label">BBox</span>
                 </button>
 
-                <div class="button-separator"></div>
+                <div class="button-separator hideResponsive"></div>
 
-                <button id="rotate" class="bottom-menu-button" title="Reset rotation">
+                <button id="rotate" class="bottom-menu-button hideResponsive" title="Reset rotation">
                     <i class="fa-solid fa-compass"></i>
                     <span class="menu-label">Reset</span>
                 </button>
 
-                <div class="button-separator"></div>
+                <div class="button-separator hideResponsive"></div>
 
-                <button id="rotate90" class="bottom-menu-button" title="Rotate left">
+                <button id="rotate90" class="bottom-menu-button hideResponsive" title="Rotate left">
                     <i class="fas fa-rotate-left"></i>
                     <span class="menu-label">Rotate</span>
                 </button>
@@ -184,6 +195,12 @@
                 <button id="clientPdfBtn" title="Export map to PDF" class="bottom-menu-button">
                     <i class="fa-solid fa-file-pdf"></i>
                     <span class="menu-label">PDF client</span>
+                </button>
+
+                <div class="button-separator hideResponsive"></div>
+                <button id="btnStreetView" class="bottom-menu-button hideResponsive" title="Street View">
+                    <i class="fa-solid fa-street-view"></i>
+                    <span class="menu-label">Street View</span>
                 </button>
 
                 <div class="button-separator hideResponsive"></div>
