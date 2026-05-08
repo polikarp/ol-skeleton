@@ -19,6 +19,12 @@ export function registerMoveEndHandler(map, minZoomLevelDisplay) {
             $btn.prop('disabled', false).css('cursor', 'pointer');
         }
 
+        if(zoom < minZoomLevelDisplay){
+            $(".ol-overviewmap").addClass("d-none");
+        }else{
+            $(".ol-overviewmap").removeClass("d-none");
+        }
+
 
     });
 

@@ -1562,6 +1562,34 @@ button.ol-rotate-reset{
     cursor: crosshair !important;
 }
 
+.ol-overviewmap {
+    left: auto !important;
+    right: 10px;
+    bottom: 100px !important;
+    border: 3px solid #ffffff;
+}
+
+.ol-overviewmap .ol-overviewmap-map {
+    width: 220px;
+    height: 160px;
+    box-shadow: 0 3px 12px rgba(0,0,0,.35);
+    border-radius: 6px;
+}
+
+.ol-overviewmap button {
+    background: rgba(255,255,255,.9);
+}
+
+.ol-overviewmap .ol-overviewmap-box {
+    border: 3px solid #ffcc00 !important;
+    background: rgba(255, 204, 0, 0.15) !important;
+    box-shadow: 0 0 0 2px #222, 0 0 10px rgba(0, 0, 0, 0.75);
+}
+
+.ol-overviewmap .map-copyright {
+    display: none !important;
+}
+
 /*Tablet view*/
 @media (max-width: 1023px) {
     input[type="checkbox"] {
@@ -2046,6 +2074,10 @@ button.ol-rotate-reset{
 
     #map-compass{
         display:none;
+    }
+
+    .ol-overviewmap {
+        display: none;
     }
 
 }

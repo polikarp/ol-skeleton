@@ -81,6 +81,7 @@ export function createOlLayerFromServiceType({layerName, serviceBaseUrl, version
         serviceVersion: version || null,
         layerName,
         title: title || layerName,
+        geomColumn: options.geomColumn
     };
 
     if (type === "WMS") {
@@ -102,7 +103,7 @@ export function createOlLayerFromServiceType({layerName, serviceBaseUrl, version
 
             // Build spatial filter
             // Note: geom must match DB geometry column name in GeoServer
-            cqlFilter = `INTERSECTS(geom, ${wkt})`;
+            cqlFilter = `INTERSECTS(${options.geomColumn}, ${wkt})`;
         }
 
         const params = {
@@ -284,7 +285,7 @@ export function createOlLayerFromServiceType({layerName, serviceBaseUrl, version
  */
 export function addLayerToMap(map, layerName, { options = {} }) {
 
-    const { serviceBaseUrl, version, title, serviceType, tiled, format } = layersInfo.get(layerName);
+    const { serviceBaseUrl, version, title, serviceType, tiled, format, geomColumn } = layersInfo.get(layerName);
     if (!map) throw new Error("Map is required");
     if (!layerName || !serviceBaseUrl) throw new Error("layerName and serviceBaseUrl are required");
 
@@ -296,6 +297,7 @@ export function addLayerToMap(map, layerName, { options = {} }) {
         return existing;
     }
 
+    options['geomColumn'] = geomColumn;
     const olLayer = createOlLayerFromServiceType({layerName, serviceBaseUrl, version, title, serviceType, tiled, format, options,});
 
     map.addLayer(olLayer);

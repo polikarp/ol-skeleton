@@ -219,6 +219,9 @@ export function renderGfiRightPanel({ results, headerId = "gfiPanelHeader", cont
 
     $container.off("mouseenter.gfiGeom", "h2.accordion-header[data-hid]");
     $container.off("mouseleave.gfiGeom", "h2.accordion-header[data-hid]");
+    $container.off("click.gfiGeom", "h2.accordion-header[data-hid]");
+    $container.off("click.gfi-buttom", "i.gfi-zoom-icon");
+
 
     function isMobile() {
         return window.matchMedia("(max-width: 767px)").matches;
@@ -264,12 +267,14 @@ export function renderGfiRightPanel({ results, headerId = "gfiPanelHeader", cont
 
         const headerId = $(this).data("hid");
         const geom = geomByHeaderId[headerId];
+        console.log(headerId + '' + $(this).attr("title"));
         if (!geom) return;
 
         //onGeomHover?.(geom, { headerId }); // highlight (no zoom on mobile from hover)
         zoomToGeometryFromGeoJson(geom, { offsetRatio: 0.5, duration: 300, maxZoom: 10 });
     });
 
+    
     $container.off("click.exportGeojson").on("click.exportGeojson", "[data-gfi-export-key]", function (e) {
         // Prevent accordion toggle
         e.preventDefault();

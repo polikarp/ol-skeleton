@@ -12,6 +12,7 @@ export function buildWfsGetFeatureUrl({
   bboxCrs,
   cqlFilter,
   count,
+  geomColumn
 }) {
     if (!baseUrl) throw new Error("baseUrl is required");
     if (!typeName) throw new Error("typeName is required");
@@ -33,8 +34,7 @@ export function buildWfsGetFeatureUrl({
     // GeoServer: if CQL is present, include bbox inside the CQL to avoid bbox+cql issues.
     let finalCql = hasCql ? String(cqlFilter).trim() : "";
     if (hasCql && hasBbox) {
-        const geomProp = "geom"; // IMPORTANT: adapt if your geometry attribute is different (e.g. "the_geom")
-        const bboxCql = `BBOX(${geomProp}, ${bbox[0]}, ${bbox[1]}, ${bbox[2]}, ${bbox[3]}, '${bboxCrs}')`;
+        const bboxCql = `BBOX(${geomColumn}, ${bbox[0]}, ${bbox[1]}, ${bbox[2]}, ${bbox[3]}, '${bboxCrs}')`;
         finalCql = `(${finalCql}) AND ${bboxCql}`;
     }
 

@@ -62,6 +62,8 @@ import { getBaseUrlFromSource } from './modules/map/utils';
 import { exportVisibleMapToPdf, exportOpenLayersMapToPdf } from './modules/export/exportToPDF'
 
 import { registerStreetViewTool } from "./modules/streetView/street-view-tool";
+ 
+import { registerOverviewMapTool } from "./modules/map/overview-map-tool";
 
 import OSM from 'ol/source/OSM';
 import XYZ from 'ol/source/XYZ';
@@ -213,7 +215,7 @@ async function initApp() {
 
   let gisBottomMenuResult = registerGisBottomMenuTools(map, { useProxy: USE_PROXY });
 
-  const streetViewTool = registerStreetViewTool(map);
+
 
   registerMoveEndHandler(map, 5);
 
@@ -229,6 +231,9 @@ async function initApp() {
   bindCheckboxToggles(map, wfsQueryExecutor, { selector: ".layerCheckbox", removeOnUncheck: true });
 
   initHighlight(map, { dataProjection: MAP_CRS, zIndex: 9999 });
+
+  registerOverviewMapTool(map);
+
 
   // Query service
   queryService = createWfsLayerQueryService({
@@ -252,6 +257,8 @@ async function initApp() {
       writeResultsOnGFIPanel(SEARCH_SERVICE, resp.results);
     },
   });
+
+  const streetViewTool = registerStreetViewTool(map);
 
   // Single click dispatcher
   const dispatcher = createSingleClickDispatcher(map);

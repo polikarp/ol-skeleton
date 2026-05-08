@@ -277,6 +277,8 @@ export function renderLayersMenuFromWms(
         const tiled = layer.options?.tiled ?? true;
         const serviceType = getServiceTypeForGroup(group, layer);
 
+        const configuredGeomColumn = layer.geom_field || null;
+
         layersInfo.set(layerName, {
             layerName,
             title,
@@ -287,8 +289,43 @@ export function renderLayersMenuFromWms(
             format,
             tiled,
             groupId: group.id,
-            groupKey
+            groupKey,
+            geomColumn: configuredGeomColumn,
+
         });
+
+        // Async validation against GeoServer
+        if (serviceBaseUrl && layerName && ['WMS', 'WFS'].includes(serviceType.toUpperCase())) {
+            fetchGeometryColumnFromGeoServer({
+                serviceBaseUrl,
+                layerName,
+                version: '2.0.0'
+            }).then((detectedGeomColumn) => {
+                const currentInfo = layersInfo.get(layerName);
+
+                if (!currentInfo) {
+                    return;
+                }
+
+                layersInfo.set(layerName, {
+                    ...currentInfo,
+                    geomColumn: detectedGeomColumn || currentInfo.geomColumn,
+                });
+            });
+        }
+
+        // layersInfo.set(layerName, {
+        //     layerName,
+        //     title,
+        //     desc,
+        //     serviceBaseUrl,
+        //     version,
+        //     serviceType,
+        //     format,
+        //     tiled,
+        //     groupId: group.id,
+        //     groupKey
+        // });
 
         const safeId = getSafeId(`wms_${groupKey}_${layerName}`);
         const inputId = `${safeId}_switch`;
@@ -490,6 +527,86 @@ function buildLegendGraphicUrl({ serviceBaseUrl, layerName, version = "1.3.0", f
     }
 
     return `${serviceBaseUrl}?${params.toString()}`;
+}
+
+/**
+ * Generates url to wfs get all data of layer
+ * @param {} serviceBaseUrl 
+ * @param {*} layerName 
+ * @param {*} version 
+ * @returns 
+ */
+function getWfsDescribeFeatureTypeUrl(serviceBaseUrl, layerName, version = '2.0.0') {
+    const url = new URL(serviceBaseUrl);
+
+    // Replace WMS endpoint with OWS when needed
+    url.pathname = url.pathname.replace(/\/wms$/i, '/ows');
+
+    url.searchParams.set('service', 'WFS');
+    url.searchParams.set('version', version);
+    url.searchParams.set('request', 'DescribeFeatureType');
+    url.searchParams.set('typeNames', layerName);
+
+    return url.toString();
+}
+
+/**
+ * Get geometry column from xml data of layer info
+ * @param {*} param0 
+ * @returns 
+ */
+async function fetchGeometryColumnFromGeoServer({
+    serviceBaseUrl,
+    layerName,
+    version = '2.0.0'
+}) {
+
+    const describeUrl = getWfsDescribeFeatureTypeUrl(
+        serviceBaseUrl,
+        layerName,
+        version
+    );
+
+    try {
+        const response = await fetch(describeUrl);
+
+        if (!response.ok) {
+            throw new Error(`DescribeFeatureType failed: ${response.status}`);
+        }
+
+        const xmlText = await response.text();
+        const xml = new DOMParser().parseFromString(xmlText, 'application/xml');
+
+        const elements = Array.from(
+            xml.getElementsByTagNameNS('*', 'element')
+        );
+
+        const geometryElement = elements.find((el) => {
+            const type = (el.getAttribute('type') || '').toLowerCase();
+
+            // Detect GML geometry property types
+            return (
+                type.includes('gml:') &&
+                (
+                    type.includes('geometry') ||
+                    type.includes('point') ||
+                    type.includes('curve') ||
+                    type.includes('line') ||
+                    type.includes('surface') ||
+                    type.includes('polygon')
+                )
+            );
+        });
+        const geomColumn = geometryElement?.getAttribute('name') || null;
+        return geomColumn;
+    } catch (error) {
+        console.warn(
+            `Could not detect geometry column for layer ${layerName}`,
+            error
+        );
+
+        return null;
+    }
 }
 
 

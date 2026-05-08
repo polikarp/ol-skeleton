@@ -71,10 +71,28 @@ export function registerStreetViewTool(map) {
     streetViewLayer.setVisible(false);
     map.addLayer(streetViewLayer);
 
-    $panel.draggable({
-        handle: '.street-view-header',
-        scroll: false
-    });
+    function initStreetViewDraggable() {
+        if (!$panel.length) {
+            return;
+        }
+
+        if (typeof $panel.draggable !== 'function') {
+            console.error('jQuery UI draggable is not loaded');
+            return;
+        }
+
+        // Avoid duplicated or broken draggable instances
+        if ($panel.data('ui-draggable')) {
+            $panel.draggable('destroy');
+        }
+
+        $panel.draggable({
+            handle: '.street-view-header',
+            scroll: false,
+            containment: 'window',
+            appendTo: 'body'
+        });
+    }
 
     function enable() {
         streetViewMode = true;
@@ -209,7 +227,10 @@ export function registerStreetViewTool(map) {
             lng: lonlat[0]
         };
 
-        $panel.fadeIn(150);
+        $panel.fadeIn(150, function () {
+            initStreetViewDraggable();
+        });
+
         showStatus('Buscando Street View...');
 
         service.getPanorama(
@@ -280,6 +301,21 @@ export function registerStreetViewTool(map) {
 
         openStreetView(evt.coordinate);
         disable();
+    });
+
+    /**
+     * Handle esc keyboard button to disable street view
+     */
+    $(document).on('keydown.streetview', (e) => {
+        if (e.key !== 'Escape') {
+            return;
+        }
+        if (!streetViewMode) {
+            return;
+        }
+        disable();
+        hideStatus();
+        removeStreetViewMarker();
     });
 
     return {

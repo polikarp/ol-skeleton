@@ -23,6 +23,7 @@ export function createWfsLayerQueryService({
                     typeName: layer.get("layerName"),
                     wfsEnabled: !!layer.get("wfsEnabled"),
                     wfsVersion: layer.get("wfsVersion") || "2.0.0",
+                    geomColumn: layer.get("geomColumn") || "geom"
                 }))
         .filter(c => c.baseUrl && c.typeName && c.wfsEnabled);
     }
@@ -36,6 +37,7 @@ export function createWfsLayerQueryService({
             bboxCrs: `EPSG:${srid}`,
             cqlFilter: finalCql,
             count,
+            geomColumn: c.geomColumn
         });
 
         const url = applyProxyIfNeeded(urlAux, useProxy, proxyPath);
@@ -77,24 +79,22 @@ export function createWfsLayerQueryService({
         //Store on window environment to use that geometry to export
         window.LAST_DRAW_GEOM = queryGeom;
 
-
-        const spatialCql = buildIntersectsCql({
-            geomProp: geomPropName,
-            geometry: queryGeom,
-            srid,
-        });
-
         const bbox = queryGeom.getExtent();
 
         const results = await Promise.all(
             candidates.map(c => {
                 const attrCql = getCqlFilter({ layer: c.layer, context });
+                const spatialCql = buildIntersectsCql({
+                    geomProp: c.geomColumn,
+                    geometry: queryGeom,
+                    srid,
+                });
                 const finalCql = combineCql(attrCql, spatialCql);
                 return fetchCandidate(c, bbox, finalCql);
             })
         );
 
-        return { ok: true, spatialCql, results };
+        return { ok: true, results };
     }
 
     return { query };
