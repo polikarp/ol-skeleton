@@ -342,6 +342,8 @@ table.table-custom button{
 
 /* Estilos gis toolbar*/
 
+/*
+
 .button-separator-vertical {
     width: 60%;
     height: 1px;
@@ -391,54 +393,12 @@ table.table-custom button{
     box-shadow: 2px 0 5px rgba(0,0,0,0.1);
 }
 
-/* .toolbar-button {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    margin: 8px 0;
-    width: 100%;
-    text-align: center;
-}
-
-.toolbar-button:hover {
-    background-color: #f0f0f0;
-    border-radius: 5px;
-} */
-
-/* .gis-toolbar-flyout {
-    display: none;
-    position: fixed;
-    left: 75px;
-    width: 260px;
-    max-height: calc(80vh - 100px);
-
-    background-color: rgba(255, 255, 255, 0.90);
-    border-right: 1px solid #ccc;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.15);
-    padding: 12px;
-    z-index: 1049;
-    transition: transform 0.2s ease;
-
-    overflow: hidden;
-}
-
-.gis-toolbar-flyout .layers-list-wrapper {
-    max-height: calc(100vh - 190px);
-    overflow-y: auto;
-    overflow-x: hidden;
-} */
-
 
 .gis-toolbar-flyout {
     display: none;
     position: fixed;
     left: 75px;
     width: 260px;
-
-    /* altura controlada correctamente */
-    /* top: 120px; */
-    /* bottom: 20px;  */
     max-height: 80%;
     
     background-color: rgba(255, 255, 255, 0.90);
@@ -450,6 +410,102 @@ table.table-custom button{
 
     overflow-y: auto;
     overflow-x: hidden;
+}
+*/
+
+/* =========================================
+   GIS LEFT TOOLBAR
+========================================= */
+
+#gis-toolbar {
+    position: absolute;
+    top: 15%;
+    left: 10px;
+
+    z-index: 900;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 10px 6px;
+
+    background-color: rgba(255, 255, 255, 0.95);
+
+    border: 1px solid #ccc;
+    border-radius: 10px;
+
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+
+/* =========================================
+   SIDE PANEL / DRAWER
+========================================= */
+
+.gis-toolbar-flyout {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 320px;
+    height: 100dvh;
+    z-index: 1090;
+    padding: 16px;
+    background-color: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(6px);
+    border-right: 1px solid #ccc;
+    box-shadow: 4px 0 14px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+    transform: translateX(calc(-100% - 20px));
+    transition: transform 0.25s ease;
+}
+
+
+/* Open state */
+
+.gis-toolbar-flyout.is-open {
+    transform: translateX(0);
+}
+
+
+/* =========================================
+   LAYERS LIST
+========================================= */
+
+.gis-toolbar-flyout .layers-list-wrapper {
+    height: calc(100dvh - 115px);
+
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+
+/* =========================================
+   BASE MAP THUMBNAILS
+========================================= */
+
+#baseMapMenuContent {
+    max-height: calc(100dvh - 80px);
+
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.base-thumb {
+    width: 80px;
+    height: 80px !important;
+
+    object-fit: cover;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    transition: box-shadow 0.2s ease;
+}
+
+.base-thumb:hover {
+    box-shadow: 0 0 0 3px #0d6efd;
 }
 
 .separator {
@@ -1331,8 +1387,8 @@ i.icon-button.has-filter::after {
 /* Right button to show panel*/
 #mapFloatingControls {
     position: absolute;
-    top: 15%;
-    right: 2%;
+    top: 1%;
+    right: 1%;
     z-index: 1000;
     display: none;
 }
@@ -1351,7 +1407,7 @@ i.icon-button.has-filter::after {
   display: none;                /* controlled by .is-open */
   flex-direction: column;
   overflow: hidden;
-  opacity: 1;
+  opacity: 0.9;
 }
 
 #gfiRightPanel.is-open {
@@ -1595,7 +1651,7 @@ button.ol-rotate-reset{
 .viewer-logo {
     position: absolute;
     top: 1%;
-    right: 20px;
+    left: 10px;
     z-index: 500;
 
     display: flex;
@@ -1928,7 +1984,18 @@ button.ol-rotate-reset{
         left: 0;
         width: 100% !important;
         top: 0 !important;
+        height: 70%;
     }
+    /* .gis-toolbar-flyout {
+        width: 100%;
+        height: 100dvh;
+
+        padding: 16px;
+    }
+    */
+    .gis-toolbar-flyout .layers-list-wrapper {
+        height: 100%;
+    } 
 
     .map-copyright{
         display:none;

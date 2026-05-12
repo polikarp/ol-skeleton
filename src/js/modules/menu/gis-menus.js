@@ -119,38 +119,90 @@ export function registerGisBottomMenuTools(map, options = {}) {
 
 }
 
+// export function registerGisLeftMenu(map, options = {}) {
+//     $('.toolbar-button').on('click', function (e) {
+//         e.stopPropagation();
+
+//         const targetId = $(this).data('target');
+//         const $targetMenu = $('#' + targetId);
+//         const buttonOffsetTop = $(this).offset().top;
+
+
+//         $('.gis-toolbar-flyout').not($targetMenu).fadeOut(150);
+
+
+//         if ($targetMenu.is(':visible')) {
+//             $targetMenu.fadeOut(150);
+//         } else {
+//             $targetMenu
+//                 .css('top', buttonOffsetTop + 'px')
+//                 .fadeIn(200);
+//         }
+//     });
+
+//     $('.base-thumb').on('click', function () {
+//         const selectedLayer = $(this).data('layer');
+//         map.getLayers().forEach(layer => {
+//             if (!layer.get('isBaseLayer')) {
+//                 return;
+//             }
+//             layer.setVisible(layer.get('name') === selectedLayer);
+//         });
+
+//         $('.base-thumb').css('border', '2px solid transparent');
+//         $(this).css('border', '2px solid #0d6efd');
+//     });
+// }
+
 export function registerGisLeftMenu(map, options = {}) {
+
     $('.toolbar-button').on('click', function (e) {
         e.stopPropagation();
 
         const targetId = $(this).data('target');
         const $targetMenu = $('#' + targetId);
-        const buttonOffsetTop = $(this).offset().top;
 
+        $('.gis-toolbar-flyout')
+            .not($targetMenu)
+            .removeClass('is-open');
 
-        $('.gis-toolbar-flyout').not($targetMenu).fadeOut(150);
-
-
-        if ($targetMenu.is(':visible')) {
-            $targetMenu.fadeOut(150);
-        } else {
-            $targetMenu
-                .css('top', buttonOffsetTop + 'px')
-                .fadeIn(200);
-        }
+        $targetMenu.toggleClass('is-open');
     });
 
+
+    $('.closeLeftMenu').on('click', function (e) {
+        e.stopPropagation();
+
+        const targetId = $(this).data('target');
+
+        $('#' + targetId).removeClass('is-open');
+    });
+
+
     $('.base-thumb').on('click', function () {
+
         const selectedLayer = $(this).data('layer');
+
         map.getLayers().forEach(layer => {
+
             if (!layer.get('isBaseLayer')) {
                 return;
             }
-            layer.setVisible(layer.get('name') === selectedLayer);
+
+            layer.setVisible(
+                layer.get('name') === selectedLayer
+            );
         });
 
-        $('.base-thumb').css('border', '2px solid transparent');
-        $(this).css('border', '2px solid #0d6efd');
+        $('.base-thumb').css(
+            'border',
+            '2px solid transparent'
+        );
+
+        $(this).css(
+            'border',
+            '2px solid #0d6efd'
+        );
     });
 }
 
