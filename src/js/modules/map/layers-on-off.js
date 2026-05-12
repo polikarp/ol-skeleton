@@ -46,7 +46,7 @@ function normalizeType(type) {
  * @param {string} params.serviceBaseUrl
  * @returns {string}
  */
-function buildLayerKey({ type, layerName, serviceBaseUrl }) {
+export function buildLayerKey({ type, layerName, serviceBaseUrl }) {
   return `${normalizeType(type)}|${serviceBaseUrl}|${layerName}`;
 }
 
@@ -429,15 +429,21 @@ export function hasLayer({ layerName, serviceBaseUrl, serviceType }) {
 export function clearAllLayers(map) {
     if (!map) throw new Error("Map is required");
     clearAllFilters();
-    for (const layer of layerRegistry.values()) {
-            const layerName = layer.get("layerName");
-            if($(`#layersMenuSelector input[type="checkbox"][data-layer="${layerName}"]`).is(":checked")){
-                 $(`#layersMenuSelector input[type="checkbox"][data-layer="${layerName}"]`).trigger("click");
-            }else{
-                map.removeLayer(layer);
-            }
-            //$(`#layersMenuSelector input[type="checkbox"][data-layer="${layerName}"]`).prop("checked", false);
 
+    for (const layer of layerRegistry.values()) {
+          const layerName = layer.get("layerName");
+          const checkedInputs = $('#layersMenuSelector input[type="checkbox"]:checked').toArray();
+          checkedInputs.forEach(input => {
+              $(input).trigger("click");
+          });
+
+
+            // if($(`#layersMenuSelector input[type="checkbox"][data-layer="${layerName}"]`).is(":checked")){
+            //      $(`#layersMenuSelector input[type="checkbox"][data-layer="${layerName}"]`).trigger("click");
+            // }else{
+            //     map.removeLayer(layer);
+            // }
+            //$(`#layersMenuSelector input[type="checkbox"][data-layer="${layerName}"]`).prop("checked", false);
     }
-    layerRegistry.clear();
+    //layerRegistry.clear();
 }

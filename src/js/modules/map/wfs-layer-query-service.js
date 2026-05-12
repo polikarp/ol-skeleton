@@ -3,6 +3,7 @@ import { applyProxyIfNeeded } from "./wms-capabilities-loader";
 import { buildWfsGetFeatureUrl } from "../../legacy/wfs-url-builder";
 import { buildIntersectsCql, combineCql } from "./cql-spatial-builder";
 import { polygonFromExtent } from "./geometry-helpers";
+import VectorLayer from "ol/layer/Vector";
 
 export function createWfsLayerQueryService({
   layerRegistry,
@@ -13,10 +14,11 @@ export function createWfsLayerQueryService({
   srid = 25830,
   count = 5000,
 }) {
+              
 
     function listActiveCandidates() {
         return Array.from(layerRegistry.values())
-            .filter(l => l?.getVisible?.())
+            .filter(l => l?.getVisible?.() && !(l instanceof VectorLayer) && l.get("serviceType") != "FILE")
                 .map(layer => ({
                     layer,
                     baseUrl: layer.get("serviceBaseUrl"),

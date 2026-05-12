@@ -3,6 +3,7 @@ import {extractLegendItems} from '../map/get-legend-json';
 import { layersInfo, PROXY_PATH } from "../map/map-config";
 
 
+
 /**
  * Build HTML for the layers menu from groups + parsed WMS layers.
  *
@@ -33,187 +34,6 @@ import { layersInfo, PROXY_PATH } from "../map/map-config";
  */
 
 let layersLegends = {};
-
-
-
-// export function renderLayersMenuFromWms(
-//     bootstrap,
-//     groupsLayers,
-//     { useProxy = false, proxyPath = PROXY_PATH, showLegends = true, legendScale = null } = {}
-// ) {
-//     const $menu = $("#layersMenuSelector");
-//     $menu.empty();
-
-//     const groups = (bootstrap?.groups || [])
-//         .slice()
-//         .sort((a, b) => (a.order_idx ?? 9999) - (b.order_idx ?? 9999));
-
-//     const services = (bootstrap?.services || []);
-
-
-//     groups.forEach((group) => {
-//         const groupKey = group.key;
-//         const groupTitle = group.title || group.key;
-//         const isCollapsedDefault = !!group.collapsed_default;
-//         let serviceType = services.filter(s => s.group_id == group.id).map(s => s.type);
-//         const collapseId = `group_${String(groupKey).replace(/[^a-zA-Z0-9_-]/g, "_")}_layers`;
-//         const expanded = isCollapsedDefault ? "false" : "true";
-//         const collapseClass = isCollapsedDefault ? "collapse" : "collapse show";
-
-//         // Group header
-//         const groupHeaderHtml = `
-//             <li class="fw-bold mt-2">
-//                 <a class="text-decoration-none toggle-arrow"
-//                    data-bs-toggle="collapse"
-//                    href="#${collapseId}"
-//                    role="button"
-//                    aria-expanded="${expanded}"
-//                    aria-controls="${collapseId}"
-//                    data-group-key="${escapeAttr(groupKey)}"
-//                    data-group-title="${escapeAttr(groupTitle)}"
-//                    data-service-id="${group.service_id ?? ""}">
-//                     ${escapeHtml(groupTitle)}
-//                 </a>
-//             </li>
-//         `;
-
-//         const $groupUl = $(`
-//             <ul id="${collapseId}"
-//                 class="${collapseClass} list-unstyled layerSelector"
-//                 data-group-key="${escapeAttr(groupKey)}"
-//                 data-service-id="${group.service_id ?? ""}"
-//                 data-collapsed-default="${isCollapsedDefault ? "1" : "0"}">
-//             </ul>
-//         `);
-
-//         const layers = (groupsLayers?.[groupKey] || [])
-//             .slice()
-//             .sort((a, b) => (a.title || a.name).localeCompare(b.title || b.name));
-
-//         if (layers.length === 0) {
-//             $groupUl.append(`
-//                 <li class="d-flex align-items-center mb-1 text-muted"
-//                     data-empty="true"
-//                     data-group-key="${escapeAttr(groupKey)}">
-//                     <span class="small">No layers</span>
-//                 </li>
-//             `);
-//         } else {
-//             layers.forEach((layer) => {
-//                 const layerName = layer.name || layer.layer_name;
-//                 const title = layer.title || layer.name;
-//                 const desc = layer.desc || layer.description ||  "";
-//                 const serviceBaseUrl = layer.serviceBaseUrl || layer.base_url;
-//                 const version = layer.serviceVersion || layer.options.version || "1.3.0";
-//                 const format = layer.options?.format ?? "image/png";
-//                 const tiled = layer.options?.tiled ?? true;
-//                 if (!serviceType.length) {
-//                     serviceType = layer.type;
-//                 }
-//                 //Store all layers info in this Map
-//                 layersInfo.set(layerName, { layerName, title, desc, serviceBaseUrl, version, serviceType, format, tiled });
-
-//                 const safeId = `wms_${groupKey}_${layerName}`.replace(/[^a-zA-Z0-9_-]/g, "_");
-//                 const inputId = `${safeId}_switch`;
-
-//                 // Legend URL (render-time)
-//                 let legendImgTag = "";
-//                 if (showLegends) {
-//                     const legendUrlDirect = buildLegendGraphicUrl({
-//                         serviceBaseUrl: serviceBaseUrl,
-//                         layerName: layerName,
-//                         version: version,
-//                         style: null,
-//                         format: format,
-//                         scale: legendScale,
-//                     });
-
-//                     const legendUrlDirectJson = buildLegendGraphicUrl({
-//                         serviceBaseUrl: serviceBaseUrl,
-//                         layerName: layerName,
-//                         version: version,
-//                         style: null,
-//                         format: "application/json",
-//                         scale: legendScale,
-//                     });
-
-
-//                     //const legendUrl = applyProxyIfNeeded(legendUrlDirect, useProxy, proxyPath);
-
-//                     const legendJson = applyProxyIfNeeded(legendUrlDirectJson, useProxy, proxyPath);
-
-//                     //Store in layersLegends object layers legends in json format to write with our html/css
-//                     loadLegendJsonPromise(
-//                             legendJson,
-//                             (legendItems) => {
-//                                 layersLegends[layerName] = legendItems;
-//                             },
-//                             (err) => console.error(layerName + '   ' + err)
-//                         );
-
-
-//                     // Hidden by default; you can show/hide on checkbox change.
-//                     // We add data-legend-url to make toggling trivial later.
-//                     legendImgTag = `
-//                         <div class="wms-legend mt-1 ms-4"
-//                              data-layer="${escapeAttr(layerName)}"
-//                              data-service-base-url="${escapeAttr(serviceBaseUrl)}"
-//                              data-legend-url="${escapeAttr(legendUrlDirect)}"
-//                              style="display:none;">
-//                             <img class="wms-legend-img"
-//                                  alt="Legend"
-//                                  src="${escapeAttr(legendUrlDirect)}"
-//                                  style="max-width: 100%; height:auto; display:block;">
-//                         </div>
-//                     `;
-//                 }
-
-//                 // NOTE: checkbox is NOT checked by default here.
-//                 // If you have initial active layers, set checked based on your own state and legend will show.
-//                 const checkedAttr = "";
-
-//                 const layerRowHtml = `
-//                     <li class="d-flex flex-column mb-1" data-layer="${escapeAttr(layerName)}">
-//                         <div class="d-flex align-items-center">
-//                             <input id="${inputId}"
-//                                    type="checkbox"
-//                                    role="switch"
-//                                    class="me-2 layerCheckbox"
-//                                    title="Add layer"
-//                                    ${checkedAttr}
-//                                    data-layer="${escapeAttr(layerName)}">
-
-//                             <label for="${inputId}" class="mb-0 flex-grow-1" title="${escapeAttr(desc)}">
-//                                 ${escapeHtml(title)}
-//                             </label>
-
-//                             &nbsp;&nbsp;
-
-//                             <i class="fa-solid fa-filter icon-button d-none layerFilterBtn"
-//                                data-layer="${escapeAttr(layerName)}">
-//                             </i>
-//                         </div>
-
-//                         ${legendImgTag}
-//                     </li>
-//                 `;
-
-//                 $groupUl.append(layerRowHtml);
-//             });
-//         }
-
-//         $menu.append(groupHeaderHtml);
-//         $menu.append($groupUl);
-//     });
-
-//     // After rendering, auto-show legends for pre-checked layers (if any).
-//     if (showLegends) {
-//         $("#layersMenuSelector .layerCheckbox:checked").each(function () {
-//             const $row = $(this).closest("li");
-//             $row.find(".wms-legend").show();
-//         });
-//     }
-// }
 
 export function renderLayersMenuFromWms(
     bootstrap,
@@ -314,19 +134,6 @@ export function renderLayersMenuFromWms(
             });
         }
 
-        // layersInfo.set(layerName, {
-        //     layerName,
-        //     title,
-        //     desc,
-        //     serviceBaseUrl,
-        //     version,
-        //     serviceType,
-        //     format,
-        //     tiled,
-        //     groupId: group.id,
-        //     groupKey
-        // });
-
         const safeId = getSafeId(`wms_${groupKey}_${layerName}`);
         const inputId = `${safeId}_switch`;
 
@@ -343,27 +150,6 @@ export function renderLayersMenuFromWms(
             });
 
             
-
-            // const legendUrlDirectJson = buildLegendGraphicUrl({
-            //     serviceBaseUrl,
-            //     layerName,
-            //     version,
-            //     style: null,
-            //     format: "application/json",
-            //     scale: legendScale
-            // });
-
-            // const legendJson = applyProxyIfNeeded(legendUrlDirectJson, useProxy, proxyPath);
-
-            // loadLegendJsonPromise(
-            //     legendJson,
-            //     (legendItems) => {
-            //         layersLegends[layerName] = legendItems;
-            //     },
-            //     (err) => console.error(`${layerName} ${err}`)
-            // );
-
-            
             legendImgTag = `
                 <div class="wms-legend mt-1 ms-4"
                     data-layer="${escapeAttr(layerName)}"
@@ -377,33 +163,44 @@ export function renderLayersMenuFromWms(
                         style="max-width: 100%; height:auto; display:block;">
                 </div>
             `;
-            
         }
 
-        return `
-            <li class="d-flex flex-column mb-1" data-layer="${escapeAttr(layerName)}">
-                <div class="d-flex align-items-center h-30">
-                    <input id="${inputId}"
-                           type="checkbox"
-                           role="switch"
-                           class="me-2 layerCheckbox"
-                           title="Add layer"
-                           data-layer="${escapeAttr(layerName)}">
+        return renderLayerMenuItem({
+            layerName,
+            title,
+            desc,
+            groupKey,
+            prefix: "wms",
+            showFilter: true,
+            showRemove: false,
+            extraHtml: legendImgTag,
+            checked: false
+        });
 
-                    <label for="${inputId}" class="mb-0 flex-grow-1" title="${escapeAttr(desc)}">
-                        ${escapeHtml(title)}
-                    </label>
+        // return `
+        //     <li class="d-flex flex-column mb-1" data-layer="${escapeAttr(layerName)}">
+        //         <div class="d-flex align-items-center h-30">
+        //             <input id="${inputId}"
+        //                    type="checkbox"
+        //                    role="switch"
+        //                    class="me-2 layerCheckbox"
+        //                    title="Add layer"
+        //                    data-layer="${escapeAttr(layerName)}">
 
-                    &nbsp;&nbsp;
+        //             <label for="${inputId}" class="mb-0 flex-grow-1" title="${escapeAttr(desc)}">
+        //                 ${escapeHtml(title)}
+        //             </label>
 
-                    <i class="fa-solid fa-filter icon-button d-none layerFilterBtn"
-                       data-layer="${escapeAttr(layerName)}">
-                    </i>
-                </div>
+        //             &nbsp;&nbsp;
 
-                ${legendImgTag}
-            </li>
-        `;
+        //             <i class="fa-solid fa-filter icon-button d-none layerFilterBtn"
+        //                data-layer="${escapeAttr(layerName)}">
+        //             </i>
+        //         </div>
+
+        //         ${legendImgTag}
+        //     </li>
+        // `;
     }
 
     function renderGroup(group, level = 0) {
@@ -480,6 +277,8 @@ export function renderLayersMenuFromWms(
     rootGroups.forEach(group => {
         $menu.append(renderGroup(group, 0));
     });
+
+    $menu.append(customLayersGroup());
 
     if (showLegends) {
         $("#layersMenuSelector .layerCheckbox:checked").each(function () {
@@ -609,6 +408,165 @@ async function fetchGeometryColumnFromGeoServer({
     }
 }
 
+/**
+ * Generates custom layer menu hidden by default. All custom layers will be added here
+ * @returns 
+ */
+function customLayersGroup(){
+    return `
+        <li id="customLayersGroup"
+            class="layer-group-wrapper d-none"
+            data-group-id="custom_layers"
+            data-group-key="custom_layers"
+            data-parent-id="">
+            
+            <div class="fw-bold mt-2">
+                <a class="text-decoration-none toggle-arrow"
+                data-bs-toggle="collapse"
+                href="#group_custom_layers_layers"
+                role="button"
+                aria-expanded="true"
+                aria-controls="group_custom_layers_layers"
+                data-group-key="custom_layers"
+                data-group-title="Custom Layers">
+                    Custom Layers
+                </a>
+            </div>
+
+            <ul id="group_custom_layers_layers"
+                class="collapse show list-unstyled layerSelector"
+                data-group-key="custom_layers"
+                data-collapsed-default="0">
+            </ul>
+        </li>
+    `;
+    
+}
+
+
+
+
+/**
+ * Generic function to add new layer item
+ * @param {*} param0 
+ * @returns 
+ */
+function renderLayerMenuItem({
+    layerName,
+    title,
+    desc = "",
+    groupKey,
+    prefix = "layer",
+    showFilter = true,
+    showRemove = false,
+    extraHtml = "",
+    checked = false
+}) {
+    const safeId = getSafeId(`${prefix}_${groupKey}_${layerName}`);
+    const inputId = `${safeId}_switch`;
+    const checked_html = checked ? 'checked' : '';
+
+    return `
+        <li class="d-flex flex-column mb-1" data-layer="${escapeAttr(layerName)}">
+            <div class="d-flex align-items-center h-30">
+                <input id="${inputId}"
+                       type="checkbox"
+                       role="switch"
+                       class="me-2 layerCheckbox"
+                       title="Add layer"
+                       ${checked_html}
+                       data-layer="${escapeAttr(layerName)}">
+
+                <label for="${inputId}" class="mb-0 flex-grow-1" title="${escapeAttr(desc)}">
+                    ${escapeHtml(title)}
+                </label>
+
+                &nbsp;&nbsp;
+
+                ${showFilter ? `
+                    <i class="fa-solid fa-filter icon-button d-none layerFilterBtn"
+                       data-layer="${escapeAttr(layerName)}">
+                    </i>
+                ` : ""}
+
+                ${showRemove ? `
+                    <i class="fa-solid fa-trash icon-button fileLayerRemoveBtn"
+                       title="Remove layer"
+                       data-layer="${escapeAttr(layerName)}">
+                    </i>
+                ` : ""}
+            </div>
+
+            ${extraHtml}
+        </li>
+    `;
+}
+
+/**
+ * Adds new layer on Custom layer group
+ * @param {*} fileLayers 
+ * @returns 
+ */
+export function appendFileLayersToMenu(fileLayers = []) {
+    const $customGroup = $("#customLayersGroup");
+    const $groupUl = $("#group_custom_layers_layers");
+
+    if (!$customGroup.length || !$groupUl.length || !Array.isArray(fileLayers)) {
+        return;
+    }
+
+    fileLayers.forEach(layer => {
+        const layerName = layer.name || layer.layerName;
+
+        if (!layerName) {
+            return;
+        }
+
+        if ($groupUl.find(`li[data-layer="${escapeAttr(layerName)}"]`).length) {
+            return;
+        }
+
+        layersInfo.set(layerName, {
+            layerName,
+            title: layer.title || layerName,
+            desc: layer.desc || layer.description || "",
+            serviceType: "FILE",
+            serviceBaseUrl: "file",
+            fileType: layer.fileType || "geojson",
+            groupId: "custom_layers",
+            groupKey: "custom_layers",
+            customLayer: true,
+            fileLayer: true,
+            wktColumn: layer.wktColumn || "wkt",
+            dataProjection: layer.dataProjection || "EPSG:4326",
+            featureProjection: layer.featureProjection || null
+        });
+
+        $groupUl.append(
+            renderLayerMenuItem({
+                layerName,
+                title: layer.title || layerName,
+                desc: layer.desc || layer.description || "",
+                groupKey: "custom_layers",
+                prefix: "file",
+                showFilter: false,
+                showRemove: true,
+                checked: true
+            })
+        );
+    });
+
+    if ($groupUl.children("li").length > 0) {
+        $customGroup.removeClass("d-none");
+    }
+}
+
+
+
+
+function getSafeId(value) {
+    return String(value).replace(/[^a-zA-Z0-9_-]/g, "_");
+}
 
 /**
  * Basic escaping helpers for safe attribute/text injection.

@@ -13,6 +13,7 @@ export function addMapCopyright({
     mapSelector = "#map",
     year = 2026,
     version = "none",
+    text = ""
 }) {
     if (!year || !version) {
         console.warn("Year or version not provided for map copyright");
@@ -32,7 +33,7 @@ export function addMapCopyright({
 
     const $copyright = $(`
         <div class="ol-unselectable ol-control map-copyright">
-            © HM Government Of Gibraltar ${escapeHtml(year)} - ${escapeHtml(version)}
+            ${escapeHtml(text)} ${escapeHtml(year)} - ${escapeHtml(version)}
         </div>
     `);
 

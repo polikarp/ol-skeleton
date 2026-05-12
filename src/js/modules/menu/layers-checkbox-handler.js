@@ -47,16 +47,21 @@ export function bindCheckboxToggles(map, wfsQueryExecutor, { selector = ".layerC
 
     $(document).on("change", selector, function () {
 
+        const SERVICE_TYPE_FILE = "FILE";
         const layerName = $(this).data("layer");
         const layerInfo = layersInfo.get(layerName);
         //const layerName = layerInfo.layerName;
-        const serviceBaseUrl = layerInfo.serviceBaseUrl;
+        const serviceBaseUrl = layerInfo.serviceBaseUrl; 
         const $row = $(this).closest("li");
 
         if (!layerName || !serviceBaseUrl) {
             console.error("Missing data-layer or data-service-base-url on checkbox", this);
             $(this).prop("checked", false);
             return;
+        }
+
+        if(layerInfo.serviceType == SERVICE_TYPE_FILE){
+            removeOnUncheck = false;
         }
 
 

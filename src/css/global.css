@@ -351,7 +351,7 @@ table.table-custom button{
 
 #gis-toolbar {
     position: absolute;
-    top: 5%;
+    top: 1%;
     left: 10px;
     background-color: rgba(255, 255, 255, 0.95);
     border: 1px solid #ccc;
@@ -774,7 +774,7 @@ ul.layerSelector {
 
 .search-box {
   position: absolute;
-  top: 5%;
+  top: 1%;
   left: 50%;
   transform: translateX(-50%);
   width: 500px;
@@ -1049,7 +1049,7 @@ ul.layerSelector {
 .map-copyright {
   position: absolute;
   bottom: 1%;   /* siempre abajo */
-  left: 2%;    /* esquina inferior izquierda (como en Leaflet) */
+  left: 10px;   
   background: rgba(255, 255, 255, 0.7);
   padding: 3px 8px;
   font-size: 12px;
@@ -1315,7 +1315,7 @@ i.icon-button.has-filter::after {
 /* Mouse coordinates*/
 .map-coordinates {
     position: absolute;
-    bottom: 60px;
+    bottom: 80px;
     left: auto;
     right: 20px;
     background: rgba(0, 0, 0, 0.65);
@@ -1331,7 +1331,7 @@ i.icon-button.has-filter::after {
 /* Right button to show panel*/
 #mapFloatingControls {
     position: absolute;
-    top: 12px;
+    top: 15%;
     right: 2%;
     z-index: 1000;
     display: none;
@@ -1341,7 +1341,7 @@ i.icon-button.has-filter::after {
 /* Right panel container */
 .gfi-panel {
   position: absolute;
-  top: 12px;
+  top: 1%;
   right: 0;
   width: 500px;
   height: 75%;
@@ -1351,7 +1351,7 @@ i.icon-button.has-filter::after {
   display: none;                /* controlled by .is-open */
   flex-direction: column;
   overflow: hidden;
-  opacity: 0.9
+  opacity: 1;
 }
 
 #gfiRightPanel.is-open {
@@ -1438,8 +1438,10 @@ i.icon-button.has-filter::after {
 
 .ol-compass{
   position:absolute;
-  top: 14px;
-  right: 10%;
+  /* top: 14px;
+  right: 10%; */
+  bottom: 70px;
+  left: 10px;
   z-index: 1000;
 }
 
@@ -1564,8 +1566,8 @@ button.ol-rotate-reset{
 
 .ol-overviewmap {
     left: auto !important;
-    right: 10px;
-    bottom: 100px !important;
+    right: 20px;
+    bottom: 120px !important;
     border: 3px solid #ffffff;
 }
 
@@ -1589,6 +1591,33 @@ button.ol-rotate-reset{
 .ol-overviewmap .map-copyright {
     display: none !important;
 }
+
+.viewer-logo {
+    position: absolute;
+    top: 1%;
+    right: 20px;
+    z-index: 500;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 8px 12px;
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+
+    pointer-events: auto;
+}
+
+.viewer-logo img {
+    height: 60px;
+    width: auto;
+}
+
+
 
 /*Tablet view*/
 @media (max-width: 1023px) {
@@ -1850,7 +1879,7 @@ button.ol-rotate-reset{
 
     div.search-box{
         width: 80%;
-        top: 5%;
+        top: 10%;
         left: 50%;
     }
 
@@ -1867,7 +1896,7 @@ button.ol-rotate-reset{
     }
 
     div#gis-toolbar{
-        top: 15%;
+        top: 20%;
         left:0;
     }
 
@@ -2078,6 +2107,28 @@ button.ol-rotate-reset{
 
     .ol-overviewmap {
         display: none;
+    }
+
+    .viewer-logo {
+        top: 0;
+        right: 0;
+        left: 0;
+
+        width: 100%;
+        border-radius: 0;
+
+        padding: 10px 16px;
+
+        justify-content: center;
+
+        box-sizing: border-box;
+    }
+
+    .viewer-logo img {
+        max-width: 90%;
+        height: auto;
+        max-height: 50px;
+        object-fit: contain;
     }
 
 }

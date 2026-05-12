@@ -1,11 +1,13 @@
 // get element info handler.js
 // Hybrid identify:
-// - If no CQL filter: WMS GetFeatureInfo (fast, always available)
-// - If CQL filter exists: WFS GetFeature with bbox + cql_filter (only if WFS enabled)
+// - GeoJSON file layers: local vector identify
+// - If no CQL filter: WMS GetFeatureInfo
+// - If CQL filter exists: WFS GetFeature with bbox + cql_filter
 
 import { transformExtent } from "ol/proj";
-import {applyProxyIfNeeded} from "../map/wms-capabilities-loader";
-import {buildWfsGetFeatureUrl} from "../../legacy/wfs-url-builder";
+import { applyProxyIfNeeded } from "../map/wms-capabilities-loader";
+import { buildWfsGetFeatureUrl } from "../../legacy/wfs-url-builder";
+import GeoJSON from "ol/format/GeoJSON";
 
 function makeBbox(coord, tol) {
     return [coord[0] - tol, coord[1] - tol, coord[0] + tol, coord[1] + tol];
@@ -16,57 +18,86 @@ function defaultNotify(msg) {
     alert(msg);
 }
 
-// function buildWfsGetFeatureUrl({ baseUrl, typeName, version, bbox, bboxCrs, cqlFilter, count }) {
-//     if (!baseUrl) throw new Error("baseUrl is required");
-//     if (!typeName) throw new Error("typeName is required");
-//     if (!version) throw new Error("version is required");
+function identifyGeoJsonLayersAtPixel(map, pixel, layers, hitTolerance = 10) {
+    const resultsByLayer = new Map();
 
-//     const sep = baseUrl.includes("?") ? "&" : "?";
-//     const typeParam = String(version).startsWith("2") ? "typeNames" : "typeName";
+    map.forEachFeatureAtPixel(
+        pixel,
+        (feature, layer) => {
+            if (!layer || layer.get("fileType") !== "geojson") {
+                return;
+            }
 
-//     const hasCql = cqlFilter !== null && cqlFilter !== undefined && String(cqlFilter).trim().length > 0;
-//     const hasBbox = Array.isArray(bbox) && bbox.length === 4 && bbox.every(v => v !== null && v !== undefined && v !== "");
+            const layerName =
+                layer.get("layerName") ||
+                layer.get("title") ||
+                layer.get("name") ||
+                "geojson_layer";
 
-//     // GeoServer: if CQL is present, include the BBOX constraint inside the CQL to avoid bbox+cql issues.
-//     // Otherwise, use the bbox parameter normally.
-//     let finalCql = hasCql ? String(cqlFilter).trim() : "";
-//     if (hasCql && hasBbox) {
-//         // CQL BBOX expects: BBOX(geom, minx, miny, maxx, maxy, 'EPSG:xxxx')
-//         // NOTE: use your geometry property name; in GeoServer it's often "the_geom" by default.
-//         const geomProp = "geom";
-//         const bboxCql = `BBOX(${geomProp}, ${bbox[0]}, ${bbox[1]}, ${bbox[2]}, ${bbox[3]}, '${bboxCrs}')`;
-//         finalCql = `(${finalCql}) AND ${bboxCql}`;
-//     }
+            const layerTitle =
+                layer.get("title") ||
+                layer.get("layerTitle") ||
+                layerName;
 
-//     let url =
-//         `${baseUrl}${sep}` +
-//         `service=WFS` +
-//         `&request=GetFeature` +
-//         `&version=${encodeURIComponent(version)}` +
-//         `&${typeParam}=${encodeURIComponent(typeName)}` +
-//         `&outputFormat=${encodeURIComponent("application/json")}` +
-//         `&count=${encodeURIComponent(String(count))}`;
+            if (!resultsByLayer.has(layerName)) {
+                resultsByLayer.set(layerName, {
+                    ok: true,
+                    layerName,
+                    layerTitle,
+                    format: "json",
+                    data: {
+                        type: "FeatureCollection",
+                        features: []
+                    },
+                    geojson: {
+                        type: "FeatureCollection",
+                        features: []
+                    },
+                    error: null
+                });
+            }
 
-//     if (!hasCql && hasBbox) {
-//         const bboxStr = `${bbox[0]},${bbox[1]},${bbox[2]},${bbox[3]},${bboxCrs}`;
-//         url += `&bbox=${encodeURIComponent(bboxStr)}`;
-//     }
+            const props = { ...feature.getProperties() };
+            delete props.geometry;
 
-//     if (finalCql) {
-//         url += `&cql_filter=${encodeURIComponent(finalCql)}`;
-//     }
+            const geometry = feature.getGeometry();
 
-//     return url;
-// }
+            const geojsonFeature = {
+                type: "Feature",
+                id: feature.getId?.() ?? null,
+                geometry: null,
+                properties: props
+            };
 
+            if (geometry) {
+                geojsonFeature.geometry = new GeoJSON().writeGeometryObject(geometry);
+            }
+
+            const result = resultsByLayer.get(layerName);
+
+            result.data.features.push(geojsonFeature);
+            result.geojson.features.push(geojsonFeature);
+        },
+        {
+            hitTolerance,
+            layerFilter: (layer) =>
+                layers.includes(layer) &&
+                layer.getVisible?.() === true &&
+                layer.get("fileType") === "geojson"
+        }
+    );
+
+    return Array.from(resultsByLayer.values());
+}
 
 /**
  * @param {Object} p
+ * @param {import("ol/Map").default} p.map
  * @param {Map} p.layerRegistry
  * @param {function(Object):(string|null)} p.getCqlFilter function({layer, click}) => string|null
- * @param {number} [p.hitTolerance=10] pixel tolerance for WMS GetFeatureInfo
+ * @param {number} [p.hitTolerance=10] pixel tolerance for WMS/vector identify
  * @param {string} [p.infoFormat="application/json"]
- * @param {number} [p.toleranceMeters=25] bbox tolerance in map units (meters in EPSG:25830)
+ * @param {number} [p.toleranceMeters=25] bbox tolerance in map units
  * @param {string} [p.mapCrs="EPSG:25830"]
  * @param {string} [p.wfsCrs="EPSG:4326"]
  * @param {number} [p.count=50]
@@ -75,6 +106,7 @@ function defaultNotify(msg) {
  * @returns {Function} async handler(ctx)
  */
 export function createHybridIdentifyHandler({
+    map,
     layerRegistry,
     useProxy,
     proxyPath,
@@ -91,17 +123,21 @@ export function createHybridIdentifyHandler({
     onResults = () => {},
     getState = () => {}
 }) {
+    if (!map || typeof map.forEachFeatureAtPixel !== "function") {
+        throw new Error("createHybridIdentifyHandler: map is required");
+    }
+
     if (!layerRegistry || typeof layerRegistry.values !== "function") {
         throw new Error("createHybridIdentifyHandler: layerRegistry (Map) is required");
     }
+
     if (typeof getCqlFilter !== "function") {
         throw new Error("createHybridIdentifyHandler: getCqlFilter is required");
     }
+
     if (typeof showGfiLoading !== "function") {
         throw new Error("createHybridIdentifyHandler: showGfiLoading is required");
     }
-
-    
 
     return async (ctx) => {
         const state = getState?.() ?? {};
@@ -114,19 +150,41 @@ export function createHybridIdentifyHandler({
         ) {
             return;
         }
-        spatialDrawTool.deactivate();
+
+        spatialDrawTool?.deactivate?.();
+
         const clickCoord = ctx.coordinate;
 
         const layers = Array.from(layerRegistry.values()).filter((l) => l?.getVisible?.());
+
         if (layers.length === 0) {
             notify("No active layers to identify.");
             return;
         }
 
+        const geojsonLayers = layers.filter((layer) => layer.get("fileType") === "geojson");
+        const serviceLayers = layers.filter((layer) => layer.get("fileType") !== "geojson");
+
         showGfiLoading();
 
-        // Determine if we should use WFS mode: at least one layer has a non-empty CQL filter
-        const layerCql = layers.map((layer) => ({
+        const vectorResults = identifyGeoJsonLayersAtPixel(
+            map,
+            ctx.pixel,
+            geojsonLayers,
+            hitTolerance
+        );
+
+        if (serviceLayers.length === 0) {
+            onResults({
+                mode: "wms",
+                click: { coordinate: clickCoord, mapCrs },
+                results: vectorResults
+            });
+
+            return;
+        }
+
+        const layerCql = serviceLayers.map((layer) => ({
             layer,
             cql: getCqlFilter({
                 layer,
@@ -149,7 +207,7 @@ export function createHybridIdentifyHandler({
                 return;
             }
 
-            const requests = layers.map(async (layer) => {
+            const requests = serviceLayers.map(async (layer) => {
                 const source = layer.getSource();
                 const layerName = layer.get("layerName") || source?.getParams?.()?.LAYERS || "unknown";
                 const serviceBaseUrl = layer.get("serviceBaseUrl") || "unknown";
@@ -165,17 +223,31 @@ export function createHybridIdentifyHandler({
                     BUFFER: hitTolerance,
                 });
 
-                urlAux = urlAux.replace("REQUEST=GetMap", "REQUEST=GetFeatureInfo").replace("&TILED=true", "");
+                urlAux = urlAux
+                    .replace("REQUEST=GetMap", "REQUEST=GetFeatureInfo")
+                    .replace("&TILED=true", "");
 
                 const url = applyProxyIfNeeded(urlAux, useProxy, proxyPath);
 
-                if (!url) return { ok: false, layerName, serviceBaseUrl, error: "No GetFeatureInfo URL" };
+                if (!url) {
+                    return { ok: false, layerName, serviceBaseUrl, error: "No GetFeatureInfo URL" };
+                }
 
                 try {
                     const resp = await fetch(url);
-                    if (!resp.ok) return { ok: false, layerName, serviceBaseUrl, error: `HTTP ${resp.status}`, url };
+
+                    if (!resp.ok) {
+                        return {
+                            ok: false,
+                            layerName,
+                            serviceBaseUrl,
+                            error: `HTTP ${resp.status}`,
+                            url
+                        };
+                    }
 
                     const ct = resp.headers.get("content-type") || "";
+
                     if (ct.includes("application/json") || infoFormat === "application/json") {
                         const data = await resp.json().catch(() => null);
                         return { ok: true, layerName, serviceBaseUrl, format: "json", data, url };
@@ -184,7 +256,13 @@ export function createHybridIdentifyHandler({
                     const text = await resp.text();
                     return { ok: true, layerName, serviceBaseUrl, format: "text", data: text, url };
                 } catch (e) {
-                    return { ok: false, layerName, serviceBaseUrl, error: e?.message || "Fetch error", url };
+                    return {
+                        ok: false,
+                        layerName,
+                        serviceBaseUrl,
+                        error: e?.message || "Fetch error",
+                        url
+                    };
                 }
             });
 
@@ -193,7 +271,10 @@ export function createHybridIdentifyHandler({
             onResults({
                 mode: "wms",
                 click: { coordinate: clickCoord, mapCrs },
-                results,
+                results: [
+                    ...vectorResults,
+                    ...results
+                ],
             });
 
             return;
@@ -206,6 +287,7 @@ export function createHybridIdentifyHandler({
             .filter((x) => x.cql && String(x.cql).trim().length > 0)
             .map((x) => {
                 const layer = x.layer;
+
                 return {
                     layer,
                     cql: String(x.cql).trim(),
@@ -218,7 +300,18 @@ export function createHybridIdentifyHandler({
             .filter((x) => x.typeName && x.baseUrl);
 
         const anyWfsEnabled = candidates.some((c) => c.wfsEnabled);
+
         if (!anyWfsEnabled) {
+            if (vectorResults.length > 0) {
+                onResults({
+                    mode: "wfs",
+                    click: { coordinate: clickCoord, mapCrs },
+                    results: vectorResults
+                });
+
+                return;
+            }
+
             notify("CQL filter requested, but WFS is not enabled for the active layers.");
             return;
         }
@@ -243,20 +336,48 @@ export function createHybridIdentifyHandler({
 
                 try {
                     const resp = await fetch(url);
-                    if (!resp.ok) return { ok: false, layerName: c.typeName, error: `HTTP ${resp.status}`, url, cql: c.cql };
+
+                    if (!resp.ok) {
+                        return {
+                            ok: false,
+                            layerName: c.typeName,
+                            error: `HTTP ${resp.status}`,
+                            url,
+                            cql: c.cql
+                        };
+                    }
 
                     const geojson = await resp.json();
                     const n = Array.isArray(geojson?.features) ? geojson.features.length : 0;
 
-                    return { ok: true, layerName: c.typeName, count: n, geojson, url, cql: c.cql };
+                    return {
+                        ok: true,
+                        layerName: c.typeName,
+                        count: n,
+                        geojson,
+                        url,
+                        cql: c.cql
+                    };
                 } catch (e) {
-                    return { ok: false, layerName: c.typeName, error: e?.message || "Fetch error", url, cql: c.cql };
+                    return {
+                        ok: false,
+                        layerName: c.typeName,
+                        error: e?.message || "Fetch error",
+                        url,
+                        cql: c.cql
+                    };
                 }
             });
 
         const results = await Promise.all(requests);
 
-        const anyOk = results.some((r) => r.ok);
+        const finalResults = [
+            ...vectorResults,
+            ...results
+        ];
+
+        const anyOk = finalResults.some((r) => r.ok);
+
         if (!anyOk) {
             notify("WFS is not available for the active layers. No query was executed.");
             console.warn("WFS query errors:", results);
@@ -266,7 +387,7 @@ export function createHybridIdentifyHandler({
         onResults({
             mode: "wfs",
             click: { coordinate: clickCoord, bboxMap, bboxWfs, mapCrs, wfsCrs },
-            results,
+            results: finalResults,
         });
     };
 }

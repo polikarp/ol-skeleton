@@ -65,6 +65,11 @@ import { registerStreetViewTool } from "./modules/streetView/street-view-tool";
  
 import { registerOverviewMapTool } from "./modules/map/overview-map-tool";
 
+import { registerFileLayerLoader } from "./modules/import/file-reader";
+import { appendFileLayersToMenu } from "./modules/menu/layers-menu-renderer";
+
+import { removeLayerFromMap } from "./modules/map/layers-on-off";
+
 import OSM from 'ol/source/OSM';
 import XYZ from 'ol/source/XYZ';
 
@@ -264,6 +269,7 @@ async function initApp() {
   const dispatcher = createSingleClickDispatcher(map);
   dispatcher.register(
     createHybridIdentifyHandler({
+      map,
       layerRegistry,
       useProxy: USE_PROXY,
       proxyPath: PROXY_PATH,
@@ -294,10 +300,18 @@ async function initApp() {
 
   clickHandlers();
 
-  addMapCopyright({ mapSelector: "#map", year: LAYERS_CONFIG.copyright.year, version: LAYERS_CONFIG.copyright.version});
+  addMapCopyright({ mapSelector: "#map", year: LAYERS_CONFIG.copyright.year, version: LAYERS_CONFIG.copyright.version, text: LAYERS_CONFIG.copyright.text});
   initAddressSearchWfs({ map, useProxy: USE_PROXY, proxyPath: PROXY_PATH });
 
   initCompass(map);
+
+  registerFileLayerLoader({
+      map,
+      layerRegistry,
+      appendFileLayersToMenu,
+      triggerSelector: "#btnAddFileLayer",
+      dataProjection: "EPSG:4326"
+  });
 }
 
 // Ensure bootstrap runs even if DOMContentLoaded already fired
@@ -504,6 +518,25 @@ function clickHandlers() {
             $input.trigger("focus");
         }
     });
+
+    /**
+   * Listener to delete custom layer
+   */
+  $(document).on("click", ".fileLayerRemoveBtn", function () {
+      const layerName = $(this).data("layer");
+      const $groupUl = $("#group_custom_layers_layers");
+
+      $(this).closest("li[data-layer]").remove();
+      
+      //Remove layer from map
+      removeLayerFromMap(map, layerName, true); 
+      //Remove layer data from app
+      layersInfo.delete(layerName);
+
+      if ($groupUl.children("li").length === 0) {
+          $("#customLayersGroup").addClass("d-none");
+      }
+  });
 }
 
 /**
