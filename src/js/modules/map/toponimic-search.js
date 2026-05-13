@@ -126,8 +126,14 @@ export function initAddressSearchWfs({
 
     async function searchTopoGrouped(query) {
         const responses = await Promise.all(
-            TYPES.map(type => searchTopoByType(query, type))
+            [...PLACE_TYPE_ICONS.keys()].map(type =>
+                searchTopoByType(query, type)
+            )
         );
+        
+        // await Promise.all(
+        //     TYPES.map(type => searchTopoByType(query, type))
+        // );
 
         return {
             type: "FeatureCollection",
@@ -340,19 +346,19 @@ function getSearchResultStyle(geometryType) {
 /**
  * Get fontawasome icons depending type
  */
-const placeTypeIcons = new Map([
+const PLACE_TYPE_ICONS = new Map([
     ["topolabel", "fa-solid fa-location-dot"],
     ["road", "fa-solid fa-road"],
     ["toilet", "fa-solid fa-restroom"],
     ["estate", "fa-solid fa-building"],
     ["address", "fa-solid fa-house"],
-    ["block", "fa-solid fa-vector-square"],
+    ["block", "fa-solid fa-table-cells"],
     ["place", "fa-solid fa-map-pin"],
     ["pit", "fa-solid fa-circle-down"]
 ]);
 
 function getPlaceTypeIcon(type) {
-    return placeTypeIcons.get(type) || "fa-solid fa-circle-question";
+    return PLACE_TYPE_ICONS.get(type) || "fa-solid fa-circle-question";
 }
 
 
