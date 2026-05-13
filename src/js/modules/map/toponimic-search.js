@@ -9,7 +9,15 @@ import Icon from "ol/style/Icon";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 
+import GeoJSON from "ol/format/GeoJSON";
+import {Stroke, Fill, Circle as CircleStyle} from "ol/style";
+import {buffer as bufferExtent} from "ol/extent";
+
+import {appendParams} from 'ol/uri.js';
+
 import {applyProxyIfNeeded} from './wms-capabilities-loader';
+
+const DEFAULT_SERVER = "http://localhost:9090/geoserver/ccgp";
 
 /**
  * Initialize WFS address search with autocomplete and map interaction.
@@ -29,13 +37,21 @@ export function initAddressSearchWfs({
     map,
     useProxy = false,
     proxyPath,
-    wfsUrl = "https://download.geoportal.gov.gi/geoserver/inspire/wfs",
+    wfsUrl = DEFAULT_SERVER,
+    layerName = "ccgp:all_places_llm_search_vw",
+    parentSelector = ".search-box",
     inputSelector = "#searchInput",
     resultsSelector = "#autocompleteResults",
     clearButtonSelector = "#clearSearch",
     minChars = 3,
     debounceMs = 300,
 }) {
+
+    if (!map) throw new Error("Map is required");
+
+    if(!wfsUrl){
+        $("div" + parentSelector).remove();
+    }
 
     const searchLayer = new VectorLayer({
         source: new VectorSource(),
@@ -45,51 +61,84 @@ export function initAddressSearchWfs({
     map.addLayer(searchLayer);
 
 
-    if (!map) throw new Error("Map is required");
+    
 
 
     let debounceTimer = null;
     let searchMarker = null;
 
+    const resultGeometries = new Map();
+
+    const geoJsonFormat = new GeoJSON();
 
 
     /**
-     * Execute WFS filtered request.
-     * @param {string} query
-     * @returns {jqXHR}
+     * Toponimic search results
+     * @param {*} query 
      */
-    function getFilteredAddress(query) {
-        const filterXml = `
-            <wfs:GetFeature xmlns:wfs="http://www.opengis.net/wfs"
-                service="WFS" version="1.1.0"
-                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">
-                <wfs:Query typeName="feature:unitaddress_for_geoportal"
-                    srsName="EPSG:25830"
-                    xmlns:feature="http://geoportal.gov.gi/inspire">
-                    <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
-                        <ogc:PropertyIsLike matchCase="false" wildCard="*" singleChar="." escapeChar="!">
-                            <ogc:PropertyName>address_text_for_search</ogc:PropertyName>
-                            <ogc:Literal>*%${escapeXml(query)}%*</ogc:Literal>
-                        </ogc:PropertyIsLike>
-                    </ogc:Filter>
-                </wfs:Query>
-            </wfs:GetFeature>
-        `;
+    // async function searchTopo(query){
+    //     const baseUrl = applyProxyIfNeeded(wfsUrl, useProxy, proxyPath);
+    //     const params = {
+    //         service: 'WFS',
+    //         version: '1.1.0',
+    //         request: 'GetFeature',
+    //         typeName: layerName,
+    //         outputFormat: 'application/json',
+    //         srsName: 'EPSG:25830',
+    //         maxFeatures: 50,
+    //         CQL_FILTER: `lower ILIKE '%${query.toLowerCase()}%'`
+    //     };
 
-        return $.ajax({
-            url: applyProxyIfNeeded(wfsUrl, useProxy, proxyPath),
-            type: "POST",
-            dataType: "xml",
-            contentType: "text/xml",
-            data: filterXml,
-        });
+    //     const url = appendParams(`${baseUrl}/wfs`, params);
+
+    //     const response = await fetch(url);
+    //     const geojson = await response.json();
+    //     return geojson;
+    // }
+
+    const TYPES = ["topolabel", "road", "toilet", "estate", "address", "block", "place", "pit"];
+
+    async function searchTopoByType(query, type) {
+        const safeQuery = query.toLowerCase().replaceAll("'", "''");
+        const safeType = type.replaceAll("'", "''");
+        const baseUrl = applyProxyIfNeeded(wfsUrl, useProxy, proxyPath);
+
+        const params = {
+            service: "WFS",
+            version: "1.1.0",
+            request: "GetFeature",
+            typeName: layerName,
+            outputFormat: "application/json",
+            srsName: "EPSG:25830",
+            maxFeatures: 15,
+            CQL_FILTER: `lower ILIKE '%${safeQuery}%' AND type = '${safeType}'`
+        };
+
+        const url = appendParams(`${baseUrl}/wfs`, params);
+
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`GeoServer WFS error: ${response.status}`);
+        }
+
+        return await response.json();
+    }
+
+    async function searchTopoGrouped(query) {
+        const responses = await Promise.all(
+            TYPES.map(type => searchTopoByType(query, type))
+        );
+
+        return {
+            type: "FeatureCollection",
+            features: responses.flatMap(response => response.features || [])
+        };
     }
 
     /* ---------------------------------------------------------
      * Input handler (autocomplete)
      * --------------------------------------------------------- */
-    $(document).on("input", inputSelector, function () {
+    $(document).on("input", inputSelector, async function () {
         const query = $(this).val().trim();
         const $results = $(resultsSelector);
 
@@ -102,84 +151,97 @@ export function initAddressSearchWfs({
             return;
         }
 
-        debounceTimer = setTimeout(() => {
-            getFilteredAddress(query).done((xml) => {
-                $results.empty();
+        debounceTimer = setTimeout(async ()  => {
+            const geojson = await searchTopoGrouped(query);
 
-                const features = xml.getElementsByTagNameNS("*", "unitaddress_for_geoportal");
-                if (!features || features.length === 0) {
-                    $results.addClass("d-none");
-                    return;
-                }
+            $results.empty();
+            resultGeometries.clear();
 
-                for (let i = 0; i < features.length; i++) {
-                    const item = features[i];
+            const features = geojson?.features || [];
 
-                    const name = $(item)
-                        .find("inspire\\:address_text_for_search, address_text_for_search")
-                        .text();
+            if (features.length === 0) {
+                $results.addClass("d-none");
+                return;
+            }
 
-                    const pos = $(item)
-                        .find("gml\\:pos, pos")
-                        .text()
-                        .split(" ")
-                        .map(Number);
+            features.forEach((feature, index) => {
+                const props = feature.properties || {};
+                const geometry = feature.geometry;
 
-                    if (pos.length !== 2) continue;
+                const name = props.name || "";
+                const type = props.type || "";
 
-                    const [x, y] = pos;
+                if (!name || !geometry) return;
 
-                    const $li = $("<li>")
-                        .addClass("list-group-item list-group-item-action")
-                        .text(name)
-                        .attr("data-x", x)
-                        .attr("data-y", y);
+                const resultId = `address-result-${index}`;
 
-                    $results.append($li);
-                }
+                resultGeometries.set(resultId, geometry);
 
-                $results.removeClass("d-none");
+                const $li = $("<li>")
+                    .addClass("list-group-item list-group-item-action d-flex align-items-center gap-2")
+                    .attr("data-result-id", resultId)
+                    .attr("data-type", type)
+                    .append(
+                        $("<i>").addClass(getPlaceTypeIcon(type))
+                    )
+                    .append(
+                        $("<span>").text(name)
+                    );
+
+                $results.append($li);
             });
+
+            $results.removeClass("d-none");
+
         }, debounceMs);
+
     });
 
     /* ---------------------------------------------------------
      * Result click handler
      * --------------------------------------------------------- */
+
+
     $(document).on("click", `${resultsSelector} li`, function () {
-        const x = parseFloat($(this).data("x"));
-        const y = parseFloat($(this).data("y"));
+        const resultId = $(this).data("result-id");
+        const geometry = resultGeometries.get(resultId);
 
-        if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+        if (!geometry) return;
 
-        const coord = [x, y];
+        const source = searchLayer.getSource();
 
-        // Center map
-        map.getView().animate({ center: coord, zoom: 7 });
+        // Remove previous search results
+        source.clear();
 
-        // Remove previous marker
-        if (searchMarker) {
-            searchLayer.getSource().removeFeature(searchMarker);
+        let feature;
+
+        try {
+            feature = geoJsonFormat.readFeature(
+                {
+                    type: "Feature",
+                    geometry,
+                    properties: {}
+                },
+                {
+                    dataProjection: "EPSG:25830",
+                    featureProjection: map.getView().getProjection()
+                }
+            );
+        } catch (err) {
+            console.error("Error reading search geometry", err);
+            return;
         }
 
-        // Add marker
-        searchMarker = new Feature({
-            geometry: new Point(coord),
-        });
+        const olGeometry = feature.getGeometry();
 
-        searchMarker.setStyle(
-            new Style({
-                image: new Icon({
-                    src: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-                    scale: 0.05,
-                    anchor: [0.5, 1],
-                    anchorXUnits: "fraction",
-                    anchorYUnits: "fraction",
-                }),
-            })
-        );
+        if (!olGeometry) return;
 
-        searchLayer.getSource().addFeature(searchMarker);
+        // Apply style depending on geometry type
+        feature.setStyle(getSearchResultStyle(olGeometry.getType()));
+
+        source.addFeature(feature);
+
+        zoomToBufferExtent(olGeometry, 200);
 
         $(inputSelector).val($(this).text());
         $(resultsSelector).empty().addClass("d-none");
@@ -194,12 +256,106 @@ export function initAddressSearchWfs({
         $(resultsSelector).empty().addClass("d-none");
         $(this).addClass("d-none");
 
-        if (searchMarker) {
-            searchLayer.getSource().removeFeature(searchMarker);
-            searchMarker = null;
+        if(searchLayer){
+            searchLayer.getSource().clear();
         }
     });
+
+    /**
+     * Makes zoom to buffer. Add buffer in meters
+     */
+    function zoomToBufferExtent(olGeometry, meters = 500){
+        const extent = bufferExtent(
+            olGeometry.getExtent(),
+            meters
+        );
+        map.getView().fit(extent, {
+            padding: [80, 80, 80, 80],
+            duration: 400,
+            maxZoom: 11
+        });
+    }
 }
+
+/**
+ * Get default style depends on geometryType
+ * @param {*} geometryType 
+ * @returns 
+ */
+function getSearchResultStyle(geometryType) {
+    if (geometryType === "Point" || geometryType === "MultiPoint") {
+        return new Style({
+            image: new Icon({
+                src: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+                scale: 0.05,
+                anchor: [0.5, 1],
+                anchorXUnits: "fraction",
+                anchorYUnits: "fraction"
+            })
+        });
+    }
+
+    if (geometryType === "LineString" || geometryType === "MultiLineString") {
+        return new Style({
+            stroke: new Stroke({
+                color: "#ff0000",
+                width: 4
+            })
+        });
+    }
+
+    if (geometryType === "Polygon" || geometryType === "MultiPolygon") {
+        return new Style({
+            stroke: new Stroke({
+                color: "#ff0000",
+                width: 3
+            }),
+            fill: new Fill({
+                color: "rgba(255, 0, 0, 0.15)"
+            })
+        });
+    }
+
+    return new Style({
+        stroke: new Stroke({
+            color: "#ff0000",
+            width: 3
+        }),
+        fill: new Fill({
+            color: "rgba(255, 0, 0, 0.15)"
+        }),
+        image: new CircleStyle({
+            radius: 7,
+            fill: new Fill({
+                color: "#ff0000"
+            }),
+            stroke: new Stroke({
+                color: "#ffffff",
+                width: 2
+            })
+        })
+    });
+}
+
+/**
+ * Get fontawasome icons depending type
+ */
+const placeTypeIcons = new Map([
+    ["topolabel", "fa-solid fa-location-dot"],
+    ["road", "fa-solid fa-road"],
+    ["toilet", "fa-solid fa-restroom"],
+    ["estate", "fa-solid fa-building"],
+    ["address", "fa-solid fa-house"],
+    ["block", "fa-solid fa-vector-square"],
+    ["place", "fa-solid fa-map-pin"],
+    ["pit", "fa-solid fa-circle-down"]
+]);
+
+function getPlaceTypeIcon(type) {
+    return placeTypeIcons.get(type) || "fa-solid fa-circle-question";
+}
+
+
 
 /* ============================================================
  * Helpers

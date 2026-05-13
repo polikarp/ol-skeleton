@@ -301,7 +301,7 @@ async function initApp() {
   clickHandlers();
 
   addMapCopyright({ mapSelector: "#map", year: LAYERS_CONFIG.copyright.year, version: LAYERS_CONFIG.copyright.version, text: LAYERS_CONFIG.copyright.text});
-  initAddressSearchWfs({ map, useProxy: USE_PROXY, proxyPath: PROXY_PATH });
+  initAddressSearchWfs({ map, useProxy: USE_PROXY, proxyPath: PROXY_PATH, wfsUrl: LAYERS_CONFIG?.address_service?.url ?? "", layerName: LAYERS_CONFIG?.address_service?.layer ?? "" });
 
   initCompass(map);
 
