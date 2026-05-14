@@ -55,7 +55,7 @@ import { registerMoveEndHandler } from "./modules/handlers/map-events";
 
 import { initCompass } from "./modules/map/compass";
 
-import { buildMapfishPrintRequest } from './modules/export/mapfishPrint';
+import { buildMapfishPrintRequest, fetchMapfishCapabilities, openMapfishPrintModal } from './modules/export/mapfishPrint';
 
 import { getBaseUrlFromSource } from './modules/map/utils';
 
@@ -86,6 +86,7 @@ let map, queryService, spatialDrawTool;
 let LAYERS_CONFIG;
 let baseMapLayers = [];
 let selectedBaseLayer = null;
+let MAPFISH_CAPABILITIES;
 
 /**
  * Load runtime layers configuration from public/data.
@@ -195,6 +196,8 @@ async function initApp() {
   baseMapLayers = (LAYERS_CONFIG.base_layers || []).map((l) => l.layer_name);
   selectedBaseLayer = (LAYERS_CONFIG.base_layers || []).find((l) => l.visible_default)?.layer_name || null;
 
+ 
+  
   
 
   // 2) Bind UI handlers (safe once DOM exists)
@@ -209,11 +212,17 @@ async function initApp() {
   if(!isMapfishEnabled){
       $("#btnPrintPdfMapfish").prev("div").remove();
       $("#btnPrintPdfMapfish").remove();
+  }else{
+      if(LAYERS_CONFIG.mapfish_service.url){
+          MAPFISH_CAPABILITIES = await fetchMapfishCapabilities(LAYERS_CONFIG.mapfish_service.url);
+      }
   }
   if(!isCanvasPdfEnabled){
       $("#clientPdfBtn").prev("div").remove();
       $("#clientPdfBtn").remove();
   }
+
+  
   // 4) Initialize map + tools
   const mapa = initOpenLayersMap("map", LAYERS_CONFIG);
   map = mapa.map;
@@ -371,60 +380,69 @@ function clickHandlers() {
 
     });
 
-  $("#btnPrintPdfMapfish").on("click", function(){
-     const selectedBaseLayer = getSelectedBaseLayer();
+  $("#btnPrintPdfMapfish").on("click", async function () {
+    try {
+          
+          const printOptions = await openMapfishPrintModal(map, MAPFISH_CAPABILITIES);
 
-      const dataLayers = Array.from(layerRegistry.values())
-          .filter(l => l.get('visible'))
-          .map(l => ({
-              type: 'WMS',
-              baseUrl: l.get('serviceBaseUrl'),
-              layerName: l.get('layerName'),
-              cqlFilter: window.currentCqlFilterByLayer?.[l.get('layerName')],
-              transparent: true
-          }));
+          const selectedBaseLayer = getSelectedBaseLayer();
 
-      const layersForPrint = [
-          selectedBaseLayer,
-          ...dataLayers.filter(l => l.layerName !== selectedBaseLayer.layerName)
-      ];
+          const dataLayers = Array.from(layerRegistry.values())
+              .filter(l => l.get("visible"))
+              .map(l => ({
+                  type: "WMS",
+                  baseUrl: l.get("serviceBaseUrl"),
+                  layerName: l.get("layerName"),
+                  cqlFilter: window.currentCqlFilterByLayer?.[l.get("layerName")],
+                  transparent: true
+              }));
 
-      const printSpec = buildMapfishPrintRequest(map, layersForPrint, {
-          srs: 'EPSG:25830',   
-          layout: 'A4 Portrait',
-          mapTitle: 'GeoServer Print Test',
-          mapComment: 'Generated from OL',
-          dpi: 150
-      });
+          const layersForPrint = [
+              selectedBaseLayer,
+              ...dataLayers.filter(l => l.layerName !== selectedBaseLayer.layerName)
+          ];
 
-      let url;
-      if(USE_PROXY){
-          url = '/geoserver/pdf/create.json';
-      }else{
-          url = 'https://download.geoportal.gov.gi/geoserver/pdf/create.json'
+          const printSpec = buildMapfishPrintRequest(map, layersForPrint, {
+              srs: "EPSG:25830",
+              layout: printOptions.layout,
+              mapTitle: printOptions.mapTitle,
+              mapComment: printOptions.mapComment,
+              dpi: printOptions.dpi,
+              scale: printOptions.scale,
+              outputFormat: printOptions.outputFormat,
+              allowedScales: MAPFISH_CAPABILITIES.scales
+          });
+
+          const response = await fetch(MAPFISH_CAPABILITIES.createURL, {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json"
+              },
+              body: JSON.stringify(printSpec)
+          });
+
+          if (!response.ok) {
+              throw new Error(`Print request failed: ${response.status} ${response.statusText}`);
+          }
+
+          const data = await response.json();
+
+          if (data.getURL) {
+              window.open(data.getURL, "_blank");
+          } else {
+              console.error("Invalid Mapfish response", data);
+          }
+
+      } catch (error) {
+          console.error("Error printing map", error);
       }
-
-      fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(printSpec)
-      })
-      .then(res => res.json())
-      .then(data => {
-          window.open(data.getURL, '_blank');
-      });
   });
 
-  // $('#clientPdfBtn').on('click', async function () {
-  //     await exportVisibleMapToPdf(map);
-  // });
+  
 
   $('#clientPdfBtn').on('click', function () {
       exportOpenLayersMapToPdf(map);
   });
-
-  // Layers search (your existing logic can stay here as-is)
-  // ...
 
 
     /**
