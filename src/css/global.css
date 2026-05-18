@@ -677,7 +677,16 @@ ul.layerSelector {
 
 
 
+#streetViewPanel {
+    width: 800px;
+    height: 600px;
+}
 
+#streetViewContainer {
+    width: 100%;
+    height: calc(100% - 42px);
+    min-height: 300px;
+}
 
 
 

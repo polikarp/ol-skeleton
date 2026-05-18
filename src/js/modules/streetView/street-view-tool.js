@@ -210,7 +210,7 @@ export function registerStreetViewTool(map) {
             event
         } = await loadGoogleStreetViewLibrary();
 
-        googleMapsEvent = event;
+        // googleMapsEvent = event;
 
         if (!service) {
             service = new StreetViewService();
@@ -227,10 +227,6 @@ export function registerStreetViewTool(map) {
             lng: lonlat[0]
         };
 
-        $panel.fadeIn(150, function () {
-            initStreetViewDraggable();
-        });
-
         showStatus('Buscando Street View...');
 
         service.getPanorama(
@@ -241,46 +237,69 @@ export function registerStreetViewTool(map) {
             },
             (data, status) => {
                 if (status !== StreetViewStatus.OK) {
-                    showStatus('No hay Street View aquí');
+                    showStatus('Street View not available');
                     removeStreetViewMarker();
                     return;
                 }
 
                 hideStatus();
 
-                if (!panorama) {
-                    panorama = new StreetViewPanorama(
-                        document.getElementById('streetViewContainer'),
-                        {
-                            position: data.location.latLng,
-                            pov: {
-                                heading: 0,
-                                pitch: 0
-                            },
-                            zoom: 1,
-                            addressControl: false,
-                            fullscreenControl: true,
-                            motionTracking: false
-                        }
-                    );
+                $panel.stop(true, true).fadeIn(150, function () {
+                    initStreetViewDraggable();
 
-                    panorama.addListener('position_changed', () => {
+                    const container = document.getElementById('streetViewContainer');
+
+                    if (!container) {
+                        console.error('Street View container not found');
+                        return;
+                    }
+
+                    if (!panorama) {
+                        panorama = new StreetViewPanorama(
+                            container,
+                            {
+                                position: data.location.latLng,
+                                pov: {
+                                    heading: 0,
+                                    pitch: 0
+                                },
+                                zoom: 1,
+                                addressControl: false,
+                                fullscreenControl: true,
+                                motionTracking: false
+                            }
+                        );
+
+                        panorama.addListener('position_changed', () => {
+                            updateMarkerFromPanorama(true);
+                        });
+
+                        panorama.addListener('pov_changed', () => {
+                            updateMarkerFromPanorama(false);
+                        });
+                    } else {
+                        panorama.setPosition(data.location.latLng);
                         updateMarkerFromPanorama(true);
-                    });
+                    }
 
-                    panorama.addListener('pov_changed', () => {
-                        updateMarkerFromPanorama(false);
-                    });
-                } else {
-                    panorama.setPosition(data.location.latLng);
-                    updateMarkerFromPanorama(true);
-                }
-
-                if (googleMapsEvent) {
-                    googleMapsEvent.trigger(panorama, 'resize');
-                }
+                    setTimeout(() => {
+                        triggerStreetViewResize();
+                        panorama.setPosition(data.location.latLng);
+                        updateMarkerFromPanorama(true);
+                    }, 200);
+                });
             }
         );
+    }
+
+    function triggerStreetViewResize() {
+        if (!panorama) {
+            return;
+        }
+
+        if (window.google?.maps?.event) {
+            window.google.maps.event.trigger(panorama, 'resize');
+        }
     }
 
     $btn.on('click', () => {
