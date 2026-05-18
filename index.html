@@ -121,111 +121,132 @@
                 ☰
             </button>
 
-            <div id="menuButtons" class="d-flex align-items-center">
+            <div id="menuButtons" class="d-flex align-items-center gap-2">
 
-                <button id="btnMeasureLength" class="bottom-menu-button hideResponsive" title="Measure distance">
-                    <i class="fas fa-ruler"></i>
-                    <span class="menu-label">Distance</span>
-                </button>
+                <!-- Navigation -->
+                <div class="bottom-menu-group dropup">
+                    <button class="bottom-menu-button dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static">
+                        <i class="fa-solid fa-compass"></i>
+                        <span class="menu-label">Navigate</span>
+                    </button>
 
-                <div class="button-separator hideResponsive"></div>
+                    <ul class="dropdown-menu bottom-menu-dropdown">
+                        <li>
+                            <button class="dropdown-item" id="gps">
+                                <i class="fas fa-location-crosshairs"></i> Location
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item" id="home">
+                                <i class="fas fa-crosshairs"></i> Center map
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item" id="rotate">
+                                <i class="fa-solid fa-compass"></i> Reset rotation
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item" id="rotate90">
+                                <i class="fas fa-rotate-left"></i> Rotate left
+                            </button>
+                        </li>
+                    </ul>
+                </div>
 
-                <button id="btnMeasureArea" class="bottom-menu-button hideResponsive" title="Measure area">
-                    <i class="fas fa-draw-polygon"></i>
-                    <span class="menu-label">Area</span>
-                </button>
+                <!-- Analysis -->
+                <div class="bottom-menu-group dropup hideResponsive">
+                    <button class="bottom-menu-button dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static">
+                        <i class="fa-solid fa-ruler-combined"></i>
+                        <span class="menu-label">Analysis</span>
+                    </button>
 
-                <div class="button-separator hideResponsive"></div>
+                    <ul class="dropdown-menu bottom-menu-dropdown">
+                        <li>
+                            <button class="dropdown-item" id="btnMeasureLength">
+                                <i class="fas fa-ruler"></i> Distance
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item" id="btnMeasureArea">
+                                <i class="fas fa-draw-polygon"></i> Area
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item" id="btnProfile">
+                                <i class="fas fa-mountain"></i> Elevation profile
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item" id="btnSpatialViewport">
+                                <i class="fas fa-info-circle"></i> Bounding box
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item" id="btnSpatialDraw">
+                                <i class="fas fa-draw-polygon"></i> Spatial search
+                            </button>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <button class="dropdown-item text-danger d-none" id="btnCancelMeasure">
+                                <i class="fas fa-times"></i> Cancel measure
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item text-danger" id="btnSpatialDrawCancel">
+                                <i class="fas fa-times"></i> Clear spatial search
+                            </button>
+                        </li>
+                    </ul>
+                </div>
 
-                <button id="btnProfile" class="bottom-menu-button hideResponsive" title="Elevation profile">
-                    <i class="fas fa-mountain"></i>
-                    <span class="menu-label">Profile</span>
-                </button>
+                <!-- Layers -->
+                <div class="bottom-menu-group dropup hideResponsive">
+                    <button class="bottom-menu-button dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span class="menu-label">Layers</span>
+                    </button>
 
-                <div class="button-separator hideResponsive " ></div>
+                    <ul class="dropdown-menu bottom-menu-dropdown">
+                        <li>
+                            <button class="dropdown-item" id="btnAddFileLayer">
+                                <i class="fas fa-upload"></i> Upload layer
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item" id="btnStreetView">
+                                <i class="fa-solid fa-street-view"></i> Street View
+                            </button>
+                        </li>
+                    </ul>
+                </div>
 
-                <button id="btnCancelMeasure" class="bottom-menu-button d-none hideResponsive" title="Cancel measure">
-                    <i class="fas fa-times"></i>
-                    <span class="menu-label">Cancel</span>
-                </button>
+                <!-- Export -->
+                <div class="bottom-menu-group dropup">
+                    <button class="bottom-menu-button dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static">
+                        <i class="fa-solid fa-file-export"></i>
+                        <span class="menu-label">Export</span>
+                    </button>
 
-                <div class="button-separator d-none"></div>
+                    <ul class="dropdown-menu bottom-menu-dropdown">
+                        <li>
+                            <button class="dropdown-item" id="btnPrintPdfMapfish">
+                                <i class="fa-solid fa-file-pdf"></i> PDF server
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item" id="clientPdfBtn">
+                                <i class="fa-solid fa-file-pdf"></i> PDF client
+                            </button>
+                        </li>
+                    </ul>
+                </div>
 
-                <button class="bottom-menu-button" id="gps" title="GPS location">
-                    <i class="fas fa-location-crosshairs"></i>
-                    <span class="menu-label">Location</span>
-                </button>
-
-                <div class="button-separator"></div>
-
-                <button class="bottom-menu-button" id="home" title="Center map">
-                    <i class="fas fa-crosshairs"></i>
-                    <span class="menu-label">Center</span>
-                </button>
-
-                <div class="button-separator"></div>
-
-                <button class="bottom-menu-button" id="btnSpatialViewport" title="Bounding box">
-                    <i class="fas fa-info-circle"></i>
-                    <span class="menu-label">BBox</span>
-                </button>
-
-                <div class="button-separator hideResponsive"></div>
-
-                <button id="rotate" class="bottom-menu-button hideResponsive" title="Reset rotation">
-                    <i class="fa-solid fa-compass"></i>
-                    <span class="menu-label">Reset</span>
-                </button>
-
-                <div class="button-separator hideResponsive"></div>
-
-                <button id="rotate90" class="bottom-menu-button hideResponsive" title="Rotate left">
-                    <i class="fas fa-rotate-left"></i>
-                    <span class="menu-label">Rotate</span>
-                </button>
-
-                <div class="button-separator "></div>
+                <!-- Clean direct action -->
                 <button id="clearAllLayers" title="Clean map" class="bottom-menu-button">
                     <i class="fa-solid fa-broom"></i>
-                    <span class="menu-label">Clean map</span>
-                </button>
-
-                <div class="button-separator "></div>
-                <button id="btnPrintPdfMapfish" title="Export map to PDF" class="bottom-menu-button">
-                    <i class="fa-solid fa-file-pdf"></i>
-                    <span class="menu-label">PDF Fish</span>
-                </button>                
-
-                <div class="button-separator "></div>
-                <button id="clientPdfBtn" title="Export map to PDF" class="bottom-menu-button">
-                    <i class="fa-solid fa-file-pdf"></i>
-                    <span class="menu-label">PDF client</span>
-                </button>
-
-                <div class="button-separator hideResponsive"></div>
-                <button id="btnStreetView" class="bottom-menu-button hideResponsive" title="Street View">
-                    <i class="fa-solid fa-street-view"></i>
-                    <span class="menu-label">Street View</span>
-                </button>
-
-                <div class="button-separator hideResponsive"></div>
-                <button id="btnAddFileLayer" class="bottom-menu-button hideResponsive" title="Upload Layers">
-                    <i class="fas fa-upload" aria-hidden="true"></i>
-                    <span class="menu-label">Upload</span>
-                </button>
-
-                <div class="button-separator hideResponsive"></div>
-
-                <button id="btnSpatialDraw" class="bottom-menu-button hideResponsive" title="Spatial search">
-                    <i class="fas fa-draw-polygon"></i>
-                    <span class="menu-label">Search</span>
-                </button>
-
-                <div class="button-separator hideResponsive"></div>
-
-                <button id="btnSpatialDrawCancel" class="bottom-menu-button hideResponsive" title="Clear spatial search">
-                    <i class="fas fa-times"></i>
-                    <span class="menu-label">Clear</span>
+                    <span class="menu-label">Clean</span>
                 </button>
 
             </div>

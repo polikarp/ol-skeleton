@@ -545,38 +545,45 @@ table.table-custom button{
     background-color: #f0f0f0;
 } */
 
+
 .gis-bottom-menu {
     position: absolute;
-    bottom: 0px;
+    bottom: 0;
     left: 50%;
     transform: translateX(-50%);
     background-color: rgba(255, 255, 255, 0.95);
     border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 1px 1px;
+    border-radius: 10px 10px 0 0;
+    padding: 4px 6px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
 }
 
-.menu-buttons {
+#menuButtons {
     display: flex;
     flex-wrap: nowrap;
-    gap: 8px;
+    align-items: center;
+    gap: 6px;
+}
+
+.bottom-menu-group {
+    display: flex;
+    align-items: center;
 }
 
 .bottom-menu-button {
     background: none;
     border: none;
-    font-size: 20px;
+    font-size: 18px;
     cursor: pointer;
     color: #444;
-    padding: 6px 6px 4px;
-    width: 50px;
+    padding: 6px 8px 4px;
+    min-width: 58px;
     height: auto;
-    border-radius: 6px;
+    border-radius: 8px;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -584,24 +591,49 @@ table.table-custom button{
     justify-content: center;
 }
 
-.bottom-menu-button:hover {
+.bottom-menu-button:hover,
+.bottom-menu-button.show {
     color: #17191b;
     background-color: #f0f0f0;
 }
 
-.menu-label {
-    font-size: 12px;
-    margin-top: 5px;
-    line-height: 1;
-    color: #333;
+.bottom-menu-button.dropdown-toggle::after {
+    margin-top: 4px;
+    font-size: 10px;
 }
 
-/* Separador vertical */
-.button-separator {
-    width: 1px;
-    height: 36px;
-    background-color: #ccc;
-    margin: 0 6px;
+.menu-label {
+    font-size: 11px;
+    margin-top: 4px;
+    line-height: 1;
+    color: #333;
+    white-space: nowrap;
+}
+
+.bottom-menu-dropdown {
+    min-width: 220px;
+    padding: 6px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+.bottom-menu-dropdown .dropdown-item {
+    border-radius: 8px;
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+}
+
+.bottom-menu-dropdown .dropdown-item:hover {
+    background-color: #f0f0f0;
+}
+
+.bottom-menu-dropdown .dropdown-item i {
+    width: 18px;
+    text-align: center;
 }
 
 /* Botón ☰ visible solo en móvil */
@@ -611,8 +643,25 @@ table.table-custom button{
     border-radius: 6px;
     font-size: 20px;
     padding: 8px 12px;
-
 }
+
+.bottom-menu-group.dropup .dropdown-menu {
+    margin-bottom: 8px;
+}
+
+.bottom-menu-group.dropup .dropdown-toggle::after {
+    margin-top: 4px;
+    vertical-align: middle;
+}
+
+/* Make Bootstrap arrow point down when using dropup */
+.bottom-menu-group.dropup .dropdown-toggle::after {
+    border-top: 0;
+    border-right: 0.3em solid transparent;
+    border-bottom: 0;
+    border-left: 0.3em solid transparent;
+}
+
 
 ul.layerSelector {
     max-height: 300px;
@@ -1890,7 +1939,6 @@ button.ol-rotate-reset{
 
     #menuButtons {
         display: none !important;
-        /* flex-direction: column; */
         align-items: stretch;
         gap: 8px;
         width: 100%;
@@ -1903,8 +1951,6 @@ button.ol-rotate-reset{
     #menuButtons .hideResponsive {
         display: none;
     }
-
-
 
     #gis-bottom-menu {
         flex-direction: column;
