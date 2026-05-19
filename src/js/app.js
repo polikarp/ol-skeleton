@@ -555,6 +555,28 @@ function clickHandlers() {
           $("#customLayersGroup").addClass("d-none");
       }
   });
+
+  function showBusinessScreen() {
+      $('#appScreens').addClass('show-business');
+      setTimeout(() => {
+          map.updateSize();
+      }, 500);
+  }
+
+  function showGisScreen() {
+      $('#appScreens').removeClass('show-business');
+      setTimeout(() => {
+          map.updateSize();
+      }, 500);
+  }
+
+  $('#openBusinessScreenBtn').on('click', () => {
+      showBusinessScreen();
+  });
+
+  $('#backToGisBtn').on('click', () => {
+      showGisScreen();
+  });
 }
 
 /**

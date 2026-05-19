@@ -1,0 +1,130 @@
+html,
+body {
+    overflow: hidden;
+}
+
+#appScreens {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.app-screen {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transition:
+        transform 0.45s cubic-bezier(.77,0,.18,1),
+        opacity 0.35s ease;
+
+    will-change: transform;
+}
+
+/* GIS visible by default */
+#gisScreen {
+    transform: translateX(0%);
+    z-index: 2;
+}
+
+/* Business hidden on right */
+#businessScreen {
+    transform: translateX(100%);
+    background:
+        linear-gradient(
+            135deg,
+            #f4f7fb 0%,
+            #e9eef5 100%
+        );
+
+    overflow: auto;
+    z-index: 3;
+}
+
+/* SHOW BUSINESS */
+#appScreens.show-business #gisScreen {
+    transform: translateX(-30%);
+    opacity: 0.7;
+}
+
+#appScreens.show-business #businessScreen {
+    transform: translateX(0%);
+}
+
+/* BUSINESS UI */
+
+.business-layout {
+    padding: 32px;
+    min-height: 100%;
+}
+
+.business-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+.business-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(280px, 1fr));
+
+    gap: 20px;
+}
+
+.business-card {
+    background: white;
+    border-radius: 18px;
+    padding: 22px;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.08);
+}
+
+.business-kpi {
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1;
+    margin: 16px 0;
+}
+
+.business-table-card {
+    grid-column: 1 / -1;
+}
+
+/* TOGGLE BUTTON */
+
+.screen-toggle-btn {
+    position: absolute;
+    top: 20px;
+    left: 400px;
+    z-index: 5000;
+
+    border: none;
+    border-radius: 14px;
+
+    padding: 12px 18px;
+
+    background: rgba(33,37,41,0.92);
+    color: white;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-weight: 600;
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,0.25);
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+}
+
+.screen-toggle-btn:hover {
+    transform: translateY(-2px);
+    background: rgba(20,20,20,0.96);
+}

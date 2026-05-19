@@ -2,6 +2,7 @@
 /* @import 'bootstrap'; */
 @import "jquery-ui-dist/jquery-ui.css";
 @import './global.css';
+@import './appScreens.css';
 
 /* .front_end {
     margin: 0 !important;
