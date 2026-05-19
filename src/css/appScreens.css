@@ -99,7 +99,7 @@ body {
 .screen-toggle-btn {
     position: absolute;
     top: 20px;
-    left: 400px;
+    left: 500px;
     z-index: 5000;
 
     border: none;
