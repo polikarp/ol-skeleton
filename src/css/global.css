@@ -688,6 +688,56 @@ ul.layerSelector {
     min-height: 300px;
 }
 
+.street-view-google-maps-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10000;
+
+    width: 42px;
+    height: 42px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.96);
+    color: #222;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 18px;
+
+    box-shadow:
+        0 2px 6px rgba(0,0,0,0.35),
+        0 1px 2px rgba(0,0,0,0.25);
+
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease,
+        box-shadow 0.15s ease;
+
+    cursor: pointer;
+}
+
+.street-view-google-maps-btn:hover {
+    background: #ffffff;
+    transform: scale(1.08);
+
+    box-shadow:
+        0 4px 12px rgba(0,0,0,0.45),
+        0 2px 4px rgba(0,0,0,0.3);
+}
+
+.street-view-google-maps-btn:active {
+    transform: scale(0.96);
+}
+
+.street-view-google-maps-btn i {
+    pointer-events: none;
+}
+
 
 
 /************************************/

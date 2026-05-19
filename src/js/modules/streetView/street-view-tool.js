@@ -15,6 +15,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import Style from 'ol/style/Style';
 import Icon from 'ol/style/Icon';
+import { setStreetViewCoverageVisible, hideStreetViewCoverage } from './street-view-coverage';
 
 // let GOOGLE_API_KEY = 'AIzaSyDQ46LAUm6W4UNWF71WocAE59YTBi7B4_o';
 
@@ -94,16 +95,18 @@ export function registerStreetViewTool(map) {
         });
     }
 
-    function enable() {
+    async function enable() {
         streetViewMode = true;
         $btn.addClass('active');
         $map.addClass('street-view-active');
+        setStreetViewCoverageVisible(map, true);
     }
 
     function disable() {
         streetViewMode = false;
         $btn.removeClass('active');
         $map.removeClass('street-view-active');
+        hideStreetViewCoverage();
     }
 
     function showStatus(msg) {
@@ -254,6 +257,8 @@ export function registerStreetViewTool(map) {
                         return;
                     }
 
+                    addOpenInGoogleMapsButton();
+
                     if (!panorama) {
                         panorama = new StreetViewPanorama(
                             container,
@@ -317,9 +322,7 @@ export function registerStreetViewTool(map) {
         if (!streetViewMode) {
             return;
         }
-
         openStreetView(evt.coordinate);
-        disable();
     });
 
     /**
@@ -343,4 +346,58 @@ export function registerStreetViewTool(map) {
         disable,
         removeStreetViewMarker
     };
+
+    function openCurrentPanoramaInGoogleMaps() {
+        if (!panorama) {
+            return;
+        }
+
+        const pos = panorama.getPosition();
+        const pov = panorama.getPov();
+
+        if (!pos || !pov) {
+            return;
+        }
+
+        const lat = pos.lat();
+        const lng = pos.lng();
+
+        const heading = pov.heading || 0;
+        const pitch = pov.pitch || 0;
+        const fov = 80;
+
+        const url = new URL('https://www.google.com/maps/@');
+
+        url.searchParams.set('api', '1');
+        url.searchParams.set('map_action', 'pano');
+        url.searchParams.set('viewpoint', `${lat},${lng}`);
+        url.searchParams.set('heading', heading);
+        url.searchParams.set('pitch', pitch);
+        url.searchParams.set('fov', fov);
+
+        window.open(url.toString(), '_blank', 'noopener,noreferrer');
+    }
+
+    function addOpenInGoogleMapsButton() {
+        if ($('#openStreetViewInGoogleMaps').length) {
+            return;
+        }
+
+        const $button = $(`
+            <button
+                id="openStreetViewInGoogleMaps"
+                type="button"
+                class="street-view-google-maps-btn"
+                title="Open in Google Maps"
+            >
+                <i class="fa-solid fa-map-location-dot"></i>
+            </button>
+        `);
+
+        $button.on('click', () => {
+            openCurrentPanoramaInGoogleMaps();
+        });
+
+        $('#streetViewContainer').append($button);
+    }
 }
