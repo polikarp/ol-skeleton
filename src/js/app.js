@@ -70,6 +70,10 @@ import { appendFileLayersToMenu } from "./modules/menu/layers-menu-renderer";
 
 import { removeLayerFromMap } from "./modules/map/layers-on-off";
 
+import { initTableViewPanel } from "./modules/map/table-view";
+
+import { createTableMiniMap } from "./modules/map/table-mini-map";
+
 import OSM from 'ol/source/OSM';
 import XYZ from 'ol/source/XYZ';
 
@@ -87,6 +91,8 @@ let LAYERS_CONFIG;
 let baseMapLayers = [];
 let selectedBaseLayer = null;
 let MAPFISH_CAPABILITIES;
+
+
 
 /**
  * Load runtime layers configuration from public/data.
@@ -321,6 +327,19 @@ async function initApp() {
       triggerSelector: "#btnAddFileLayer",
       dataProjection: "EPSG:4326"
   });
+
+  const miniMap =  createTableMiniMap(map, '#tableMiniMap');
+
+  initTableViewPanel({
+      map,
+      miniMap,
+      queryService,
+      spatialDrawTool,
+      zoomToGeometryFromGeoJson
+  });
+
+
+
 }
 
 // Ensure bootstrap runs even if DOMContentLoaded already fired
@@ -556,27 +575,27 @@ function clickHandlers() {
       }
   });
 
-  function showBusinessScreen() {
-      $('#appScreens').addClass('show-business');
-      setTimeout(() => {
-          map.updateSize();
-      }, 500);
-  }
+  // function showBusinessScreen() {
+  //     $('#appScreens').addClass('show-business');
+  //     setTimeout(() => {
+  //         map.updateSize();
+  //     }, 500);
+  // }
 
-  function showGisScreen() {
-      $('#appScreens').removeClass('show-business');
-      setTimeout(() => {
-          map.updateSize();
-      }, 500);
-  }
+  // function showGisScreen() {
+  //     $('#appScreens').removeClass('show-business');
+  //     setTimeout(() => {
+  //         map.updateSize();
+  //     }, 500);
+  // }
 
-  $('#openBusinessScreenBtn').on('click', () => {
-      showBusinessScreen();
-  });
+  // $('#openBusinessScreenBtn').on('click', () => {
+  //     showBusinessScreen();
+  // });
 
-  $('#backToGisBtn').on('click', () => {
-      showGisScreen();
-  });
+  // $('#backToGisBtn').on('click', () => {
+  //     showGisScreen();
+  // });
 }
 
 /**

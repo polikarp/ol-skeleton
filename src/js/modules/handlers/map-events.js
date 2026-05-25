@@ -25,7 +25,10 @@ export function registerMoveEndHandler(map, minZoomLevelDisplay) {
             $(".ol-overviewmap").removeClass("d-none");
         }
 
+        
+
 
     });
 
 }
+

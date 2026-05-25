@@ -140,11 +140,11 @@ export function zoomToGeometryFromGeoJson(geometry, opts = {}) {
     let feature;
     try {
         feature = _format.readFeature(
-        { type: "Feature", geometry, properties: {} },
-        {
-            dataProjection: _dataProjection,
-            featureProjection: view.getProjection()
-        }
+            { type: "Feature", geometry, properties: {} },
+            {
+                dataProjection: _dataProjection,
+                featureProjection: view.getProjection()
+            }
         );
     } catch (err) {
         console.error("Error reading geometry for zoom", err);
@@ -182,4 +182,114 @@ export function zoomToGeometryFromGeoJson(geometry, opts = {}) {
 
         view.animate({ center: newCenter, duration: 200 });
     }, duration + 30);
+}
+
+/**
+ * Make zoom to every map with fit true or false
+ */
+
+
+let highlightLayerByMap = new WeakMap();
+
+
+export function clearHighLightLayer(targetMap) {
+    if (!targetMap) {
+        return;
+    }
+    const highlightLayer = highlightLayerByMap.get(targetMap);
+    if (highlightLayer) {
+        targetMap.removeLayer(highlightLayer);
+    }
+    highlightLayerByMap.delete(targetMap);
+}
+
+export function zoomToGeometryOnMap(geometry, targetMap, options = {}) {
+
+    if (!geometry || !targetMap) {
+        return;
+    }
+
+    const {
+        fit = false,
+        maxZoom = 18,
+        padding = [40, 40, 40, 40],
+        duration = 500,
+        clearPrevious = true
+    } = options;
+
+    const geoJsonFormat = new GeoJSON();
+
+    const feature = geoJsonFormat.readFeature({
+        type: 'Feature',
+        geometry: geometry,
+        properties: {}
+    }, {
+        dataProjection: targetMap.getView().getProjection(),
+        featureProjection: targetMap.getView().getProjection()
+    });
+
+    let highlightLayer = highlightLayerByMap.get(targetMap);
+
+    if (!highlightLayer) {
+
+        highlightLayer = new VectorLayer({
+            source: new VectorSource(),
+            style: createHighlightStyle(),
+            zIndex: 999999
+        });
+
+        highlightLayer.set('isMiniMapHighlight', true);
+
+        targetMap.addLayer(highlightLayer);
+
+        highlightLayerByMap.set(targetMap, highlightLayer);
+    }
+
+    const source = highlightLayer.getSource();
+
+    if (clearPrevious) {
+        source.clear();
+    }
+
+    source.addFeature(feature);
+
+    if (fit) {
+
+        const extent = feature.getGeometry().getExtent();
+
+        targetMap.getView().fit(extent, {
+            size: targetMap.getSize(),
+            padding: padding,
+            maxZoom: maxZoom,
+            duration: duration
+        });
+    }
+}
+
+function createHighlightStyle() {
+
+    return new Style({
+
+        stroke: new Stroke({
+            color: '#ff0000',
+            width: 4
+        }),
+
+        fill: new Fill({
+            color: 'rgba(255, 0, 0, 0.15)'
+        }),
+
+        image: new CircleStyle({
+            radius: 7,
+
+            fill: new Fill({
+                color: '#ff0000'
+            }),
+
+            stroke: new Stroke({
+                color: '#ffffff',
+                width: 2
+            })
+        })
+    });
 }

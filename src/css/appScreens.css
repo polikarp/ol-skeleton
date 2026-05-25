@@ -5,93 +5,163 @@ body {
 
 #appScreens {
     position: relative;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
 }
 
 .app-screen {
     position: absolute;
-    inset: 0;
+    top: 0;
     width: 100%;
     height: 100%;
-    transition:
-        transform 0.45s cubic-bezier(.77,0,.18,1),
-        opacity 0.35s ease;
-
-    will-change: transform;
+    transition: transform 0.45s ease-in-out;
 }
 
-/* GIS visible by default */
 #gisScreen {
-    transform: translateX(0%);
-    z-index: 2;
+    left: 0;
+    transform: translateX(0);
 }
 
-/* Business hidden on right */
 #businessScreen {
-    transform: translateX(100%);
-    background:
-        linear-gradient(
-            135deg,
-            #f4f7fb 0%,
-            #e9eef5 100%
-        );
-
-    overflow: auto;
-    z-index: 3;
+    left: 100%;
+    transform: translateX(0);
 }
 
-/* SHOW BUSINESS */
 #appScreens.show-business #gisScreen {
-    transform: translateX(-30%);
-    opacity: 0.7;
+    transform: translateX(-100%);
 }
 
 #appScreens.show-business #businessScreen {
-    transform: translateX(0%);
+    transform: translateX(-100%);
 }
 
 /* BUSINESS UI */
 
-.business-layout {
-    padding: 32px;
-    min-height: 100%;
+.business-screen {
+    width: 100%;
+    height: 100%;
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .business-header {
+    height: 64px;
+    padding: 10px 16px;
+    background: #ffffff;
+    border-bottom: 1px solid #dee2e6;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 28px;
+    justify-content: space-between;
 }
 
-.business-grid {
-    display: grid;
-    grid-template-columns:
-        repeat(auto-fit, minmax(280px, 1fr));
-
-    gap: 20px;
+.business-content {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+    overflow: hidden;
 }
 
-.business-card {
-    background: white;
-    border-radius: 18px;
-    padding: 22px;
-
-    box-shadow:
-        0 10px 30px rgba(0,0,0,0.08);
+.gis-results-tabs-wrapper {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
-.business-kpi {
-    font-size: 48px;
-    font-weight: 700;
-    line-height: 1;
-    margin: 16px 0;
+.gis-results-tab-content {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
-.business-table-card {
-    grid-column: 1 / -1;
+.gis-results-tab-content .tab-pane {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.gis-results-tab-content .tab-pane.active {
+    display: flex;
+    flex-direction: column;
+}
+
+.gis-results-table-wrapper {
+    flex: 1;
+    min-height: 0;
+    max-height: 100%;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+.gis-results-table {
+    margin-bottom: 0;
+}
+
+.gis-results-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #f8f9fa;
+}
+
+.gis-results-table th:last-child,
+.gis-results-table td:last-child {
+    width: 1%;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.gis-results-table .js-open-result {
+    padding: 2px 6px;
+    font-size: 12px;
+    line-height: 1.2;
+}
+
+.gis-results-table .js-open-result i {
+    font-size: 12px;
+}
+
+#gisResultsTable {
+    margin-bottom: 0;
+}
+
+#gisResultsTable thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #f8f9fa;
+}
+
+#gisResultsTable tbody tr {
+    cursor: pointer;
+}
+
+#gisResultsTabsWrapper .badge.bg-secondary  {
+    color: #fff !important;
+}
+
+.table-mini-map {
+    height: 220px;
+    border-radius: 10px;
+    border: 1px solid #dee2e6;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #777777;
+    overflow: hidden;
 }
 
 /* TOGGLE BUTTON */
@@ -127,4 +197,11 @@ body {
 .screen-toggle-btn:hover {
     transform: translateY(-2px);
     background: rgba(20,20,20,0.96);
+}
+
+#tableMiniMap {
+    width: 100%;
+    height: 260px;
+    border-radius: 8px;
+    overflow: hidden;
 }
