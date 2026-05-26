@@ -70,7 +70,7 @@ import { appendFileLayersToMenu } from "./modules/menu/layers-menu-renderer";
 
 import { removeLayerFromMap } from "./modules/map/layers-on-off";
 
-import { initTableViewPanel } from "./modules/map/table-view";
+import { initTableViewPanel, initTableMiniMapResizable } from "./modules/map/table-view";
 
 import { createTableMiniMap } from "./modules/map/table-mini-map";
 
@@ -83,6 +83,7 @@ const SRID = 25830;
 const USE_PROXY = false; // import.meta.env.DEV;
 const GEOM_PROP = "geom";
 const SEARCH_SERVICE = "wfs";
+const MAIN_BASE_LAYER = "gibgis:basemap_basic_1";
 
 window.MAP_CLICK_BLOCKED = false;
 
@@ -91,6 +92,7 @@ let LAYERS_CONFIG;
 let baseMapLayers = [];
 let selectedBaseLayer = null;
 let MAPFISH_CAPABILITIES;
+let TABLE_SEARCHING_SERVICE;
 
 
 
@@ -151,6 +153,7 @@ async function bootstrapLayersFromConfig() {
   window.PDF_PRINT = pdf_print;
   window.DEBUG_ENABLED =  debug === true;
   window.GOOGLE_API_KEY = LAYERS_CONFIG.google_api_key;
+  window.TABLE_SERVICE = LAYERS_CONFIG.table_searching_service;
 }
 
 /**
@@ -214,6 +217,7 @@ async function initApp() {
 
   const isMapfishEnabled = window.PDF_PRINT?.mapfish ?? false;
   const isCanvasPdfEnabled = window.PDF_PRINT?.canvas ?? false;
+  const isTableServiceEnabled = window.TABLE_SERVICE ?? false;
 
   if(!isMapfishEnabled){
       $("#btnPrintPdfMapfish").prev("div").remove();
@@ -226,6 +230,10 @@ async function initApp() {
   if(!isCanvasPdfEnabled){
       $("#clientPdfBtn").prev("div").remove();
       $("#clientPdfBtn").remove();
+  }
+
+  if(!isTableServiceEnabled){
+    $("#openBusinessScreenLi").remove();
   }
 
   
@@ -338,6 +346,8 @@ async function initApp() {
       zoomToGeometryFromGeoJson
   });
 
+  initTableMiniMapResizable();
+
 
 
 }
@@ -363,12 +373,14 @@ function clickHandlers() {
 
   // Draw polygon and query
   $("#btnSpatialDraw").on("click", function () {
-    spatialDrawTool.activate();
+      spatialDrawTool.activate();
+
   });
 
   // Cancel draw tool
   $("#btnSpatialDrawCancel").on("click", function () {
     spatialDrawTool.deactivate();
+    $('#mapFloatingControls').hide();
   });
 
   // Query viewport
@@ -599,12 +611,12 @@ function clickHandlers() {
 }
 
 /**
- * Get selected base layer
+ * Get selected base layer. For mapfish must be gibgis:basemap_basic_1, otherwise other base layers may fail on printing
  * @returns { layerName, baseUrl, transparent}
  */
 function getSelectedBaseLayer(){
     const selectedBaseLayer = map.getLayers().getArray()
-      .filter(layer => layer.getVisible() && layer.get('isBaseLayer'))
+      .filter(layer => layer.get("name") == MAIN_BASE_LAYER && layer.get('isBaseLayer'))
       .map(layer => {
           const source = layer.getSource();
 

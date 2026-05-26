@@ -62,19 +62,19 @@ body {
     min-height: 0;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 0;
     padding: 12px;
     overflow: hidden;
 }
 
 .gis-results-tabs-wrapper {
-    flex: 1;
-    min-height: 0;
+    flex: 1 1 auto;
+    min-height: 160px;
     display: flex;
     flex-direction: column;
     background: #ffffff;
     border: 1px solid #dee2e6;
-    border-radius: 10px;
+    border-radius: 10px 10px 0 0;
     overflow: hidden;
 }
 
@@ -148,22 +148,68 @@ body {
     cursor: pointer;
 }
 
-#gisResultsTabsWrapper .badge.bg-secondary  {
+#gisResultsTabsWrapper .badge.bg-secondary {
     color: #fff !important;
 }
 
-.table-mini-map {
-    height: 220px;
-    border-radius: 10px;
-    border: 1px solid #dee2e6;
-    background: #ffffff;
+.table-map-resize-handle {
+    height: 12px;
+    flex: 0 0 12px;
+    cursor: row-resize;
+    background: #f1f3f5;
+    border-left: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.table-map-resize-handle::before {
+    content: "";
+    width: 44px;
+    height: 4px;
+    border-radius: 999px;
+    background: #adb5bd;
+}
+
+.table-map-resize-handle:hover {
+    background: #e9ecef;
+}
+
+.table-mini-map {
+    flex: 0 0 auto;
+    height: 220px;
+    min-height: 120px;
+    max-height: 70%;
+    border-radius: 0 0 10px 10px;
+    border: 1px solid #dee2e6;
+    background: #ffffff;
     color: #777777;
     overflow: hidden;
 }
 
+body.resizing-table-map {
+    user-select: none;
+    cursor: row-resize;
+}
+
+
+.table-export-btn {
+    border: none;
+    background: transparent;
+    padding: 6px 8px;
+    color: #6c757d;
+    transition: all 0.15s ease;
+}
+
+.table-export-btn:hover:not(:disabled) {
+    color: #0d6efd;
+}
+
+.table-export-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
 /* TOGGLE BUTTON */
 
 .screen-toggle-btn {
@@ -204,4 +250,39 @@ body {
     height: 260px;
     border-radius: 8px;
     overflow: hidden;
+}
+
+
+/*Gis table searching*/
+.gis-table-toolbar .input-group-text {
+    min-width: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gis-search-highlight {
+    padding: 0 2px;
+    border-radius: 3px;
+    font-weight: 600;
+}
+
+.gis-search-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.gis-search-icon {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+#gisTableSearchInput {
+    padding-left: 2.2rem;
+    /* padding-right: 2rem; */
 }

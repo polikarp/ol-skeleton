@@ -8,6 +8,31 @@
   </head>
   <body>
 
+        <!-- Filters modal -->
+        <div class="modal fade" id="layerFiltersModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Filters</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <ul class="nav nav-tabs" id="layerFiltersTabs" role="tablist"></ul>
+                        <div class="tab-content pt-3" id="layerFiltersTabContent"></div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            Close
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
         <div id="appScreens">
 
             <!-- GIS SCREEN -->
@@ -184,7 +209,7 @@
                                             </button>
                                         </li>
 
-                                        <li>
+                                        <li id="openBusinessScreenLi">
                                             <button id="openBusinessScreenBtn" class="dropdown-item">
                                                 <i class="fa-solid fa-table"></i>
                                                 Table
@@ -241,7 +266,7 @@
                                     <ul class="dropdown-menu bottom-menu-dropdown">
                                         <li>
                                             <button class="dropdown-item" id="btnPrintPdfMapfish">
-                                                <i class="fa-solid fa-file-pdf"></i> PDF server
+                                                <i class="fa-solid fa-file-pdf"></i> PDF
                                             </button>
                                         </li>
                                         <li>
@@ -301,30 +326,7 @@
 
                         </div>
 
-                        <!-- Filters modal -->
-                        <div class="modal fade" id="layerFiltersModal" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                                <div class="modal-content">
-
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Filters</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-
-                                    <div class="modal-body">
-                                        <ul class="nav nav-tabs" id="layerFiltersTabs" role="tablist"></ul>
-                                        <div class="tab-content pt-3" id="layerFiltersTabContent"></div>
-                                    </div>
-
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                                            Close
-                                        </button>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
+                        <!-- Modal aquí-->
 
 
                         <div id="map-compass" class="ol-compass">
@@ -359,7 +361,7 @@
 
                 <div class="business-header">
                     <div>
-                        <h5 class="mb-0">Visible map data</h5>
+                        <h5 class="mb-0">Map data in table</h5>
                         
                     </div>
 
@@ -377,11 +379,20 @@
                 </div>
 
                 <div class="business-content">
-                    <div id="gisResultsTabsWrapper" class="gis-results-tabs-wrapper">
+                    <div class="gis-table-toolbar d-flex align-items-center gap-2 mb-2 col-3 px-0">
+                         <div class="gis-search-wrapper">
+                            <i class="fa-solid fa-magnifying-glass gis-search-icon"></i>
+                            <input type="search" id="gisTableSearchInput"  class="form-control form-control-sm" placeholder="Search..." autocomplete="off">
+                        </div>
+                    </div>
+                        
+                    <div id="gisResultsTabsWrapper" class="gis-results-tabs-wrapper">                        
                         <ul id="gisResultsTabs" class="nav nav-tabs"></ul>
                         <div id="gisResultsTabContent" class="tab-content gis-results-tab-content"></div>
                     </div>
 
+                    <div id="tableMapResizeHandle" class="table-map-resize-handle"></div>
+                    
                     <div id="tableMiniMap" class="table-mini-map">
                         
                     </div>

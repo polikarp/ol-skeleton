@@ -78,6 +78,7 @@ export function bindCheckboxToggles(map, wfsQueryExecutor, { selector = ".layerC
                     refreshLayer(map, layerName, {});
                 }
             }
+            $row.find(".layerFilterBtn").removeClass("d-none");
             $row.find(".wms-legend").first().show();
             
         } else {

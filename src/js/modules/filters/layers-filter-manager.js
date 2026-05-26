@@ -159,7 +159,6 @@ async function openFiltersModalForLayer({ layerName, $layerLi, getWfsDescribeUrl
 
     // Load schema (fields) via WFS DescribeFeatureType and populate selects
     const $pane = getPaneByLayerName(layerName);
-    $pane.find(".layerFilterStatus").text("Loading fields...");
 
     // Ensure at least one row exists
     ensureAtLeastOneRow($pane);
@@ -169,12 +168,11 @@ async function openFiltersModalForLayer({ layerName, $layerLi, getWfsDescribeUrl
         if(!window.currentCqlFilterByLayer[layerName]){
             const fields = await getFieldsForLayer(layerName, $layerLi, getWfsDescribeUrl);
             populateFieldsSelect($pane, fields);
-            $pane.find(".layerFilterStatus").text("");
         }
 
     } catch (err) {
         console.error(err);
-        $pane.find(".layerFilterStatus").text("Error loading fields (WFS DescribeFeatureType).");
+        alert("Error loading fields (WFS DescribeFeatureType).");
     }
 
     // Sync preview + icon status
@@ -223,8 +221,6 @@ function ensureTabExists(layerName, layerTitle) {
            role="tabpanel"
            aria-labelledby="${tabBtnId}"
            data-layer="${escapeAttr(layerName)}">
-
-        <div class="small text-muted mb-2 layerFilterStatus"></div>
 
         <!-- Conditions container -->
         <div class="layerFilterRows"></div>

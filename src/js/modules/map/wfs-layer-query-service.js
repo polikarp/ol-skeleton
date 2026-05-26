@@ -23,6 +23,7 @@ export function createWfsLayerQueryService({
                     layer,
                     baseUrl: layer.get("serviceBaseUrl"),
                     typeName: layer.get("layerName"),
+                    title: layer.get("title"),
                     wfsEnabled: !!layer.get("wfsEnabled"),
                     wfsVersion: layer.get("wfsVersion") || "2.0.0",
                     geomColumn: layer.get("geomColumn") || "geom"
@@ -53,6 +54,7 @@ export function createWfsLayerQueryService({
             return {
                 ok: true,
                 layerName: c.typeName,
+                title: c.title,
                 count: geojson?.features?.length || 0,
                 geojson,
                 url,
@@ -78,8 +80,11 @@ export function createWfsLayerQueryService({
             return { ok: false, error: "No spatial input", results: [] };
         }
 
-        //Store on window environment to use that geometry to export
-        window.LAST_DRAW_GEOM = queryGeom;
+        if(context?.mode !== "viewport-table"){
+            //Store on window environment to use that geometry to export
+            window.LAST_DRAW_GEOM = queryGeom;
+        }
+
 
         const bbox = queryGeom.getExtent();
 

@@ -191,7 +191,6 @@ export function zoomToGeometryFromGeoJson(geometry, opts = {}) {
 
 let highlightLayerByMap = new WeakMap();
 
-
 export function clearHighLightLayer(targetMap) {
     if (!targetMap) {
         return;
@@ -204,33 +203,21 @@ export function clearHighLightLayer(targetMap) {
 }
 
 export function zoomToGeometryOnMap(geometry, targetMap, options = {}) {
-
     if (!geometry || !targetMap) {
         return;
     }
-
     const {
+        key = null,
         fit = false,
+        remove = false,
         maxZoom = 18,
         padding = [40, 40, 40, 40],
-        duration = 500,
-        clearPrevious = true
+        duration = 500
     } = options;
-
-    const geoJsonFormat = new GeoJSON();
-
-    const feature = geoJsonFormat.readFeature({
-        type: 'Feature',
-        geometry: geometry,
-        properties: {}
-    }, {
-        dataProjection: targetMap.getView().getProjection(),
-        featureProjection: targetMap.getView().getProjection()
-    });
 
     let highlightLayer = highlightLayerByMap.get(targetMap);
 
-    if (!highlightLayer) {
+    if (!highlightLayer || !targetMap.getLayers().getArray().includes(highlightLayer)) {
 
         highlightLayer = new VectorLayer({
             source: new VectorSource(),
@@ -247,22 +234,47 @@ export function zoomToGeometryOnMap(geometry, targetMap, options = {}) {
 
     const source = highlightLayer.getSource();
 
-    if (clearPrevious) {
-        source.clear();
+    if (remove && key) {
+        const existingFeature = source.getFeatureById(key);
+        if (existingFeature) {
+            source.removeFeature(existingFeature);
+        }
+        return;
+    }
+
+    const geoJsonFormat = new GeoJSON();
+
+    const feature = geoJsonFormat.readFeature({
+        type: 'Feature',
+        geometry: geometry,
+        properties: {}
+    }, {
+        dataProjection: targetMap.getView().getProjection(),
+        featureProjection: targetMap.getView().getProjection()
+    });
+
+    if (key) {
+        const existingFeature = source.getFeatureById(key);
+        if (existingFeature) {
+            source.removeFeature(existingFeature);
+        }
+        feature.setId(key);
     }
 
     source.addFeature(feature);
 
     if (fit) {
 
-        const extent = feature.getGeometry().getExtent();
-
-        targetMap.getView().fit(extent, {
-            size: targetMap.getSize(),
-            padding: padding,
-            maxZoom: maxZoom,
-            duration: duration
-        });
+        const featureExtent = feature.getGeometry().getExtent();
+        targetMap.getView().fit(
+            featureExtent,
+            {
+                size: targetMap.getSize(),
+                padding,
+                maxZoom,
+                duration
+            }
+        );
     }
 }
 

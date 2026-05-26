@@ -4,6 +4,7 @@
     "google_api_key": "AIzaSyDOJt6shYbnwYFgdxVaMMaDnt9YkyaY6Y0", 
     "address_service": {"url": "https://download.geoportal.gov.gi/geoserver", "layer": "all_places_llm_search_vw"},
     "mapfish_service": {"url": "https://download.geoportal.gov.gi/geoserver/pdf"},
+    "table_searching_service": true,
     "base_layers": [
             {
                 "id": 1,

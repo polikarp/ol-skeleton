@@ -232,3 +232,113 @@ function getSourceUrl(source) {
 
     return undefined;
 }
+
+/** Table searching functions */
+
+let tableSearchTimer = null;
+
+$(document).on("input search", "#gisTableSearchInput", function () {
+    const searchText = $(this).val().trim();
+
+    clearTimeout(tableSearchTimer);
+
+    tableSearchTimer = setTimeout(function () {
+
+        // Clear filter immediately when input is empty
+        if (!searchText.length) {
+            filterAndHighlightActiveTable("");
+            return;
+        }
+
+        // Start filtering from 3 characters
+        if (searchText.length < 3) {
+            return;
+        }
+
+        filterAndHighlightActiveTable(searchText);
+
+    }, 200);
+});
+
+
+function normalizeSearchText(value) {
+    return String(value || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+}
+
+function filterAndHighlightActiveTable(searchText) {
+    const normalizedSearch = normalizeSearchText(searchText);
+    const $activePane = $(".tab-pane.active");
+    const $rows = $activePane.find("table tbody tr");
+
+    let visibleCount = 0;
+
+    $rows.each(function () {
+        const $row = $(this);
+        let rowMatches = false;
+
+        $row.find("td").each(function () {
+            const $cell = $(this);
+
+            restoreOriginalCellHtml($cell);
+
+            if (!normalizedSearch) {
+                return;
+            }
+
+            const cellText = normalizeSearchText($cell.text());
+
+            if (cellText.includes(normalizedSearch)) {
+                rowMatches = true;
+                highlightCellMatches($cell, searchText);
+            }
+        });
+
+        const showRow = !normalizedSearch || rowMatches;
+
+        $row.toggle(showRow);
+
+        if (showRow) {
+            visibleCount++;
+        }
+    });
+
+    $("#gisTableSearchInfo").text(
+        normalizedSearch
+            ? `${visibleCount} matching results`
+            : `${visibleCount} results`
+    );
+}
+
+function restoreOriginalCellHtml($cell) {
+    const originalHtml = $cell.data("original-html");
+
+    if (originalHtml !== undefined) {
+        $cell.html(originalHtml);
+        return;
+    }
+
+    $cell.data("original-html", $cell.html());
+}
+
+function highlightCellMatches($cell, searchText) {
+    const rawSearch = String(searchText || "").trim();
+
+    if (!rawSearch) {
+        return;
+    }
+
+    const escapedSearch = escapeRegExp(rawSearch);
+    const regex = new RegExp(`(${escapedSearch})`, "gi");
+
+    $cell.html(function (_, html) {
+        return html.replace(regex, '<mark class="gis-search-highlight">$1</mark>');
+    });
+}
+
+function escapeRegExp(value) {
+    return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}

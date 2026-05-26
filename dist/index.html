@@ -5,10 +5,35 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Public Viewer</title>
-    <script type="module" crossorigin src="/assets/index-Dv-oFInF.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CIbiqRdF.css">
+    <script type="module" crossorigin src="/assets/index-BVSUJqqx.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-tDIWXb_k.css">
   </head>
   <body>
+
+        <!-- Filters modal -->
+        <div class="modal fade" id="layerFiltersModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Filters</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <ul class="nav nav-tabs" id="layerFiltersTabs" role="tablist"></ul>
+                        <div class="tab-content pt-3" id="layerFiltersTabContent"></div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            Close
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
 
         <div id="appScreens">
 
@@ -185,6 +210,14 @@
                                                 <i class="fas fa-info-circle"></i> Bounding box
                                             </button>
                                         </li>
+
+                                        <li id="openBusinessScreenLi">
+                                            <button id="openBusinessScreenBtn" class="dropdown-item">
+                                                <i class="fa-solid fa-table"></i>
+                                                Table
+                                            </button>
+                                        </li>
+                                        
                                         <li>
                                             <button class="dropdown-item" id="btnSpatialDraw">
                                                 <i class="fas fa-draw-polygon"></i> Spatial search
@@ -235,7 +268,7 @@
                                     <ul class="dropdown-menu bottom-menu-dropdown">
                                         <li>
                                             <button class="dropdown-item" id="btnPrintPdfMapfish">
-                                                <i class="fa-solid fa-file-pdf"></i> PDF server
+                                                <i class="fa-solid fa-file-pdf"></i> PDF
                                             </button>
                                         </li>
                                         <li>
@@ -255,10 +288,10 @@
                             </div>
                         </div>
 
-                        <button id="openBusinessScreenBtn" class="screen-toggle-btn">
+                        <!-- <button id="openBusinessScreenBtn" class="screen-toggle-btn">
                             <i class="fa-solid fa-building"></i>
                             <span>Business</span>
-                        </button>
+                        </button> -->
 
                         <!-- Rigth button to show panel -->
                         <div id="mapFloatingControls">
@@ -295,30 +328,7 @@
 
                         </div>
 
-                        <!-- Filters modal -->
-                        <div class="modal fade" id="layerFiltersModal" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                                <div class="modal-content">
-
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Filters</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-
-                                    <div class="modal-body">
-                                        <ul class="nav nav-tabs" id="layerFiltersTabs" role="tablist"></ul>
-                                        <div class="tab-content pt-3" id="layerFiltersTabContent"></div>
-                                    </div>
-
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                                            Close
-                                        </button>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
+                        <!-- Modal aquí-->
 
 
                         <div id="map-compass" class="ol-compass">
@@ -349,121 +359,45 @@
             </section>
 
             <!-- BUSINESS SCREEN -->
-            <section id="businessScreen" class="app-screen">
+            <section id="businessScreen" class="app-screen business-screen">
 
-                <div class="business-layout">
+                <div class="business-header">
+                    <div>
+                        <h5 class="mb-0">Map data in table</h5>
+                        
+                    </div>
 
-                    <div class="business-header">
-                        <div>
-                            <h2>Corporate Management</h2>
-                            <p>Incidents, tasks and operational dashboard</p>
-                        </div>
+                    <div class="d-flex gap-2">
+                        <!-- <button id="refreshTableViewBtn" class="btn btn-sm btn-outline-primary">
+                            <i class="fa-solid fa-rotate"></i>
+                            Refresh
+                        </button> -->
 
-                        <button id="backToGisBtn" class="btn btn-dark">
-                            <i class="fa-solid fa-map"></i>
-                            GIS Viewer
+                        <button id="backToGisBtn" class="btn btn-sm btn-outline-secondary">
+                            <i class="fa-solid fa-arrow-left"></i>
+                            Back to map
                         </button>
                     </div>
+                </div>
 
-                    <div class="business-grid">
-
-                        <div class="business-card">
-                            <h5>Open incidents</h5>
-
-                            <div class="business-kpi">
-                                24
-                            </div>
-
-                            <div class="text-muted">
-                                +3 today
-                            </div>
+                <div class="business-content">
+                    <div class="gis-table-toolbar d-flex align-items-center gap-2 mb-2 col-3 px-0">
+                         <div class="gis-search-wrapper">
+                            <i class="fa-solid fa-magnifying-glass gis-search-icon"></i>
+                            <input type="search" id="gisTableSearchInput"  class="form-control form-control-sm" placeholder="Search..." autocomplete="off">
                         </div>
-
-                        <div class="business-card">
-                            <h5>Field teams</h5>
-
-                            <div class="business-kpi">
-                                8
-                            </div>
-
-                            <div class="text-muted">
-                                2 active now
-                            </div>
-                        </div>
-
-                        <div class="business-card">
-                            <h5>Pending reviews</h5>
-
-                            <div class="business-kpi">
-                                12
-                            </div>
-
-                            <div class="text-muted">
-                                Awaiting validation
-                            </div>
-                        </div>
-
-                        <div class="business-card business-table-card">
-
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="mb-0">Recent incidents</h5>
-
-                                <button class="btn btn-primary btn-sm">
-                                    New incident
-                                </button>
-                            </div>
-
-                            <table class="table table-hover align-middle">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Status</th>
-                                        <th>Type</th>
-                                        <th>Assigned</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-                                    <tr>
-                                        <td>#1042</td>
-                                        <td>
-                                            <span class="badge bg-warning">
-                                                Pending
-                                            </span>
-                                        </td>
-                                        <td>Road</td>
-                                        <td>John</td>
-                                    </tr>
-
-                                    <tr>
-                                        <td>#1043</td>
-                                        <td>
-                                            <span class="badge bg-success">
-                                                Resolved
-                                            </span>
-                                        </td>
-                                        <td>Lighting</td>
-                                        <td>Anna</td>
-                                    </tr>
-
-                                    <tr>
-                                        <td>#1044</td>
-                                        <td>
-                                            <span class="badge bg-danger">
-                                                Critical
-                                            </span>
-                                        </td>
-                                        <td>Water</td>
-                                        <td>Mike</td>
-                                    </tr>
-                                </tbody>
-
-                            </table>
-
-                        </div>
-
+                    </div>
+                        
+                    <div id="gisResultsTabsWrapper" class="gis-results-tabs-wrapper">                        
+                        <ul id="gisResultsTabs" class="nav nav-tabs"></ul>
+                        <div id="gisResultsTabContent" class="tab-content gis-results-tab-content"></div>
                     </div>
 
+                    <div id="tableMapResizeHandle" class="table-map-resize-handle"></div>
+                    
+                    <div id="tableMiniMap" class="table-mini-map">
+                        
+                    </div>
                 </div>
 
             </section>
