@@ -1602,10 +1602,10 @@ i.icon-button.has-filter::after {
 
 .ol-compass{
   position:absolute;
-  /* top: 14px;
-  right: 10%; */
-  bottom: 70px;
-  left: 10px;
+  top: 30%;
+  right: 20px;
+  /* bottom: 70px;
+  left: 10px; */
   z-index: 1000;
 }
 
