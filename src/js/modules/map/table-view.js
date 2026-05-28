@@ -230,10 +230,25 @@ export function initTableViewPanel({
         $tabs.append(`
                 <li class="nav-item ms-auto d-flex align-items-center pe-2">
                     <button type="button"
-                            class="table-export-btn"
-                            data-file="geojson"
-                            title="Export GeoJSON">
-                        <i class="fa-solid fa-file-code fa-lg"></i>
+                            id="table-new-feature-btn"
+                            class="d-none"
+                            title="New feature">
+                        New feature
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <button type="button"
+                            id="table-save-temporary-btn"
+                            class="d-none"
+                            title="Save feature">
+                        Save
+                        <i class="fa-solid fa-check"></i>
+                    </button>
+                    <button type="button"
+                            id="table-cancel-temporary-btn"
+                            class="d-none"
+                            title="Cancel feature">
+                        Cancel
+                        <i class="fa-solid fa-xmark"></i>
                     </button>
                     <button type="button"
                             class="table-export-btn ms-2"
@@ -241,6 +256,13 @@ export function initTableViewPanel({
                             title="Export CSV">
                         <i class="fa-solid fa-file-csv fa-lg"></i>
                     </button>
+                    <button type="button"
+                            class="table-export-btn"
+                            data-file="geojson"
+                            title="Export GeoJSON">
+                        <i class="fa-solid fa-file-code fa-lg"></i>
+                    </button>
+                    
                 </li>
             `);
     }

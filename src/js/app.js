@@ -93,6 +93,7 @@ let baseMapLayers = [];
 let selectedBaseLayer = null;
 let MAPFISH_CAPABILITIES;
 let TABLE_SEARCHING_SERVICE;
+const DEFAULT_VIEWER = "mapviewer";
 
 
 
@@ -112,17 +113,19 @@ async function loadLayersConfig() {
  */
 function readBootstrapFromUrlConfig() {
   const params = new URLSearchParams(window.location.search);
-  const type = params.get("type");
+  let type = params.get("type");
+  const default_viewer = LAYERS_CONFIG['default_viewer'] || DEFAULT_VIEWER;
 
   if (!type) {
-    console.warn('Missing URL parameter "type".');
-    return null;
+    type = default_viewer;
   }
 
   if (!LAYERS_CONFIG || !LAYERS_CONFIG[type]) {
     console.warn(`No config entry for type="${type}".`);
     return null;
   }
+
+  $("#appTitle").html(type.toUpperCase());
 
   const { pdf_print, debug, groups, services, layers } = LAYERS_CONFIG[type];
   return { type, pdf_print, debug, groups, services, layers };
