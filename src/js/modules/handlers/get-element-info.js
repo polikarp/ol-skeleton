@@ -235,6 +235,10 @@ export function createHybridIdentifyHandler({
 
                 try {
                     const resp = await fetch(url);
+                    // const resp = await fetch(url, {
+                    //     method: 'GET',
+                    //     credentials: 'include'
+                    // });
 
                     if (!resp.ok) {
                         return {

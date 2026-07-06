@@ -156,13 +156,14 @@ export function renderLayersMenuFromWms(
                     data-service-base-url="${escapeAttr(serviceBaseUrl)}"
                     data-legend-url="${escapeAttr(legendUrlDirect)}"
                     style="display:none;">
-                    <img class="wms-legend-img"
+                    <img id="legend_${layerName}" class="wms-legend-img"
                         alt="Legend"
-                        src="${escapeAttr(legendUrlDirect)}"
-                        onerror="this.closest('.wms-legend')?.remove();"
+                        src="#"
                         style="max-width: 100%; height:auto; display:block;">
                 </div>
             `;
+
+            layersInfo.get(layerName)['legendImgSrc'] = legendUrlDirect;
         }
 
         return renderLayerMenuItem({

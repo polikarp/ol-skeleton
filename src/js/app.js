@@ -71,6 +71,7 @@ import { appendFileLayersToMenu } from "./modules/menu/layers-menu-renderer";
 import { removeLayerFromMap } from "./modules/map/layers-on-off";
 
 import { initTableViewPanel, initTableMiniMapResizable } from "./modules/map/table-view";
+import { initTableCreateFeatureTools } from "./modules/map/table-create-feature";
 
 import { createTableMiniMap } from "./modules/map/table-mini-map";
 
@@ -222,17 +223,54 @@ async function initApp() {
   const isCanvasPdfEnabled = window.PDF_PRINT?.canvas ?? false;
   const isTableServiceEnabled = window.TABLE_SERVICE ?? false;
 
-  if(!isMapfishEnabled){
-      $("#btnPrintPdfMapfish").prev("div").remove();
-      $("#btnPrintPdfMapfish").remove();
-  }else{
-      if(LAYERS_CONFIG.mapfish_service.url){
-          MAPFISH_CAPABILITIES = await fetchMapfishCapabilities(LAYERS_CONFIG.mapfish_service.url);
-      }
+  const $mapfishBtn = $("#btnPrintPdfMapfish");
+  const $clientPdfBtn = $("#clientPdfBtn");
+  const $exportOptions = $("#exportOptions");
+
+  let mapfishCapabilities = {};
+
+  function removeMenuButton($button) {
+      $button.prev("div.bottom-menu-group, div").remove();
+      $button.remove();
   }
-  if(!isCanvasPdfEnabled){
-      $("#clientPdfBtn").prev("div").remove();
-      $("#clientPdfBtn").remove();
+
+  async function loadMapfishCapabilities() {
+      const mapfishUrl = LAYERS_CONFIG.mapfish_service?.url;
+      if (!mapfishUrl) {
+          return {};
+      }
+      const capabilities = await fetchMapfishCapabilities(mapfishUrl);
+      return isPlainEmptyObject(capabilities) ? {} : capabilities;
+  }
+
+  function isPlainEmptyObject(value) {
+      return (
+          value !== null &&
+          typeof value === "object" &&
+          Object.prototype.toString.call(value) === "[object Object]" &&
+          Object.keys(value).length === 0
+      );
+  }
+
+  if (isMapfishEnabled) {
+      mapfishCapabilities = await loadMapfishCapabilities();
+  }
+
+  const hasMapfishCapabilities = !isPlainEmptyObject(mapfishCapabilities);
+  const shouldShowMapfishButton = isMapfishEnabled && hasMapfishCapabilities;
+  const shouldShowCanvasPdfButton = isCanvasPdfEnabled;
+  const shouldShowExportOptions = shouldShowMapfishButton || shouldShowCanvasPdfButton;
+
+  if (!shouldShowMapfishButton) {
+      removeMenuButton($mapfishBtn);
+  }
+
+  if (!shouldShowCanvasPdfButton) {
+      removeMenuButton($clientPdfBtn);
+  }
+
+  if (!shouldShowExportOptions) {
+      $exportOptions.remove();
   }
 
   if(!isTableServiceEnabled){
@@ -341,13 +379,15 @@ async function initApp() {
 
   const miniMap =  createTableMiniMap(map, '#tableMiniMap');
 
-  initTableViewPanel({
+  const {getState} = initTableViewPanel({
       map,
       miniMap,
       queryService,
       spatialDrawTool,
       zoomToGeometryFromGeoJson
   });
+
+  initTableCreateFeatureTools({miniMap, getState});
 
   initTableMiniMapResizable();
 

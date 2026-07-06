@@ -161,7 +161,8 @@ export async function fetchMapfishCapabilities(mapfishBaseUrl) {
     });
 
     if (!response.ok) {
-        throw new Error(`Error loading Mapfish capabilities: ${response.status} ${response.statusText}`);
+        console.error(`Error loading Mapfish capabilities: ${response.status} ${response.statusText}`);
+        return {};
     }
 
     const data = await response.json();

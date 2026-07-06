@@ -4,6 +4,10 @@ import { refreshTableMiniMap } from "./table-mini-map";
 import { zoomToGeometryOnMap, clearHighLightLayer } from "../handlers/highlight-element";
 import { exportNormalizedFeaturesToGeoJSON } from "../export/exportToGeojson";
 import { exportNormalizedFeaturesToCSV } from "../export/exportToCSV";
+import { clearTemporaryCreatedFeatures } from "./table-create-feature";
+
+
+let mapOnlyMode = false;
 
 export function initTableViewPanel({
     map,
@@ -22,11 +26,12 @@ export function initTableViewPanel({
         results: []
     };
 
-    map.on('moveend', () => {
-        clearResults();
-    });
+    function getState(){
+        return state;
+    }
 
     $(openButtonSelector).on('click', () => {
+        mapOnlyMode = false;
         showBusinessScreen();
     });
 
@@ -112,6 +117,35 @@ export function initTableViewPanel({
         }
     });
 
+    /*Hide table and full map */
+    $(document).on("click", "#toggleTablePanelBtn", function () {
+
+        const $screen = $("#businessScreen");
+        const $icon = $(this).find("i");
+
+        mapOnlyMode = !mapOnlyMode;
+
+        $screen.toggleClass("map-only", mapOnlyMode);
+
+        if (mapOnlyMode) {
+            $icon
+                .removeClass("fa-up-right-and-down-left-from-center")
+                .addClass("fa-table");
+
+            $(this).attr("title", "Show table");
+        } else {
+            $icon
+                .removeClass("fa-table")
+                .addClass("fa-up-right-and-down-left-from-center");
+
+            $(this).attr("title", "Full map");
+        }
+
+        setTimeout(() => {
+            miniMap.updateSize();
+        }, 100);
+    });
+
 
     function showBusinessScreen() {
         $(appScreensSelector).addClass('show-business');
@@ -140,6 +174,7 @@ export function initTableViewPanel({
 
     function clearResults() {
         state.results = null;
+        clearTemporaryCreatedFeatures();
     }
 
     async function loadViewportResultsTable() {
@@ -231,24 +266,17 @@ export function initTableViewPanel({
                 <li class="nav-item ms-auto d-flex align-items-center pe-2">
                     <button type="button"
                             id="table-new-feature-btn"
-                            class="d-none"
+                            class="feature-btn btn btn-sm btn-outline-secondary"
                             title="New feature">
                         New feature
                         <i class="fa-solid fa-plus"></i>
                     </button>
                     <button type="button"
-                            id="table-save-temporary-btn"
-                            class="d-none"
-                            title="Save feature">
-                        Save
-                        <i class="fa-solid fa-check"></i>
-                    </button>
-                    <button type="button"
-                            id="table-cancel-temporary-btn"
-                            class="d-none"
-                            title="Cancel feature">
-                        Cancel
+                            id="table-cancel-create-feature-btn"
+                            class="feature-btn btn btn-sm btn-outline-secondary d-none">
+                        Cancel Creation
                         <i class="fa-solid fa-xmark"></i>
+                        
                     </button>
                     <button type="button"
                             class="table-export-btn ms-2"
@@ -262,7 +290,6 @@ export function initTableViewPanel({
                             title="Export GeoJSON">
                         <i class="fa-solid fa-file-code fa-lg"></i>
                     </button>
-                    
                 </li>
             `);
     }
@@ -426,7 +453,7 @@ export function initTableViewPanel({
                 item.layerIndex === layerIndex &&
                 item.featureIndex === featureIndex
         );
-        if (!result || !tableMiniMap) {
+        if (!result || !miniMap) {
             return;
         }
         const geometry =
@@ -477,7 +504,8 @@ export function initTableViewPanel({
         showBusinessScreen,
         showGisScreen,
         clearResults,
-        loadViewportResultsTable
+        loadViewportResultsTable,
+        getState
     };
 }
 
@@ -538,8 +566,8 @@ export function initTableMiniMapResizable() {
             height: `${newMapHeight}px`
         });
 
-        if (tableMiniMap) {
-            tableMiniMap.updateSize();
+        if (miniMap) {
+            miniMap.updateSize();
         }
     });
 

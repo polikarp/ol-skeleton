@@ -33,6 +33,41 @@
             </div>
         </div>
 
+        <!-- New feature modal-->
+        <div class="modal fade" id="tableCreateFeatureConfirmModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create new feature</h5>
+
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        Draw the feature on the map first. After drawing it, the creation form will open automatically.
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <button type="button"
+                                id="tableCreateFeatureConfirmBtn"
+                                class="btn btn-primary">
+                            Create
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
         <div id="appScreens">
 
             <!-- GIS SCREEN -->
@@ -257,7 +292,7 @@
                                 </div>
 
                                 <!-- Export -->
-                                <div class="bottom-menu-group dropup">
+                                <div id="exportOptions" class="bottom-menu-group dropup">
                                     <button class="bottom-menu-button dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static">
                                         <i class="fa-solid fa-file-export"></i>
                                         <span class="menu-label">Export</span>
@@ -374,6 +409,10 @@
                         <button id="backToGisBtn" class="btn btn-sm btn-outline-secondary">
                             <i class="fa-solid fa-arrow-left"></i>
                             Back to map
+                        </button>
+
+                        <button id="toggleTablePanelBtn" class="btn btn-sm btn-outline-secondary" title="Full map">
+                            <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
                         </button>
                     </div>
                 </div>

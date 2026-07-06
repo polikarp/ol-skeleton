@@ -5,8 +5,8 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title id="appTitle">Public Viewer</title>
-    <script type="module" crossorigin src="/assets/index-MR54a6cZ.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-vSBxwNPl.css">
+    <script type="module" crossorigin src="/assets/index-BtnwOPLV.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-D3QSVPHB.css">
   </head>
   <body>
 
@@ -28,6 +28,41 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                             Close
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- New feature modal-->
+        <div class="modal fade" id="tableCreateFeatureConfirmModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create new feature</h5>
+
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        Draw the feature on the map first. After drawing it, the creation form will open automatically.
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <button type="button"
+                                id="tableCreateFeatureConfirmBtn"
+                                class="btn btn-primary">
+                            Create
                         </button>
                     </div>
 

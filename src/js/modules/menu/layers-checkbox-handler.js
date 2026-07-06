@@ -79,6 +79,8 @@ export function bindCheckboxToggles(map, wfsQueryExecutor, { selector = ".layerC
                 }
             }
             $row.find(".layerFilterBtn").removeClass("d-none");
+            //Load legend only when layer is loaded
+            $row.find(".wms-legend-img").first().attr("src", layerInfo.legendImgSrc);
             $row.find(".wms-legend").first().show();
             
         } else {

@@ -79,12 +79,15 @@ export function getTableMiniMap() {
 
 function clearTableMiniMapLayers() {
     const layersToRemove = [];
+
     tableMiniMap.getLayers().forEach(function (layer) {
-        // if (layer.get('isMiniMapHighlight') === true) {
-        //     return;
-        // }
+        if (layer.get("preserveOnMiniMapRefresh") === true) {
+            return;
+        }
+
         layersToRemove.push(layer);
     });
+
     layersToRemove.forEach(function (layer) {
         tableMiniMap.removeLayer(layer);
     });
@@ -210,8 +213,8 @@ function cloneSourceForMiniMap(source) {
         });
     }
 
-    if (source instanceof VectorLayer) {
-        return new VectorLayer({
+    if (source instanceof VectorSource) {
+        return new VectorSource({
             features: source.getFeatures().map(function (feature) {
                 return feature.clone();
             })
