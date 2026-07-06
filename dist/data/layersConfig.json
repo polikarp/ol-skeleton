@@ -2445,6 +2445,25 @@
         ],
         "layers": [
             {
+                "id": 311,
+                "group_id": 2,
+                "title": "Cameras",
+                "layer_name": "ccgp:cameras",
+                "description": "ProtecteCameasSite",
+                "base_url": "http://localhost:9091/geoserver/ccgp/wms",
+                "type": "wms",
+                "geom_field": "geom",
+                "visible_default": false,
+                "z_index": 0,
+                "queryable": true,
+                "options": {
+                    "tiled": true,
+                    "format": "image/png",
+                    "version": "1.3.0",
+                    "transparent": true
+                }
+            },
+            {
                 "id": 31,
                 "group_id": 2,
                 "title": "PS.ProtectedSite",
