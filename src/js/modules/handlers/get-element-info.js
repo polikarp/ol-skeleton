@@ -234,11 +234,14 @@ export function createHybridIdentifyHandler({
                 }
 
                 try {
-                    const resp = await fetch(url);
-                    // const resp = await fetch(url, {
-                    //     method: 'GET',
-                    //     credentials: 'include'
-                    // });
+                    //const resp = await fetch(url);
+                    const resp = await fetch(url, {
+                        method: 'GET',
+                        credentials: 'include',
+                        headers: {
+                            Accept: "application/json"
+                        }
+                    });
 
                     if (!resp.ok) {
                         return {
