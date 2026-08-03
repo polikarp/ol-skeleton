@@ -47,12 +47,12 @@ export function createWfsLayerQueryService({
 
         try {
             const resp = await fetch(url, {
-                    method: 'GET',
-                    credentials: 'include',
-                    headers: {
-                        Accept: "application/json"
-                    }
-                });
+                        method: 'GET',
+                        credentials: 'include',
+                        headers: {
+                            Accept: "application/json"
+                        }
+                    });
             if (!resp.ok) {
                 return { ok: false, layerName: c.typeName, error: `HTTP ${resp.status}`, url };
             }

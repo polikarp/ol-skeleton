@@ -3,6 +3,7 @@
 
 import { layersInfo } from "../map/map-config";
 import { addLayerToMap, refreshLayer, removeLayerFromMap } from "../map/layers-on-off";
+import { removeLayerFilterTab } from "../filters/layers-filter-manager";
 
 /**
  * Read WMS info from checkbox data attributes.
@@ -87,6 +88,7 @@ export function bindCheckboxToggles(map, wfsQueryExecutor, { selector = ".layerC
             removeLayerFromMap(map, layerName, removeOnUncheck );
             $row.find(".wms-legend").first().hide();
             $row.find(".layerFilterBtn").addClass("d-none");
+            removeLayerFilterTab(layerName);
         }
     });
 }

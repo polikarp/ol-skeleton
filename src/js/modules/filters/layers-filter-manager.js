@@ -282,6 +282,15 @@ function activateTab(layerName) {
     tab.show();
 }
 
+export function removeLayerFilterTab(layerName) {
+    const domId = normalizeDomId(layerName);
+    const tabId = `#tab_${domId}`;
+    const paneId = `#pane_${domId}`;
+    $(tabId).closest(".nav-item").remove();
+    $(paneId).remove();
+}
+
+
 /**
  * Returns the HTML for one condition row.
  */
