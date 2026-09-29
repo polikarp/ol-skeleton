@@ -71,31 +71,6 @@ export function initAddressSearchWfs({
 
     const geoJsonFormat = new GeoJSON();
 
-
-    /**
-     * Toponimic search results
-     * @param {*} query 
-     */
-    // async function searchTopo(query){
-    //     const baseUrl = applyProxyIfNeeded(wfsUrl, useProxy, proxyPath);
-    //     const params = {
-    //         service: 'WFS',
-    //         version: '1.1.0',
-    //         request: 'GetFeature',
-    //         typeName: layerName,
-    //         outputFormat: 'application/json',
-    //         srsName: 'EPSG:25830',
-    //         maxFeatures: 50,
-    //         CQL_FILTER: `lower ILIKE '%${query.toLowerCase()}%'`
-    //     };
-
-    //     const url = appendParams(`${baseUrl}/wfs`, params);
-
-    //     const response = await fetch(url);
-    //     const geojson = await response.json();
-    //     return geojson;
-    // }
-
     const TYPES = ["topolabel", "road", "toilet", "estate", "address", "block", "place", "pit"];
 
     async function searchTopoByType(query, type) {
@@ -130,10 +105,6 @@ export function initAddressSearchWfs({
                 searchTopoByType(query, type)
             )
         );
-        
-        // await Promise.all(
-        //     TYPES.map(type => searchTopoByType(query, type))
-        // );
 
         return {
             type: "FeatureCollection",

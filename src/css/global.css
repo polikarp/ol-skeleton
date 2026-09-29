@@ -23,6 +23,10 @@ body {
   z-index: 0;
 }
 
+.ol_bw {
+    filter: grayscale(100%);
+}
+
 /* test ccgp -------------------------------------------------------------*/
 
 .divInfoFeature{
@@ -485,8 +489,7 @@ table.table-custom button{
 ========================================= */
 
 #baseMapMenuContent {
-    max-height: calc(100dvh - 80px);
-
+    height: 200px;
     overflow-y: auto;
     overflow-x: hidden;
 }

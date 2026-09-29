@@ -11,6 +11,7 @@ import { addMeasureInteraction, removeMeasureInteraction } from '../../legacy/me
 import { enableElevationProfile, removeElevation } from '../map/elevation-profile';
 import { animateZoom, animateCenter, animateRotation } from '../map/map-animations';
 import {initialCenter, initialZoom, initialRotation} from '../map/map-config';
+import { extent, setViewExtent } from '../map/openlayers-map';
 
 
 /**
@@ -119,41 +120,6 @@ export function registerGisBottomMenuTools(map, options = {}) {
 
 }
 
-// export function registerGisLeftMenu(map, options = {}) {
-//     $('.toolbar-button').on('click', function (e) {
-//         e.stopPropagation();
-
-//         const targetId = $(this).data('target');
-//         const $targetMenu = $('#' + targetId);
-//         const buttonOffsetTop = $(this).offset().top;
-
-
-//         $('.gis-toolbar-flyout').not($targetMenu).fadeOut(150);
-
-
-//         if ($targetMenu.is(':visible')) {
-//             $targetMenu.fadeOut(150);
-//         } else {
-//             $targetMenu
-//                 .css('top', buttonOffsetTop + 'px')
-//                 .fadeIn(200);
-//         }
-//     });
-
-//     $('.base-thumb').on('click', function () {
-//         const selectedLayer = $(this).data('layer');
-//         map.getLayers().forEach(layer => {
-//             if (!layer.get('isBaseLayer')) {
-//                 return;
-//             }
-//             layer.setVisible(layer.get('name') === selectedLayer);
-//         });
-
-//         $('.base-thumb').css('border', '2px solid transparent');
-//         $(this).css('border', '2px solid #0d6efd');
-//     });
-// }
-
 export function registerGisLeftMenu(map, options = {}) {
 
     $('.toolbar-button').on('click', function (e) {
@@ -180,29 +146,24 @@ export function registerGisLeftMenu(map, options = {}) {
 
 
     $('.base-thumb').on('click', function () {
-
         const selectedLayer = $(this).data('layer');
-
         map.getLayers().forEach(layer => {
-
             if (!layer.get('isBaseLayer')) {
                 return;
             }
+            if(layer.get("name") === selectedLayer){
+                if(layer.get("customExtent") === false){
+                    setViewExtent(map, false);
+                }else{
+                    setViewExtent(map, true, extent);
+                }
+            }
 
-            layer.setVisible(
-                layer.get('name') === selectedLayer
-            );
+            layer.setVisible(layer.get('name') === selectedLayer);
         });
 
-        $('.base-thumb').css(
-            'border',
-            '2px solid transparent'
-        );
-
-        $(this).css(
-            'border',
-            '2px solid #0d6efd'
-        );
+        $('.base-thumb').css('border', '2px solid transparent');
+        $(this).css('border', '2px solid #0d6efd');
     });
 }
 

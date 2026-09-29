@@ -21,6 +21,9 @@ import { defaults as defaultControls } from "ol/control";
 
 import { initialCenter, initialZoom, initialRotation } from "./map-config";
 
+
+// Map extent and resolutions for EPSG:25830
+export const extent = [276486.2885, 3994246.2864, 305419.119, 4008267.4237];
 /**
  * Initialize OpenLayers map with EPSG:25830, custom resolutions/extent,
  * and basemaps defined in layersConfig.
@@ -48,8 +51,7 @@ export function initOpenLayersMap(targetId = "map", layersConfig) {
   );
   registerProj4(proj4);
 
-  // Map extent and resolutions for EPSG:25830
-  const extent = [276486.2885, 3994246.2864, 305419.119, 4008267.4237];
+  
   const resolutions = [
     33.524080254556836,
     16.76204127278418,
@@ -64,7 +66,7 @@ export function initOpenLayersMap(targetId = "map", layersConfig) {
   ];
 
   const baseLayersJson = Array.isArray(layersConfig.base_layers) ? layersConfig.base_layers : [];
-  const baseLayersOl = buildBaseLayers(baseLayersJson);
+  const baseLayersOl = buildBaseLayers(baseLayersJson.filter(layer => layer.enabled === true));
 
   // Create map
   const map = new Map({
@@ -129,6 +131,8 @@ function buildBaseLayers(baseLayersJson) {
             serverType: "geoserver",
             crossOrigin: 'anonymous'
           }),
+          className: r.class ?? '',
+          customExtent: r.extent ?? true,
           visible: !!r.visible_default,
           name: r.layer_name,
           isBaseLayer: true,
@@ -139,6 +143,8 @@ function buildBaseLayers(baseLayersJson) {
         return new TileLayer({
           source: new OSM(),
           visible: !!r.visible_default,
+          className: r.class ?? '',
+          customExtent: r.extent ?? true,
           name: r.layer_name,
           isBaseLayer: true,
         });
@@ -150,6 +156,8 @@ function buildBaseLayers(baseLayersJson) {
             url: r.base_url,
           }),
           visible: !!r.visible_default,
+          className: r.class ?? '',
+          customExtent: r.extent ?? true,
           name: r.layer_name,
           isBaseLayer: true,
         });
@@ -166,4 +174,29 @@ function safeJsonParse(str, fallback) {
   } catch (e) {
     return fallback;
   }
+}
+
+/**
+ * Enables or disables the map view extent constraint.
+ *
+ * @param {ol.Map} map OpenLayers map instance.
+ * @param {boolean} enabled Whether the extent constraint is enabled.
+ * @param {Array<number>} extent Map extent.
+ */
+export function setViewExtent(map, enabled, extent) {
+    const currentView = map.getView();
+
+    const newView = new View({
+        projection: currentView.getProjection(),
+        resolutions: currentView.getResolutions(),
+        constrainResolution: false,
+        center: currentView.getCenter(),
+        zoom: currentView.getZoom(),
+        rotation: currentView.getRotation(),
+        extent: enabled
+            ? extent
+            : undefined
+    });
+
+    map.setView(newView);
 }

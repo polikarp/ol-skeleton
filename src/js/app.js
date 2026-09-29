@@ -206,7 +206,7 @@ async function initApp() {
   LAYERS_CONFIG = await loadLayersConfig();
 
   // Base layers config computed once
-  baseMapLayers = (LAYERS_CONFIG.base_layers || []).map((l) => l.layer_name);
+  baseMapLayers = (LAYERS_CONFIG.base_layers || []).filter(layer => layer.enabled === true).map((l) => l.layer_name);
   selectedBaseLayer = (LAYERS_CONFIG.base_layers || []).find((l) => l.visible_default)?.layer_name || null;
 
  
