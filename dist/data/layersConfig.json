@@ -2867,6 +2867,45 @@
                 }
             }
         ]
+    },
+    "landproperty": {
+        "pdf_print":{"mapfish": false, "canvas": false}, 
+        "groups": [
+            {
+                "id": 2,
+                "key": "landproperty",
+                "title": "Landproperty",
+                "order_idx": 1,
+                "parent_id": null,
+                "collapsed_default": false,
+                "icon": null
+            }
+        ],
+        "services": [
+            
+        ],
+        "layers": [
+            {
+                "id": 111,
+				"group_id": 2,
+                "id_field": "uprn",
+				"title": "UPRN",
+                "title_property": "uprn",
+				"layer_name": "unitaddress_for_geoportal",
+				"description": "UPRN",
+				"base_url": "http://geomapint.gibraltar.gov.gi:8080/geoserver/landproperty/wms",
+				"type": "wms",
+				"geom_field": "geom",
+				"visible_default": false,
+				"z_index": 0,
+				"queryable": true,
+				"options": {
+					"tiled": true,
+					"format": "image/png",
+					"version": "1.3.0"
+				}
+            }
+        ]
     }
 
 }
