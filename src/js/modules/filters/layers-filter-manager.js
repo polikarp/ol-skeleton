@@ -514,7 +514,7 @@ function populateFieldsSelect($pane, fields) {
 /**
  * Build CQL from UI controls.
  */
-function buildCql(field, op, type, rawValue) {
+export function buildCql(field, op, type, rawValue) {
     const f = String(field || "").trim();
     const o = String(op || "").trim().toUpperCase();
     const v = String(rawValue || "").trim();

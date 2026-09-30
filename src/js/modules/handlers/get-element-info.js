@@ -233,15 +233,20 @@ export function createHybridIdentifyHandler({
                     return { ok: false, layerName, serviceBaseUrl, error: "No GetFeatureInfo URL" };
                 }
 
-                try {
-                    //const resp = await fetch(url);
-                    const resp = await fetch(url, {
+                let fetchConfig = 
+                    {
                         method: 'GET',
-                        credentials: 'include',
                         headers: {
                             Accept: "application/json"
                         }
-                    });
+                    };
+                if(layer.get("credentials") === true){
+                    fetchConfig['credentials'] = 'include';
+                }
+                
+                try {
+                    //const resp = await fetch(url);
+                    const resp = await fetch(url, fetchConfig);
 
                     if (!resp.ok) {
                         return {

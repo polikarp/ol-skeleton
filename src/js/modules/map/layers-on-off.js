@@ -82,7 +82,9 @@ export function createOlLayerFromServiceType({layerName, serviceBaseUrl, version
         layerName,
         title: title || layerName,
         geomColumn: options.geomColumn,
-        description: options.description
+        description: options.description,
+        credentials: options.credentials,
+        idField: options.id_field
     };
 
     if (type === "WMS") {
@@ -286,7 +288,7 @@ export function createOlLayerFromServiceType({layerName, serviceBaseUrl, version
  */
 export function addLayerToMap(map, layerName, { options = {} }) {
 
-    const { serviceBaseUrl, version, title, serviceType, tiled, format, geomColumn, desc } = layersInfo.get(layerName);
+    const { serviceBaseUrl, version, title, serviceType, tiled, format, geomColumn, desc, credentials, id_field } = layersInfo.get(layerName);
     if (!map) throw new Error("Map is required");
     if (!layerName || !serviceBaseUrl) throw new Error("layerName and serviceBaseUrl are required");
 
@@ -300,6 +302,8 @@ export function addLayerToMap(map, layerName, { options = {} }) {
 
     options['geomColumn'] = geomColumn;
     options['description'] = desc;
+    options['credentials'] = credentials;
+    options['id_field'];
     const olLayer = createOlLayerFromServiceType({layerName, serviceBaseUrl, version, title, serviceType, tiled, format, options,});
 
     map.addLayer(olLayer);
@@ -438,14 +442,6 @@ export function clearAllLayers(map) {
           checkedInputs.forEach(input => {
               $(input).trigger("click");
           });
-
-
-            // if($(`#layersMenuSelector input[type="checkbox"][data-layer="${layerName}"]`).is(":checked")){
-            //      $(`#layersMenuSelector input[type="checkbox"][data-layer="${layerName}"]`).trigger("click");
-            // }else{
-            //     map.removeLayer(layer);
-            // }
-            //$(`#layersMenuSelector input[type="checkbox"][data-layer="${layerName}"]`).prop("checked", false);
     }
-    //layerRegistry.clear();
+
 }

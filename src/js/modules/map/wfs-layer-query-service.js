@@ -26,7 +26,8 @@ export function createWfsLayerQueryService({
                     title: layer.get("title"),
                     wfsEnabled: !!layer.get("wfsEnabled"),
                     wfsVersion: layer.get("wfsVersion") || "2.0.0",
-                    geomColumn: layer.get("geomColumn") || "geom"
+                    geomColumn: layer.get("geomColumn") || "geom",
+                    credentials: layer.get("credentials")
                 }))
         .filter(c => c.baseUrl && c.typeName && c.wfsEnabled);
     }
@@ -45,14 +46,19 @@ export function createWfsLayerQueryService({
 
         const url = applyProxyIfNeeded(urlAux, useProxy, proxyPath);
 
+        let fetchConfig = 
+            {
+                method: 'GET',
+                headers: {
+                    Accept: "application/json"
+                }
+            };
+        if(c.credentials === true){
+            fetchConfig['credentials'] = 'include';
+        }
+
         try {
-            const resp = await fetch(url, {
-                        method: 'GET',
-                        credentials: 'include',
-                        headers: {
-                            Accept: "application/json"
-                        }
-                    });
+            const resp = await fetch(url, fetchConfig);
             if (!resp.ok) {
                 return { ok: false, layerName: c.typeName, error: `HTTP ${resp.status}`, url };
             }

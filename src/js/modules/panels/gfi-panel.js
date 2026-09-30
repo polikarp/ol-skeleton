@@ -6,6 +6,8 @@ import { exportNormalizedFeaturesToCSV } from "../export/exportToCSV";
 import { exportGfiRegistryToZipGeoJSON } from "../export/exportToZIP";
 import { olGeomToGeoJsonLikeFeature } from "../map/utils";
 import Feature from "ol/Feature";
+import { layersInfo } from "../map/map-config";
+import { formatLabel, filterLayerProperties } from "../map/utils";
 
 //Registry of layers to export to geojson
 const gfiExportRegistry = new Map();
@@ -28,28 +30,40 @@ function normalizeFeaturesFromGeoJsonLike(obj) {
     }));
 }
 
-function renderPropertiesTable(props) {
-    const keys = Object.keys(props || {});
-    if (keys.length === 0) {
+
+function renderPropertiesTable(props, layerName) {
+    const propertyNames = filterLayerProperties(
+        Object.keys(props ?? {}),
+        layerName
+    );
+
+    if (propertyNames.length === 0) {
         return `<div class="text-muted small">No properties.</div>`;
     }
 
-    const rows = keys.map((k) => {
-        const v = props[k];
-        const value =
-            v === null || v === undefined
-                ? ""
-                : typeof v === "object"
-                    ? escapeHtml(JSON.stringify(v))
-                    : escapeHtml(v);
+    const rows = propertyNames.map(function (propertyName) {
+        const value = props[propertyName];
+        const label = formatLabel(escapeHtml(propertyName));
 
-        return `<tr><td>${escapeHtml(k)}</td><td>${value}</td></tr>`;
+        const printableValue =
+            value === null || value === undefined
+                ? ""
+                : typeof value === "object"
+                    ? escapeHtml(JSON.stringify(value))
+                    : escapeHtml(value);
+
+        return `
+            <tr>
+                <td>${label}</td>
+                <td>${printableValue}</td>
+            </tr>
+        `;
     });
 
     return `
-      <table class="table table-sm table-striped gfi-kv mb-0">
-        <tbody>${rows.join("")}</tbody>
-      </table>
+        <table class="table gfi-table table-sm table-striped gfi-kv mb-0">
+            <tbody>${rows.join("")}</tbody>
+        </table>
     `;
 }
 
@@ -77,7 +91,7 @@ export function renderGfiRightPanel({ results, headerId = "gfiPanelHeader", cont
         ${okResults
             .map((r, layerIdx) => {
                 const layerKey = `${accId}_layer_${layerIdx}`;
-                const layerTitle = escapeHtml(r.layerTitle || r.layerName || `Layer ${layerIdx + 1}`);
+                const layerTitle = layersInfo.get(r.layerName)?.title || escapeHtml(r.layerTitle || r.layerName || `Layer ${layerIdx + 1}`);
 
                 let features = [];
                 if (r.format === "json") {
@@ -86,7 +100,7 @@ export function renderGfiRightPanel({ results, headerId = "gfiPanelHeader", cont
 
                 const featureCount = features.length;
 
-                
+
                 let bodyHtml = "";
                 if (r.format === "json") {
                     gfiExportRegistry.set(layerKey, {
@@ -105,8 +119,9 @@ export function renderGfiRightPanel({ results, headerId = "gfiPanelHeader", cont
                                     if (geom) {
                                         geomByHeaderId[headerId] = geom;
                                     }
-
+ 									const elementTitleProperty = layersInfo.get(r.layerName)?.titleProperty;
                                     const label =
+                                    		f?.properties[elementTitleProperty] ??
                                             f?.properties?.name ??
                                             f?.properties?.NAME ??
                                             f?.properties?.title ??
@@ -137,7 +152,7 @@ export function renderGfiRightPanel({ results, headerId = "gfiPanelHeader", cont
                                                 aria-labelledby="${featKey}_h"
                                                 data-bs-parent="#${layerKey}_features">
                                                 <div class="accordion-body py-2">
-                                                    ${renderPropertiesTable(f.properties)}
+                                                    ${renderPropertiesTable(f.properties, r.layerName)}
                                                 </div>
                                             </div>
                                         </div>

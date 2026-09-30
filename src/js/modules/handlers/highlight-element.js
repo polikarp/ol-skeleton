@@ -212,7 +212,8 @@ export function zoomToGeometryOnMap(geometry, targetMap, options = {}) {
         remove = false,
         maxZoom = 18,
         padding = [40, 40, 40, 40],
-        duration = 500
+        duration = 500,
+        imageFillColor
     } = options;
 
     let highlightLayer = highlightLayerByMap.get(targetMap);
@@ -221,7 +222,7 @@ export function zoomToGeometryOnMap(geometry, targetMap, options = {}) {
 
         highlightLayer = new VectorLayer({
             source: new VectorSource(),
-            style: createHighlightStyle(),
+            style: createHighlightStyle(imageFillColor),
             zIndex: 999999
         });
 
@@ -278,7 +279,7 @@ export function zoomToGeometryOnMap(geometry, targetMap, options = {}) {
     }
 }
 
-function createHighlightStyle() {
+function createHighlightStyle(imageFillColor = '#ff0000') {
 
     return new Style({
 
@@ -295,7 +296,7 @@ function createHighlightStyle() {
             radius: 7,
 
             fill: new Fill({
-                color: '#ff0000'
+                color: imageFillColor
             }),
 
             stroke: new Stroke({

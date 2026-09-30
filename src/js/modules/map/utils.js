@@ -1,4 +1,5 @@
 import GeoJSON from "ol/format/GeoJSON";
+import { layersInfo } from "./map-config";
 
 /**
  * Convert an OpenLayers Geometry into a plain GeoJSON-like Feature (no OL Feature).
@@ -24,6 +25,41 @@ export function olGeomToGeoJsonLikeFeature(geom, { featureProjection, dataProjec
         properties: {},
         geometry: geojsonGeom
     };
+}
+
+/**
+ * Label formatting: Camel case first letter and change _ with ' '
+ * @param {*} label
+ * @returns
+ */
+export function formatLabel(label) {
+    if (!label) {
+        return "";
+    }
+    const formatted = String(label).replace(/_/g, " ").toLowerCase();
+    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+}
+
+/**
+ * Get printable properties ignoring those properties stored in layersInfo(layerName).options.ignoreProperties
+ * @param {*} properties
+ * @param {*} layerName
+ * @returns
+ */
+export function filterLayerProperties(properties, layerName) {
+    const ignoreProperties = layersInfo.get(layerName)?.options?.ignoreProperties ?? [];
+
+    if (!Array.isArray(properties)) {
+        return [];
+    }
+    const ignored = new Set(
+        ignoreProperties.map(propertyName =>
+            String(propertyName).toLowerCase()
+        )
+    );
+    return properties.filter(propertyName =>
+        !ignored.has(String(propertyName).toLowerCase())
+    );
 }
 
 /**

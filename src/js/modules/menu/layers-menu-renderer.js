@@ -90,18 +90,22 @@ export function renderLayersMenuFromWms(
 
         const layerName = layer.name || layer.layer_name;
         const title = layer.title || layer.name || layer.layer_name;
+        const titleProperty = layer.title_property;
         const desc = layer.desc || layer.description || "";
         const serviceBaseUrl = layer.serviceBaseUrl || layer.base_url;
         const version = layer.serviceVersion || layer.options?.version || "1.3.0";
         const format = layer.options?.format ?? "image/png";
         const tiled = layer.options?.tiled ?? true;
+        const credentials = layer.credentials ?? false;
         const serviceType = getServiceTypeForGroup(group, layer);
+        const id_field = layer.id_field;
 
         const configuredGeomColumn = layer.geom_field || null;
 
         layersInfo.set(layerName, {
             layerName,
             title,
+            titleProperty,
             desc,
             serviceBaseUrl,
             version,
@@ -111,7 +115,8 @@ export function renderLayersMenuFromWms(
             groupId: group.id,
             groupKey,
             geomColumn: configuredGeomColumn,
-
+            credentials,
+            id_field
         });
 
         // Async validation against GeoServer

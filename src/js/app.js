@@ -75,6 +75,8 @@ import { initTableCreateFeatureTools } from "./modules/map/table-create-feature"
 
 import { createTableMiniMap } from "./modules/map/table-mini-map";
 
+import { loadInitialFeature } from "./modules/map/initial-feature-loader";
+
 import OSM from 'ol/source/OSM';
 import XYZ from 'ol/source/XYZ';
 
@@ -95,6 +97,8 @@ let selectedBaseLayer = null;
 let MAPFISH_CAPABILITIES;
 let TABLE_SEARCHING_SERVICE;
 const DEFAULT_VIEWER = "mapviewer";
+//Data to be loaded from URL
+let selectedLayerFromUrl, layerConfig, elementIdFromUrl;
 
 
 
@@ -111,10 +115,14 @@ async function loadLayersConfig() {
 
 /**
  * Read URL params and build the bootstrap object (groups/services/layers).
+ * if layer and elementId are filled, means that id of that layer has to be loaded on map
  */
 function readBootstrapFromUrlConfig() {
   const params = new URLSearchParams(window.location.search);
   let type = params.get("type");
+  selectedLayerFromUrl = params.get("layer");
+  elementIdFromUrl = params.get("id");
+
   const default_viewer = LAYERS_CONFIG['default_viewer'] || DEFAULT_VIEWER;
 
   if (!type) {
@@ -128,7 +136,12 @@ function readBootstrapFromUrlConfig() {
 
   $("#appTitle").html(type.toUpperCase());
 
+  
   const { pdf_print, debug, groups, services, layers } = LAYERS_CONFIG[type];
+
+  //Only for selected layer from url
+  layerConfig = layers.find(l => l.layer_name == selectedLayerFromUrl)
+
   return { type, pdf_print, debug, groups, services, layers };
 }
 
@@ -158,6 +171,7 @@ async function bootstrapLayersFromConfig() {
   window.DEBUG_ENABLED =  debug === true;
   window.GOOGLE_API_KEY = LAYERS_CONFIG.google_api_key;
   window.TABLE_SERVICE = LAYERS_CONFIG.table_searching_service;
+
 }
 
 /**
@@ -211,13 +225,17 @@ async function initApp() {
 
  
   
-  
 
   // 2) Bind UI handlers (safe once DOM exists)
   bindStaticUiHandlers();
 
   // 3) Build menus and layer groups from config (async)
   await bootstrapLayersFromConfig();
+
+  //Delete bottom menu when layer and id are filled. Asumed that is only previsualization
+  if(layerConfig){
+      $("#gis-bottom-menu").remove();
+  }
 
   const isMapfishEnabled = window.PDF_PRINT?.mapfish ?? false;
   const isCanvasPdfEnabled = window.PDF_PRINT?.canvas ?? false;
@@ -391,17 +409,31 @@ async function initApp() {
 
   initTableMiniMapResizable();
 
+  //Load element indicated in URL
+  if (selectedLayerFromUrl) {
+      $("#layersMenuSelector").find(`input[data-layer="${selectedLayerFromUrl}"]`).trigger("click");
+      if(elementIdFromUrl){
+          await loadInitialFeature({
+              map,
+              layerConfig,
+              featureId: elementIdFromUrl,
+              useProxy: USE_PROXY,
+              proxyPath: PROXY_PATH
+          });
+      }
+  }
 
+  
 
 }
 
 // Ensure bootstrap runs even if DOMContentLoaded already fired
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => {
-    initApp().catch((e) => console.error("Bootstrap error:", e));
-  });
+    document.addEventListener("DOMContentLoaded", () => {
+      initApp().catch((e) => console.error("Bootstrap error:", e));
+    });
 } else {
-  initApp().catch((e) => console.error("Bootstrap error:", e));
+    initApp().catch((e) => console.error("Bootstrap error:", e));
 }
 
 /**
