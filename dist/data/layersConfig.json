@@ -2898,7 +2898,8 @@
 				"geom_field": "geom",
 				"visible_default": false,
 				"z_index": 0,
-				"queryable": true,
+				"queryable": false,
+                "identifiable": true,
 				"options": {
 					"tiled": true,
 					"format": "image/png",
