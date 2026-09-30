@@ -346,8 +346,6 @@ table.table-custom button{
 
 /* Estilos gis toolbar*/
 
-/*
-
 .button-separator-vertical {
     width: 60%;
     height: 1px;
@@ -357,17 +355,29 @@ table.table-custom button{
 
 #gis-toolbar {
     position: absolute;
-    top: 1%;
-    left: 10px;
+    top: 15%;
+    left: 0;
+    transition: left 0.25s ease;
     background-color: rgba(255, 255, 255, 0.95);
+
     border: 1px solid #ccc;
-    border-radius: 10px;
+    border-left: none;
+    border-radius: 0 10px 10px 0;
+
     padding: 10px 6px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    z-index: 1000;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.18);
+    z-index: 1049;
+
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+#gis-toolbar.menu-open {
+    left: 400px;
+    border-left: none;
+    border-radius: 0 10px 10px 0;
+    box-shadow: 4px 2px 8px rgba(0,0,0,0.12);
 }
 
 
@@ -397,118 +407,106 @@ table.table-custom button{
     box-shadow: 2px 0 5px rgba(0,0,0,0.1);
 }
 
+.toolbar-button {
+    position: relative;
+    transition: all 0.15s ease;
+}
+
+.toolbar-button.active {
+    background-color: rgba(13, 110, 253, 0.08);
+}
+
+.toolbar-button.active::before {
+    content: '';
+
+    position: absolute;
+    left: -6px;
+    top: 4px;
+    bottom: 4px;
+
+    width: 4px;
+
+    background: #0d6efd;
+    border-radius: 4px;
+}
+
+.toolbar-button.active i {
+    color: #0d6efd;
+}
+
+.toolbar-button.active .menu-label {
+    color: #0d6efd;
+    font-weight: 600;
+}
 
 .gis-toolbar-flyout {
-    display: none;
     position: fixed;
-    left: 75px;
-    width: 260px;
-    max-height: 80%;
-    
-    background-color: rgba(255, 255, 255, 0.90);
-    border-right: 1px solid #ccc;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.15);
-    padding: 12px;
-    z-index: 1049;
-    transition: transform 0.2s ease;
-
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-*/
-
-/* =========================================
-   GIS LEFT TOOLBAR
-========================================= */
-
-#gis-toolbar {
-    position: absolute;
     top: 15%;
-    left: 10px;
+    left: 0;
+    width: 400px;
+    max-height: calc(100vh - 100px);
 
-    z-index: 900;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    padding: 10px 6px;
-
-    background-color: rgba(255, 255, 255, 0.95);
+    background-color: rgba(255, 255, 255, 0.97);
 
     border: 1px solid #ccc;
-    border-radius: 10px;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
 
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.18);
+
+    padding: 12px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 1050;
+
+    transform: translateX(-110%);
+    opacity: 0;
+    pointer-events: none;
+
+    transition:
+        transform 0.25s ease,
+        opacity 0.20s ease;
 }
 
-
-/* =========================================
-   SIDE PANEL / DRAWER
-========================================= */
-
-.gis-toolbar-flyout {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 320px;
-    height: 100dvh;
-    z-index: 1090;
-    padding: 16px;
-    background-color: rgba(255, 255, 255, 0.96);
-    backdrop-filter: blur(6px);
-    border-right: 1px solid #ccc;
-    box-shadow: 4px 0 14px rgba(0, 0, 0, 0.18);
-    overflow: hidden;
-    transform: translateX(calc(-100% - 20px));
-    transition: transform 0.25s ease;
-}
-
-
-/* Open state */
-
-.gis-toolbar-flyout.is-open {
+.gis-toolbar-flyout.show {
     transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
 }
 
+.gis-toolbar-flyout .flyout-header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
 
-/* =========================================
-   LAYERS LIST
-========================================= */
-
-.gis-toolbar-flyout .layers-list-wrapper {
-    height: calc(100dvh - 115px);
-
-    overflow-y: auto;
-    overflow-x: hidden;
+    background-color: rgba(255, 255, 255, 0.97);
+    padding-bottom: 8px;
+    margin-bottom: 8px;
 }
 
-
-/* =========================================
-   BASE MAP THUMBNAILS
-========================================= */
-
-#baseMapMenuContent {
-    height: 200px;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-.base-thumb {
-    width: 80px;
-    height: 80px !important;
-
-    object-fit: cover;
-
-    border-radius: 6px;
-
+.gis-toolbar-flyout .flyout-close {
     cursor: pointer;
-
-    transition: box-shadow 0.2s ease;
+    font-size: 18px;
+    opacity: 0.6;
 }
 
-.base-thumb:hover {
-    box-shadow: 0 0 0 3px #0d6efd;
+.gis-toolbar-flyout .flyout-close:hover {
+    opacity: 1;
+}
+
+.gis-toolbar-flyout .flyout-header {
+    padding-bottom: 6px;
+}
+
+.gis-toolbar-flyout .flyout-close {
+    cursor: pointer;
+    font-size: 18px;
+    opacity: 0.6;
+}
+
+.gis-toolbar-flyout .flyout-close:hover {
+    opacity: 1;
 }
 
 .separator {
@@ -519,16 +517,26 @@ table.table-custom button{
     border-radius: 2px;
 }
 
+.gis-bottom-menu {
+    position: absolute;
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 1px 1px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-/* .gis-bottom-menu {
-    position: fixed;
-    bottom: 0;
-    left: 39%;
-    width: 20%;
-    background-color: var(--bg-color-whiteTrasnparent);
-    border-top: 1px solid #ccc;
-    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
-    z-index: 1050;
+.menu-buttons {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
 }
 
 .bottom-menu-button {
@@ -537,56 +545,10 @@ table.table-custom button{
     font-size: 20px;
     cursor: pointer;
     color: #444;
-    padding: 8px;
-    width: 48px;
-    height: 48px;
-    border-radius: 6px;
-}
-
-.bottom-menu-button:hover {
-    color: #0d6efd;
-    background-color: #f0f0f0;
-} */
-
-
-.gis-bottom-menu {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(255, 255, 255, 0.95);
-    border: 1px solid #ccc;
-    border-radius: 10px 10px 0 0;
-    padding: 4px 6px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
-#menuButtons {
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
-    gap: 6px;
-}
-
-.bottom-menu-group {
-    display: flex;
-    align-items: center;
-}
-
-.bottom-menu-button {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    color: #444;
-    padding: 6px 8px 4px;
-    min-width: 58px;
+    padding: 6px 6px 4px;
+    width: 50px;
     height: auto;
-    border-radius: 8px;
+    border-radius: 6px;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -594,49 +556,24 @@ table.table-custom button{
     justify-content: center;
 }
 
-.bottom-menu-button:hover,
-.bottom-menu-button.show {
+.bottom-menu-button:hover {
     color: #17191b;
     background-color: #f0f0f0;
 }
 
-.bottom-menu-button.dropdown-toggle::after {
-    margin-top: 4px;
-    font-size: 10px;
-}
-
 .menu-label {
-    font-size: 11px;
-    margin-top: 4px;
+    font-size: 12px;
+    margin-top: 5px;
     line-height: 1;
     color: #333;
-    white-space: nowrap;
 }
 
-.bottom-menu-dropdown {
-    min-width: 220px;
-    padding: 6px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
-}
-
-.bottom-menu-dropdown .dropdown-item {
-    border-radius: 8px;
-    padding: 8px 10px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
-}
-
-.bottom-menu-dropdown .dropdown-item:hover {
-    background-color: #f0f0f0;
-}
-
-.bottom-menu-dropdown .dropdown-item i {
-    width: 18px;
-    text-align: center;
+/* Separador vertical */
+.button-separator {
+    width: 1px;
+    height: 36px;
+    background-color: #ccc;
+    margin: 0 6px;
 }
 
 /* Botón ☰ visible solo en móvil */
@@ -646,25 +583,8 @@ table.table-custom button{
     border-radius: 6px;
     font-size: 20px;
     padding: 8px 12px;
-}
 
-.bottom-menu-group.dropup .dropdown-menu {
-    margin-bottom: 8px;
 }
-
-.bottom-menu-group.dropup .dropdown-toggle::after {
-    margin-top: 4px;
-    vertical-align: middle;
-}
-
-/* Make Bootstrap arrow point down when using dropup */
-.bottom-menu-group.dropup .dropdown-toggle::after {
-    border-top: 0;
-    border-right: 0.3em solid transparent;
-    border-bottom: 0;
-    border-left: 0.3em solid transparent;
-}
-
 
 ul.layerSelector {
     max-height: 300px;
@@ -674,9 +594,6 @@ ul.layerSelector {
     background: none;
 }
 
-#wms-menu{
-    width: 500px;
-}
 
 
 
@@ -1605,7 +1522,7 @@ i.icon-button.has-filter::after {
 
 .ol-compass{
   position:absolute;
-  top: 30%;
+  top: 10%;
   right: 20px;
   /* bottom: 70px;
   left: 10px; */

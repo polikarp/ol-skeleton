@@ -27,9 +27,10 @@ export function createWfsLayerQueryService({
                     wfsEnabled: !!layer.get("wfsEnabled"),
                     wfsVersion: layer.get("wfsVersion") || "2.0.0",
                     geomColumn: layer.get("geomColumn") || "geom",
-                    credentials: layer.get("credentials")
+                    credentials: layer.get("credentials"),
+                    identifiable: layer.get("identifiable")
                 }))
-        .filter(c => c.baseUrl && c.typeName && c.wfsEnabled);
+        .filter(c => c.baseUrl && c.typeName && c.wfsEnabled && c.identifiable);
     }
 
     async function fetchCandidate(c, bbox, finalCql) {

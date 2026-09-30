@@ -84,7 +84,8 @@ export function createOlLayerFromServiceType({layerName, serviceBaseUrl, version
         geomColumn: options.geomColumn,
         description: options.description,
         credentials: options.credentials,
-        idField: options.id_field
+        idField: options.id_field,
+        identifiable: options.identifiable
     };
 
     if (type === "WMS") {
@@ -288,7 +289,7 @@ export function createOlLayerFromServiceType({layerName, serviceBaseUrl, version
  */
 export function addLayerToMap(map, layerName, { options = {} }) {
 
-    const { serviceBaseUrl, version, title, serviceType, tiled, format, geomColumn, desc, credentials, id_field } = layersInfo.get(layerName);
+    const { serviceBaseUrl, version, title, serviceType, tiled, format, geomColumn, desc, credentials, id_field, identifiable } = layersInfo.get(layerName);
     if (!map) throw new Error("Map is required");
     if (!layerName || !serviceBaseUrl) throw new Error("layerName and serviceBaseUrl are required");
 
@@ -303,7 +304,8 @@ export function addLayerToMap(map, layerName, { options = {} }) {
     options['geomColumn'] = geomColumn;
     options['description'] = desc;
     options['credentials'] = credentials;
-    options['id_field'];
+    options['id_field'] = id_field;
+    options['identifiable'] = identifiable;
     const olLayer = createOlLayerFromServiceType({layerName, serviceBaseUrl, version, title, serviceType, tiled, format, options,});
 
     map.addLayer(olLayer);

@@ -212,7 +212,7 @@ export function createHybridIdentifyHandler({
                 const layerName = layer.get("layerName") || source?.getParams?.()?.LAYERS || "unknown";
                 const serviceBaseUrl = layer.get("serviceBaseUrl") || "unknown";
 
-                if (!source || typeof source.getFeatureInfoUrl !== "function") {
+                if (!source || typeof source.getFeatureInfoUrl !== "function" || !layer.get("identifiable")) {
                     return { ok: false, layerName, serviceBaseUrl, error: "No GetFeatureInfo support" };
                 }
 

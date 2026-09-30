@@ -121,33 +121,28 @@ export function registerGisBottomMenuTools(map, options = {}) {
 }
 
 export function registerGisLeftMenu(map, options = {}) {
-    $('.toolbar-button').on('click', function (e) {
 
-        const $button = $(this);
-        const targetId = $button.data('target');
+    $('.toolbar-button').on('click', function (e) {
+        e.stopPropagation();
+
+        const targetId = $(this).data('target');
         const $targetMenu = $('#' + targetId);
 
-        $('.gis-toolbar-flyout').not($targetMenu).removeClass('show');
+        $('.gis-toolbar-flyout')
+            .not($targetMenu)
+            .removeClass('is-open');
 
-        const opening = !$targetMenu.hasClass('show');
-
-        $targetMenu.toggleClass('show', opening);
-
-        $('.gis-toolbar').toggleClass('menu-open', opening);
-
-        $('.toolbar-button').removeClass('active');
-
-        if (opening) {
-            $button.addClass('active');
-        }
+        $targetMenu.toggleClass('is-open');
     });
 
-    $('.flyout-close').on('click', function () {
-        $('.gis-toolbar-flyout').removeClass('show');
-        $('.gis-toolbar').removeClass('menu-open');
-        $('.toolbar-button').removeClass('active');
-    });
 
+    $('.closeLeftMenu').on('click', function (e) {
+        e.stopPropagation();
+
+        const targetId = $(this).data('target');
+
+        $('#' + targetId).removeClass('is-open');
+    });
 
 
     $('.base-thumb').on('click', function () {

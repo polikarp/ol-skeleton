@@ -99,6 +99,8 @@ export function renderLayersMenuFromWms(
         const credentials = layer.credentials ?? false;
         const serviceType = getServiceTypeForGroup(group, layer);
         const id_field = layer.id_field;
+        const queryable = layer.queryable ?? true;
+        const identifiable = layer.identifiable ?? true;
 
         const configuredGeomColumn = layer.geom_field || null;
 
@@ -116,7 +118,8 @@ export function renderLayersMenuFromWms(
             groupKey,
             geomColumn: configuredGeomColumn,
             credentials,
-            id_field
+            id_field,
+            identifiable
         });
 
         // Async validation against GeoServer
@@ -177,7 +180,7 @@ export function renderLayersMenuFromWms(
             desc,
             groupKey,
             prefix: "wms",
-            showFilter: true,
+            showFilter: queryable,
             showRemove: false,
             extraHtml: legendImgTag,
             checked: false
