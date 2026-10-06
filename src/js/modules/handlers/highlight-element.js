@@ -293,7 +293,7 @@ function createHighlightStyle(imageFillColor = '#ff0000') {
         }),
 
         image: new CircleStyle({
-            radius: 7,
+            radius: 10,
 
             fill: new Fill({
                 color: imageFillColor

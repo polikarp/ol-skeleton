@@ -2891,9 +2891,9 @@
                 "id_field": "uprn",
 				"title": "UPRN",
                 "title_property": "uprn",
-				"layer_name": "unitaddress_for_geoportal",
+				"layer_name": "unitaddress_with_type_vw",
 				"description": "UPRN",
-				"base_url": "http://geomapint.gibraltar.gov.gi:8080/geoserver/landproperty/wms",
+				"base_url": "http://geomapint.gibraltar.gov.gi:8080/geoserver/central/wms",
 				"type": "wms",
 				"geom_field": "geom",
 				"visible_default": false,
@@ -2906,6 +2906,7 @@
 					"version": "1.3.0"
 				}
             }
+
         ]
     }
 
